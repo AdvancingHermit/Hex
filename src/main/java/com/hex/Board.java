@@ -15,7 +15,7 @@ public class Board extends Pane {
         this.rows = rows;
         this.cols = cols;
         this.size = hexagonSize;
-        board = new int[rows][cols];
+        this.board = new int[rows][cols];
     }
     public void setPiece(int x, int y, int player) {
         board[x][y] = player;
@@ -23,14 +23,27 @@ public class Board extends Pane {
     public void drawBoard() {
         for (int i = 0; i < cols; i++ ) {
             for (int j = 0; j < rows; j++ ) {
-                double horSpacing = sqrt(3)*size;
-                double verSpacing = 3.0/2.0 * size;
-                double x = i * horSpacing + j * (horSpacing / 2 ) + size;
-                double y = j * verSpacing + size;
-                Hexagon hex = new Hexagon( new double[] {x, y},  size);
-                hex.setFill(Color.TRANSPARENT);
+
+                Piece hex = new Piece( new double[] {i, j},  size);
+
+                hex.setOnMouseClicked(event -> {
+                    System.out.println("Hex clicked! " + hex.gridPosition[0] + " " + hex.gridPosition[1]);
+                    setPiece((int) hex.gridPosition[0], (int) hex.gridPosition[1], 1);
+                    getChildren().clear();
+                    drawBoard();
+                });
+
+                if (board[i][j] == 0) {
+                    hex.setFill(Color.TRANSPARENT);
+                } else if (board[i][j] == 1) {
+                    hex.setFill(Color.BLUE);
+                } else if (board[i][j] == 2) {
+                    hex.setFill(Color.RED);
+                }
+
                 hex.setStroke(Color.grayRgb(45));
                 getChildren().add(hex);
+
 
             }
 
