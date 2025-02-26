@@ -3,6 +3,6 @@ module com.example.hex {
     requires javafx.fxml;
 
 
-    opens com.example.hex to javafx.fxml;
-    exports com.example.hex;
+    opens com.hex to javafx.fxml;
+    exports com.hex;
 }
