@@ -1,4 +1,4 @@
-package com.hex;
+package com.hex.components;
 
 import javafx.scene.shape.Polygon;
 

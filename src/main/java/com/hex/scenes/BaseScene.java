@@ -1,4 +1,4 @@
-package com.hex;
+package com.hex.scenes;
 
 import javafx.scene.Scene;
 

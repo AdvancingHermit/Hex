@@ -1,11 +1,12 @@
-package com.hex;
+package com.hex.scenes;
 
+import com.hex.HexApp;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 
 public class MainMenu extends BaseScene {
-    MainMenu(HexApp hexApp) {
+    public MainMenu(HexApp hexApp) {
         StackPane root = new StackPane();
 
         Button playButton = new Button("Play!");
