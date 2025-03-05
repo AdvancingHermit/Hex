@@ -24,7 +24,7 @@ public class HexGame extends BaseScene {
         // Hex Board and wrapper
         Group boardWrap = new Group();
 
-        Board hexBoard = new Board(5, 5, 30, gameState);
+        Board hexBoard = new Board(11, 11, 30, gameState);
         hexBoard.drawBoard();
         boardWrap.getChildren().add(hexBoard);
 

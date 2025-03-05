@@ -1,6 +1,9 @@
 package com.hex.components;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+
+import java.awt.*;
 
 import static java.lang.Math.*;
 
@@ -14,12 +17,14 @@ public class Piece extends Polygon {
         //calc position
         double horSpacing = sqrt(3)*size;
         double verSpacing = 3.0/2.0 * size;
-        double x = gridPosition[0] * horSpacing + gridPosition[1] * (horSpacing / 2 ) + size;
+        double x = gridPosition[0] * horSpacing + gridPosition[1] * (horSpacing / 2 ) + horSpacing/2;
         double y = gridPosition[1] * verSpacing + size;
         double[] center = new double[] {x, y};
         double angle = toRadians(30);
         double second = sin(angle) * size;
         double realSize = size*sqrt(3)/2.0;
+
+
 
 
         getPoints().addAll(new Double[]{

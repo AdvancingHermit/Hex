@@ -1,6 +1,7 @@
 module com.example.hex {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.desktop;
 
 
     opens com.hex to javafx.fxml;
