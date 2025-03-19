@@ -27,14 +27,6 @@ public class Board {
         board[x][y] = player;
         System.out.println(checkWin(player));
     }
-    public void pieceClicked(Piece hex) {
-        System.out.println("Hex clicked! " + hex.gridPosition[0] + " " + hex.gridPosition[1]);
-        if (board[(int) hex.gridPosition[0]][(int) hex.gridPosition[1]] == 0){
-            setPiece((int) hex.gridPosition[0], (int) hex.gridPosition[1], gameState.getCurrentPlayer());
-            gameState.nextPlayer();
-        }
-    }
-
 
     private boolean checkWin(int player) {
         if (player == 1) {

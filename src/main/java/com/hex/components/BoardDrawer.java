@@ -23,6 +23,14 @@ public class BoardDrawer extends Pane {
         board = new Board(rows, cols, gameState);
     }
 
+    public void pieceClicked(Piece hex) {
+        System.out.println("Hex clicked! " + hex.gridPosition[0] + " " + hex.gridPosition[1]);
+        if (board.getPiece((int) hex.gridPosition[0], (int) hex.gridPosition[1]) == 0){
+            board.setPiece((int) hex.gridPosition[0], (int) hex.gridPosition[1], gameState.getCurrentPlayer());
+            gameState.nextPlayer();
+        }
+    }
+
     public void drawBoard() {
         Line line = new Line(-size, 0, -size + rows* sqrt(3.0)*size / 2.0, computePrefHeight(0) + 10);
         line.setStrokeWidth(10);  // Set thickness
@@ -35,7 +43,7 @@ public class BoardDrawer extends Pane {
                 Piece hex = new Piece( new double[] {i, j},  size);
 
                 hex.setOnMouseClicked(event -> {
-                    board.pieceClicked(hex);
+                    pieceClicked(hex);
                     getChildren().clear();
                     drawBoard();
                 });
