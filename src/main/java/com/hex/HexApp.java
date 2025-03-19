@@ -5,8 +5,6 @@ import com.hex.scenes.MainMenu;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 public class HexApp extends Application {
     private Stage primaryStage;
     public enum Scenes {
@@ -14,7 +12,7 @@ public class HexApp extends Application {
         HEXGAME
     }
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         primaryStage = stage;
 
         stage.setTitle("Hex Game Board");
