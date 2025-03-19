@@ -2,6 +2,7 @@ package com.hex.scenes;
 import com.hex.GameState;
 import com.hex.components.Board;
 import com.hex.HexApp;
+import com.hex.components.BoardDrawer;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -24,7 +25,7 @@ public class HexGame extends BaseScene {
         // Hex Board and wrapper
         Group boardWrap = new Group();
 
-        Board hexBoard = new Board(11, 11, 30, gameState);
+        BoardDrawer hexBoard = new BoardDrawer(3, 3, 30, gameState);
         hexBoard.drawBoard();
         boardWrap.getChildren().add(hexBoard);
 
