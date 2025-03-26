@@ -1,6 +1,7 @@
 package com.hex.components;
 
 import com.hex.GameState;
+import com.hex.gamecontroller.GameController;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -15,14 +16,12 @@ public class BoardUI extends Pane {
     private java.util.function.Consumer<int[]> onMoveHandler;
     Board board;
 
-    public BoardUI(int rows, int cols, double hexagonSize, GameState gameState, java.util.function.Consumer<int[]> onMoveHandler){
+    public BoardUI(Board board, double hexagonSize, java.util.function.Consumer<int[]> onMoveHandler){
         this.size = hexagonSize;
-        this.rows = rows;
-        this.cols = cols;
-        this.gameState = gameState;
         this.onMoveHandler = onMoveHandler;
-        board = new Board(rows, cols);
-
+        this.board = board;
+        this.rows = board.rows;
+        this.cols = board.cols;
     }
 
     public void pieceClicked(Piece hex) {
@@ -52,7 +51,8 @@ public class BoardUI extends Pane {
                 Piece hex = new Piece( new double[] {i, j},  size);
 
                 hex.setOnMouseClicked(event -> {
-                    pieceClicked(hex);
+                  //  pieceClicked(hex);
+                    GameController.gameIteration(hex);
                     getChildren().clear();
                     drawBoard();
                 });
@@ -86,7 +86,6 @@ public class BoardUI extends Pane {
 
         }
     }
-
     @Override
     protected double computePrefWidth(double width) {
         return sqrt(3)*size* cols + rows* sqrt(3)*size / 2;

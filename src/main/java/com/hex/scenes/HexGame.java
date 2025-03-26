@@ -1,8 +1,12 @@
 package com.hex.scenes;
 import com.hex.GameState;
+import com.hex.algorithms.Algorithm;
+import com.hex.algorithms.MCTS;
+import com.hex.components.Board;
 import com.hex.HexApp;
 import com.hex.components.BoardUI;
 import javafx.application.Platform;
+import com.hex.gamecontroller.GameController;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -24,6 +28,7 @@ public class HexGame extends BaseScene {
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    private Board board;
 
 
     public HexGame(HexApp hexApp) {
@@ -97,7 +102,8 @@ public class HexGame extends BaseScene {
         // Hex Board and wrapper
         Group boardWrap = new Group();
 
-        hexBoard = new BoardUI(11, 11, 30, gameState,  coords -> {
+        board = new Board(11, 11);
+        hexBoard = new BoardUI(board, 30, coords -> {
             try {
                 String move = coords[0] + " " + coords[1];
                 out.writeObject(move);
@@ -132,6 +138,7 @@ public class HexGame extends BaseScene {
 
 
         scene = new Scene(root, 800, 600);
+
     }
 
 }

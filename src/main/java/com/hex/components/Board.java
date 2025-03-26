@@ -6,14 +6,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static java.lang.Math.sqrt;
 
 public class Board {
     private int[][] board;
 
-    int rows;
-    int cols;
+    public int rows;
+    public int cols;
 
     public Board(int rows, int cols) {
         this.rows = rows;
@@ -25,7 +26,7 @@ public class Board {
         board[x][y] = player;
     }
 
-    private boolean checkWin(int player) {
+    public boolean checkWin(int player) {
         if (player == 1) {
             for (int i = 0; i < rows; i++) {
                 if (board[0][i] == 1) {
@@ -109,4 +110,5 @@ public class Board {
     public int getPiece(int x, int y){
         return board[x][y];
     }
+
 }

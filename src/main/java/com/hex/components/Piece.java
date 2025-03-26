@@ -38,6 +38,7 @@ public class Piece extends Polygon {
 
     }
 
-
-
+    public double[] getGridPosition() {
+        return gridPosition;
+    }
 }
