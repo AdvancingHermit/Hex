@@ -7,28 +7,37 @@ import javafx.scene.shape.Line;
 
 import static java.lang.Math.sqrt;
 
-public class BoardDrawer extends Pane {
+public class BoardUI extends Pane {
     int rows;
     int cols;
     double size;
     GameState gameState;
-
+    private java.util.function.Consumer<int[]> onMoveHandler;
     Board board;
 
-    public BoardDrawer(int rows, int cols, double hexagonSize, GameState gameState){
+    public BoardUI(int rows, int cols, double hexagonSize, GameState gameState, java.util.function.Consumer<int[]> onMoveHandler){
         this.size = hexagonSize;
         this.rows = rows;
         this.cols = cols;
         this.gameState = gameState;
-        board = new Board(rows, cols, gameState);
+        this.onMoveHandler = onMoveHandler;
+        board = new Board(rows, cols);
+
     }
 
     public void pieceClicked(Piece hex) {
         System.out.println("Hex clicked! " + hex.gridPosition[0] + " " + hex.gridPosition[1]);
-        if (board.getPiece((int) hex.gridPosition[0], (int) hex.gridPosition[1]) == 0){
-            board.setPiece((int) hex.gridPosition[0], (int) hex.gridPosition[1], gameState.getCurrentPlayer());
+        int x = (int) hex.gridPosition[0];
+        int y = (int) hex.gridPosition[1];
+        System.out.println(gameState.getCurrentPlayer() + ", " + gameState.getPlayerNum());
+        if (board.getPiece(x, y) == 0 && onMoveHandler != null && gameState.getCurrentPlayer() == gameState.getPlayerNum()) {
+            board.setPiece(x, y, gameState.getCurrentPlayer());
+            onMoveHandler.accept(new int[]{x, y});
             gameState.nextPlayer();
         }
+    }
+    public Board getBoard() {
+        return board;
     }
 
     public void drawBoard() {

@@ -1,6 +1,6 @@
-package com.hex.components;
+package com.server;
 
-import com.hex.GameState;
+import com.server.GameState;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -23,9 +23,10 @@ public class Board {
 
     public void setPiece(int x, int y, int player)  {
         board[x][y] = player;
+        System.out.println(checkWin(player));
     }
 
-    private boolean checkWin(int player) {
+    public boolean checkWin(int player) {
         if (player == 1) {
             for (int i = 0; i < rows; i++) {
                 if (board[0][i] == 1) {
@@ -41,7 +42,7 @@ public class Board {
                 if (board[i][0] == 2) {
                     if (depthFirstSearch(i, 0, player)) {
                         replacePieces(player);
-                        return true;
+                        return false;
                     }
                 }
             }
