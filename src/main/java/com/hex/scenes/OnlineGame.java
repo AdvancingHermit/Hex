@@ -94,7 +94,13 @@ public class OnlineGame extends BaseScene {
         int player = Integer.parseInt(parts[2]);
 
         Platform.runLater(() -> {
-            hexBoard.getBoard().setPiece(x, y, player);
+            if (board.getPiece(x, y) != 0) {
+                hexBoard.getBoard().setPiece(x, y, 0);
+                hexBoard.getBoard().setPiece(y, x, player);
+            } else {
+                hexBoard.getBoard().setPiece(x, y, player);
+            }
+
             gameState.nextPlayer();
             hexBoard.getChildren().clear();
             hexBoard.drawBoard();
