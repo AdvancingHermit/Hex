@@ -77,7 +77,7 @@ public class GameSession implements Runnable {
             if ((move = (String) in.readObject()) != null) {
                 String[] coords = move.split(" ");
                 if (coords.length == 2) {
-                    board.setPiece(Integer.parseInt(coords[0]), Integer.parseInt(coords[1]), gameState.getCurrentPlayer());
+                    handleMove(Integer.parseInt(coords[0]), Integer.parseInt(coords[1]), gameState.getCurrentPlayer());
                     relayMove(out, move);
                 } else {
                     System.err.println("Client sent invalid move");
@@ -90,6 +90,18 @@ public class GameSession implements Runnable {
             System.err.println("Client sent invalid move: " + e.getMessage());
         }
 
+    }
+    private void handleMove(int x, int y, int player) {
+        boolean emptySpot = board.getPiece(x, y) == 0;
+        if (gameState.getSwap() && !emptySpot) {
+            board.setPiece(x, y, 0);
+            board.setPiece(y, x, player);
+        } else if (emptySpot) {
+            board.setPiece(x, y, player);
+        } else {
+            System.out.println("Illegal move");
+        }
+       
     }
 
     private void relayMove(ObjectOutputStream out, String move) throws IOException {

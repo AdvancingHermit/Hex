@@ -6,7 +6,7 @@ import com.hex.components.Board;
 import com.hex.components.Piece;
 
 
-public class GameController {
+public class GameController implements Controller {
     private static Board board;
     private static GameState gameState;
     private static Algorithm algorithm;

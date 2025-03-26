@@ -1,12 +1,11 @@
 package com.hex.scenes;
 import com.hex.GameState;
-import com.hex.algorithms.Algorithm;
-import com.hex.algorithms.MCTS;
 import com.hex.components.Board;
 import com.hex.HexApp;
+import com.hex.components.BoardCoordinate;
 import com.hex.components.BoardUI;
+import com.hex.gamecontroller.OnlineController;
 import javafx.application.Platform;
-import com.hex.gamecontroller.GameController;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -19,7 +18,7 @@ import javafx.scene.layout.VBox;
 import java.io.*;
 import java.net.*;
 
-public class HexGame extends BaseScene {
+public class OnlineGame extends BaseScene {
     private GameState gameState = new GameState();
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 5917;
@@ -28,10 +27,21 @@ public class HexGame extends BaseScene {
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    private Board board;
+    private Board board = new Board(11, 11);;
+    private OnlineController controller = new OnlineController(board, gameState,
+                                                            coords -> {
+                                                                            try {
+                                                                                String move = coords[0] + " " + coords[1];
+                                                                                out.writeObject(move);
+                                                                                out.flush();
+                                                                            }
+                                                                            catch (IOException e) {
+                                                                                e.printStackTrace();
+                                                                            }
+                                                                            });
 
 
-    public HexGame(HexApp hexApp) {
+    public OnlineGame(HexApp hexApp) {
 
         try {
             socket = new Socket(SERVER_IP, SERVER_PORT);
@@ -48,23 +58,9 @@ public class HexGame extends BaseScene {
                     while ((serverMove = (String) in.readObject()) != null ) {
                         String[] parts = serverMove.split(" ");
                         if (parts[0].equals("w")) {
-                            System.out.println("Ayo, player " + parts[1] + " won!");
-                            if (gameState.getPlayerNum() == Integer.parseInt(parts[1])) {
-                                System.out.println("(thats you)");
-                            } else {
-                                System.out.println("(you lost bitch)");
-                            }
+                            handleGameEnd(parts);
                         } else {
-                            int x = Integer.parseInt(parts[0]);
-                            int y = Integer.parseInt(parts[1]);
-                            int player = Integer.parseInt(parts[2]);
-
-                            Platform.runLater(() -> {
-                                hexBoard.getBoard().setPiece(x, y, player);
-                                gameState.nextPlayer();
-                                hexBoard.getChildren().clear();
-                                hexBoard.drawBoard();
-                            });
+                            handleReceivedMove(parts);
                         }
 
                     }
@@ -92,26 +88,38 @@ public class HexGame extends BaseScene {
             e.printStackTrace();
         }
     }
+    public void handleReceivedMove(String[] parts) {
+        int x = Integer.parseInt(parts[0]);
+        int y = Integer.parseInt(parts[1]);
+        int player = Integer.parseInt(parts[2]);
 
+        Platform.runLater(() -> {
+            hexBoard.getBoard().setPiece(x, y, player);
+            gameState.nextPlayer();
+            hexBoard.getChildren().clear();
+            hexBoard.drawBoard();
+        });
+    }
+
+    public void handleGameEnd(String[] parts){
+        System.out.println("Ayo, player " + parts[1] + " won!");
+        if (gameState.getPlayerNum() == Integer.parseInt(parts[1])) {
+            System.out.println("(thats you)");
+        } else {
+            System.out.println("(you lost bitch)");
+        }
+    }
 
     public void drawGame() {
         BorderPane root = new BorderPane();
 
         StackPane gameWrap = new StackPane();
 
+
         // Hex Board and wrapper
         Group boardWrap = new Group();
 
-        board = new Board(11, 11);
-        hexBoard = new BoardUI(board, 30, coords -> {
-            try {
-                String move = coords[0] + " " + coords[1];
-                out.writeObject(move);
-                out.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        hexBoard = new BoardUI(board, 30, true);
         hexBoard.drawBoard();
         boardWrap.getChildren().add(hexBoard);
 

@@ -5,6 +5,7 @@ public class GameState {
     private int currentPlayer = 1;
     private int playerNum;
     private boolean gameFinished = false;
+    private boolean swap = true;
 
     public int getCurrentPlayer() {
         return currentPlayer;
@@ -20,6 +21,14 @@ public class GameState {
 
     public void nextPlayer() {
         currentPlayer = currentPlayer == 1 ? 2 : 1;
+    }
+
+    public void setSwap(boolean swap) {
+        this.swap = swap;
+    }
+
+    public boolean getSwap() {
+        return swap;
     }
 
     public boolean isGameFinished(){

@@ -4,6 +4,7 @@ public class GameState {
     private int currentPlayer;
     private int currentClient;
     private boolean gameFinished = false;
+    private boolean swap = true;
 
     GameState() {
         currentPlayer = 1;
@@ -11,6 +12,14 @@ public class GameState {
     GameState(int currentClient) {
         this.currentClient = currentClient;
         currentPlayer = 1;
+    }
+
+    public void setSwap(boolean swap) {
+        this.swap = swap;
+    }
+
+    public boolean getSwap() {
+        return swap;
     }
 
 

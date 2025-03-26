@@ -42,7 +42,7 @@ public class Board {
                 if (board[i][0] == 2) {
                     if (depthFirstSearch(i, 0, player)) {
                         replacePieces(player);
-                        return false;
+                        return true;
                     }
                 }
             }

@@ -1,7 +1,9 @@
 package com.hex.components;
 
 import com.hex.GameState;
+import com.hex.gamecontroller.Controller;
 import com.hex.gamecontroller.GameController;
+import com.hex.gamecontroller.OnlineController;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -13,28 +15,17 @@ public class BoardUI extends Pane {
     int cols;
     double size;
     GameState gameState;
-    private java.util.function.Consumer<int[]> onMoveHandler;
     Board board;
+    boolean online;
 
-    public BoardUI(Board board, double hexagonSize, java.util.function.Consumer<int[]> onMoveHandler){
+    public BoardUI(Board board, double hexagonSize,  boolean online){
         this.size = hexagonSize;
-        this.onMoveHandler = onMoveHandler;
         this.board = board;
         this.rows = board.rows;
         this.cols = board.cols;
+        this.online = online;
     }
 
-    public void pieceClicked(Piece hex) {
-        System.out.println("Hex clicked! " + hex.gridPosition[0] + " " + hex.gridPosition[1]);
-        int x = (int) hex.gridPosition[0];
-        int y = (int) hex.gridPosition[1];
-        System.out.println(gameState.getCurrentPlayer() + ", " + gameState.getPlayerNum());
-        if (board.getPiece(x, y) == 0 && onMoveHandler != null && gameState.getCurrentPlayer() == gameState.getPlayerNum()) {
-            board.setPiece(x, y, gameState.getCurrentPlayer());
-            onMoveHandler.accept(new int[]{x, y});
-            gameState.nextPlayer();
-        }
-    }
     public Board getBoard() {
         return board;
     }
@@ -51,8 +42,12 @@ public class BoardUI extends Pane {
                 Piece hex = new Piece( new double[] {i, j},  size);
 
                 hex.setOnMouseClicked(event -> {
-                  //  pieceClicked(hex);
-                    GameController.gameIteration(hex);
+                    BoardCoordinate coord = new BoardCoordinate((int) hex.getGridPosition()[0], (int) hex.getGridPosition()[1]);
+                    if(online) {
+                        OnlineController.gameIteration(coord);
+                    } else {
+                        GameController.gameIteration(hex);
+                    }
                     getChildren().clear();
                     drawBoard();
                 });

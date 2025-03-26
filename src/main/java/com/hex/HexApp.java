@@ -1,6 +1,7 @@
 package com.hex;
 
-import com.hex.scenes.HexGame;
+import com.hex.scenes.LocalGame;
+import com.hex.scenes.OnlineGame;
 import com.hex.scenes.MainMenu;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -9,7 +10,8 @@ public class HexApp extends Application {
     private Stage primaryStage;
     public enum Scenes {
         MAINMENU,
-        HEXGAME
+        ONLINE,
+        LOCAL
     }
     @Override
     public void start(Stage stage) {
@@ -25,8 +27,11 @@ public class HexApp extends Application {
             case MAINMENU:
                 primaryStage.setScene(new MainMenu(this).getScene());
                 break;
-            case HEXGAME:
-                primaryStage.setScene(new HexGame(this).getScene());
+            case ONLINE:
+                primaryStage.setScene(new OnlineGame(this).getScene());
+                break;
+            case LOCAL:
+                primaryStage.setScene(new LocalGame(this).getScene());
                 break;
 
         }
