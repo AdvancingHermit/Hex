@@ -11,6 +11,7 @@ public class GameState {
     public void nextPlayer() {
         currentPlayer = currentPlayer == 1 ? 2 : 1;
     }
+
     public boolean isGameFinished(){
         return gameFinished;
     }

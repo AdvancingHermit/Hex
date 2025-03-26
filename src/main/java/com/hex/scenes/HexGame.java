@@ -1,8 +1,11 @@
 package com.hex.scenes;
 import com.hex.GameState;
+import com.hex.algorithms.Algorithm;
+import com.hex.algorithms.MCTS;
 import com.hex.components.Board;
 import com.hex.HexApp;
 import com.hex.components.BoardDrawer;
+import com.hex.gamecontroller.GameController;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -22,10 +25,16 @@ public class HexGame extends BaseScene {
 
         StackPane gameWrap = new StackPane();
 
+        //Algorithm
+        Algorithm algorithm = new MCTS();
+
         // Hex Board and wrapper
         Group boardWrap = new Group();
+        Board board = new Board(3,3,gameState);
+        GameController gameController = new GameController(board, gameState, algorithm);
+        BoardDrawer hexBoard = new BoardDrawer(board, 30);
 
-        BoardDrawer hexBoard = new BoardDrawer(3, 3, 30, gameState);
+
         hexBoard.drawBoard();
         boardWrap.getChildren().add(hexBoard);
 

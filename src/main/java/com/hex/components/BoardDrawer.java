@@ -1,6 +1,7 @@
 package com.hex.components;
 
 import com.hex.GameState;
+import com.hex.gamecontroller.GameController;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -8,28 +9,18 @@ import javafx.scene.shape.Line;
 import static java.lang.Math.sqrt;
 
 public class BoardDrawer extends Pane {
+    double size;
+    Board board;
     int rows;
     int cols;
-    double size;
-    GameState gameState;
 
-    Board board;
-
-    public BoardDrawer(int rows, int cols, double hexagonSize, GameState gameState){
+    public BoardDrawer(Board board, double hexagonSize){
         this.size = hexagonSize;
-        this.rows = rows;
-        this.cols = cols;
-        this.gameState = gameState;
-        board = new Board(rows, cols, gameState);
+        this.board = board;
+        this.rows = board.rows;
+        this.cols = board.cols;
     }
 
-    public void pieceClicked(Piece hex) {
-        System.out.println("Hex clicked! " + hex.gridPosition[0] + " " + hex.gridPosition[1]);
-        if (board.getPiece((int) hex.gridPosition[0], (int) hex.gridPosition[1]) == 0){
-            board.setPiece((int) hex.gridPosition[0], (int) hex.gridPosition[1], gameState.getCurrentPlayer());
-            gameState.nextPlayer();
-        }
-    }
 
     public void drawBoard() {
         Line line = new Line(-size, 0, -size + rows* sqrt(3.0)*size / 2.0, computePrefHeight(0) + 10);
@@ -43,7 +34,8 @@ public class BoardDrawer extends Pane {
                 Piece hex = new Piece( new double[] {i, j},  size);
 
                 hex.setOnMouseClicked(event -> {
-                    pieceClicked(hex);
+                  //  pieceClicked(hex);
+                    GameController.gameIteration(hex);
                     getChildren().clear();
                     drawBoard();
                 });
@@ -77,7 +69,6 @@ public class BoardDrawer extends Pane {
 
         }
     }
-
     @Override
     protected double computePrefWidth(double width) {
         return sqrt(3)*size* cols + rows* sqrt(3)*size / 2;
