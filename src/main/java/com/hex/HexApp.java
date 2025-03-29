@@ -28,10 +28,10 @@ public class HexApp extends Application {
                 primaryStage.setScene(new MainMenu(this).getScene());
                 break;
             case ONLINE:
-                primaryStage.setScene(new OnlineGame(this).getScene());
+                primaryStage.setScene(new OnlineGame().getScene());
                 break;
             case LOCAL:
-                primaryStage.setScene(new LocalGame(this).getScene());
+                primaryStage.setScene(new LocalGame().getScene());
                 break;
 
         }

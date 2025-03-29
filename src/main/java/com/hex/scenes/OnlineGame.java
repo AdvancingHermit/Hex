@@ -28,7 +28,7 @@ public class OnlineGame extends BaseScene {
     private ObjectInputStream in;
     private Board board = new Board(11, 11);;
 
-    public OnlineGame(HexApp hexApp) {
+    public OnlineGame() {
         OnlineController.createOnlineController(board, gameState, this::flushMove);
 
         try {

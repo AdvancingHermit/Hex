@@ -4,8 +4,9 @@ import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
+import lombok.extern.java.Log;
 
-
+@Log
 public class GameController implements Controller {
 
     private static GameController INSTANCE;
@@ -61,7 +62,7 @@ public class GameController implements Controller {
         int player = gameState.getCurrentPlayer();
         int x = co.x;
         int y = co.y;
-        System.out.println("Hex clicked! " + x + " " + y);
+        log.info("Hex clicked! " + x + " " + y);
         if (board.getPiece(x, y) == 0 || swap) {
             swap = false;
             board.setPiece(x, y, player);

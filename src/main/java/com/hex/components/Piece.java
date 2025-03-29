@@ -1,14 +1,14 @@
 package com.hex.components;
 
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import lombok.Getter;
 
-import java.awt.*;
 
 import static java.lang.Math.*;
 
 public class Piece extends Polygon {
-    double[] gridPosition;
+    @Getter
+    private double[] gridPosition;
     public Piece(double[] gridPosition, double size) {
         super();
         getPoints().clear();
@@ -24,16 +24,12 @@ public class Piece extends Polygon {
         double second = sin(angle) * size;
         double realSize = size*sqrt(3)/2.0;
 
-
-
-
-        getPoints().addAll(new Double[]{
-                center[0], center[1] -size, // highest
+        getPoints().addAll(center[0], center[1] -size, // highest
                 center[0] + realSize, -second + center[1], // 2nd highest right
                 center[0] + realSize, second + center[1], // 3rd highest right
                 center[0], center[1] + size, // lowest
                 center[0] - realSize, second + center[1], // 3rd highest left
-                center[0] - realSize, -second + center[1]}); // 2nd highest left
+                center[0] - realSize, -second + center[1]); // 2nd highest left
 
 
     }

@@ -18,7 +18,7 @@ import javafx.scene.layout.VBox;
 public class LocalGame extends BaseScene {
     private GameState gameState = new GameState();
 
-    public LocalGame(HexApp hexApp) {
+    public LocalGame() {
         BorderPane root = new BorderPane();
 
         StackPane gameWrap = new StackPane();
