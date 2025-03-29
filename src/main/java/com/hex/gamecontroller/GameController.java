@@ -3,6 +3,7 @@ package com.hex.gamecontroller;
 import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
 import com.hex.components.Board;
+import com.hex.components.BoardCoordinate;
 import com.hex.components.Piece;
 
 
@@ -11,24 +12,32 @@ public class GameController implements Controller {
     private static GameState gameState;
     private static Algorithm algorithm;
     private static boolean swap = true;
+    private static int iterations = 250_000;
 
 
     public GameController(Board board, GameState gameState, Algorithm algorithm){
         GameController.board = board;
         GameController.gameState = gameState;
         GameController.algorithm = algorithm;
+        algoStart(board, gameState, algorithm);
     }
 
-    public static void gameIteration(Piece hex) {
+    private static void algoStart(Board board, GameState gameState, Algorithm algorithm) {
+        BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations);
+        placePiece(move);
+        gameState.nextPlayer();
+    }
+
+    public static void gameIteration(BoardCoordinate co) {
         //System.out.println("works");
         if (gameState.isGameFinished()) {
             return;
         }
-        placePiece(hex);
+        placePiece(co);
         if (algorithm != null && !gameState.isGameFinished()) {
             gameState.nextPlayer();
-            algorithm.makeRandomValidMove(gameState.getCurrentPlayer(), board);
-            updateBoard(gameState.getCurrentPlayer());
+            BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations);
+            placePiece(move);
         }
 
         if (!gameState.isGameFinished()){
@@ -37,10 +46,10 @@ public class GameController implements Controller {
     }
 
 
-    private static void placePiece(Piece hex) {
+    private static void placePiece(BoardCoordinate co) {
         int player = gameState.getCurrentPlayer();
-        int x = (int) hex.getGridPosition()[0];
-        int y = (int) hex.getGridPosition()[1];
+        int x = co.x;
+        int y = co.y;
         System.out.println("Hex clicked! " + x + " " + y);
         if (board.getPiece(x, y) == 0 || swap){
             swap = false;
