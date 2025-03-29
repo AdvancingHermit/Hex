@@ -4,7 +4,7 @@ import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
-import com.hex.gamecontroller.AlgoController;
+import com.hex.gamecontroller.SimulationController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ public class MCTS implements Algorithm {
 
     private final double exploreConstant = Math.sqrt(2);
     private Node root;
-    private AlgoController algoController;
+    private SimulationController simulationController;
 
     Board board;
     int player;
@@ -38,7 +38,7 @@ public class MCTS implements Algorithm {
                     .map(int[]::clone)
                     .toArray(int[][]::new);
             simGameState = new GameState(gameState);
-            algoController = new AlgoController(simBoard, simGameState, this);
+            simulationController = new SimulationController(simBoard, simGameState);
             Node selectedNode = selection();
             expansion(selectedNode);
             if (i==0){
@@ -59,7 +59,7 @@ public class MCTS implements Algorithm {
         Node cur = root;
         while (!cur.children.isEmpty()){
              cur = maxNode(cur);
-             algoController.placePiece(cur.move);
+             simulationController.placePiece(cur.move);
         }
 
         return cur;
@@ -67,7 +67,7 @@ public class MCTS implements Algorithm {
     }
 
     private void expansion(Node leaf){
-        if (!algoController.gameState.isGameFinished()) {
+        if (!simulationController.gameState.isGameFinished()) {
             List<BoardCoordinate> moves = possibleMoves();
             for (BoardCoordinate move : moves) {
                 Node child = new Node(leaf, new ArrayList<>(), Integer.MAX_VALUE, move);
@@ -81,12 +81,12 @@ public class MCTS implements Algorithm {
 
     private int simulation(){
         if (!gameOver) {
-            int upPlayer = algoController.gameState.getCurrentPlayer();
+            int upPlayer = simulationController.gameState.getCurrentPlayer();
 
-            while (!algoController.gameState.isGameFinished()) {
-                algoController.randomMove();
+            while (!simulationController.gameState.isGameFinished()) {
+                simulationController.randomMove();
             }
-            int win = algoController.gameState.getCurrentPlayer() != upPlayer ? 1 : -1;
+            int win = simulationController.gameState.getCurrentPlayer() != upPlayer ? 1 : -1;
             // int win = 1;
             //win = win * val;
             return win;

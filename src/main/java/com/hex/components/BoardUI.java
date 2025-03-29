@@ -44,9 +44,9 @@ public class BoardUI extends Pane {
                 hex.setOnMouseClicked(event -> {
                     BoardCoordinate coord = new BoardCoordinate((int) hex.getGridPosition()[0], (int) hex.getGridPosition()[1]);
                     if(online) {
-                        OnlineController.gameIteration(coord);
+                        OnlineController.getInstance().gameIteration(coord);
                     } else {
-                        GameController.gameIteration(coord);
+                        GameController.getInstance().gameIteration(coord);
                     }
                     getChildren().clear();
                     drawBoard();

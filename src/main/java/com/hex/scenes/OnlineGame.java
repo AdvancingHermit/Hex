@@ -2,7 +2,6 @@ package com.hex.scenes;
 import com.hex.GameState;
 import com.hex.components.Board;
 import com.hex.HexApp;
-import com.hex.components.BoardCoordinate;
 import com.hex.components.BoardUI;
 import com.hex.gamecontroller.OnlineController;
 import javafx.application.Platform;
@@ -28,20 +27,9 @@ public class OnlineGame extends BaseScene {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private Board board = new Board(11, 11);;
-    private OnlineController controller = new OnlineController(board, gameState,
-                                                            coords -> {
-                                                                            try {
-                                                                                String move = coords[0] + " " + coords[1];
-                                                                                out.writeObject(move);
-                                                                                out.flush();
-                                                                            }
-                                                                            catch (IOException e) {
-                                                                                e.printStackTrace();
-                                                                            }
-                                                                            });
-
 
     public OnlineGame(HexApp hexApp) {
+        OnlineController.createOnlineController(board, gameState, this::flushMove);
 
         try {
             socket = new Socket(SERVER_IP, SERVER_PORT);
@@ -155,4 +143,13 @@ public class OnlineGame extends BaseScene {
 
     }
 
+    private void flushMove(int[] coords) {
+        try {
+            String move = coords[0] + " " + coords[1];
+            out.writeObject(move);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -2,26 +2,27 @@ package com.hex.gamecontroller;
 
 import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
+import com.hex.algorithms.RandomAlgorithm;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
-import com.hex.components.Piece;
 
 
-public class AlgoController{
+public class SimulationController {
     private Board board;
     public GameState gameState;
     private Algorithm algorithm;
     private boolean swap = true;
 
 
-    public AlgoController(Board board, GameState gameState, Algorithm algorithm){
+
+    public SimulationController(Board board, GameState gameState){
         this.board = board;
         this.gameState = gameState;
-        this.algorithm = algorithm;
+        this.algorithm = new RandomAlgorithm();
     }
 
     public void randomMove() {
-        BoardCoordinate move = algorithm.makeRandomValidMove(gameState.getCurrentPlayer(), board);
+        BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, 0);
         placePiece(move);
 
     }
