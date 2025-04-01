@@ -50,6 +50,7 @@ public class MCTS implements Algorithm {
              simulationController.placePiece(cur.move);
         }
         return cur;
+
     }
 
     private void expansion(Node leaf, Board simBoard, SimulationController simulationController){

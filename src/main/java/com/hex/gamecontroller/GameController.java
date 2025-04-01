@@ -15,7 +15,7 @@ public class GameController implements Controller {
     private GameState gameState;
     private Algorithm algorithm;
     private boolean swap = true;
-    private int iterations = 250_000;
+    private int iterations = 750_000;
 
     public static GameController getInstance() {
         return INSTANCE;
@@ -41,7 +41,7 @@ public class GameController implements Controller {
 
     public void gameIteration(BoardCoordinate co) {
         //System.out.println("works");
-        if (gameState.isGameFinished()) {
+        if (gameState.isGameFinished() || board.getPiece(co.x, co.y) != 0) {
             return;
         }
         placePiece(co);
