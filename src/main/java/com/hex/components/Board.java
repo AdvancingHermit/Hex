@@ -1,37 +1,39 @@
 package com.hex.components;
 
 import com.hex.GameState;
+import lombok.Data;
 
 import java.util.ArrayList;
 
+@Data
 public class Board {
-    public int[][] board;
-    public GameState gameState;
-    public int rows;
-    public int cols;
+    private int[][] board;
+    private GameState gameState;
+    private int rows;
+    private int cols;
 
     public Board(int rows, int cols) {
-        this.rows = rows;
-        this.cols = cols;
-        this.board = new int[rows][cols];
+        setRows(rows);
+        setCols(cols);
+        setBoard(new int[rows][cols]);
     }
 
     public Board(int rows, int cols, GameState gameState) {
-        this.rows = rows;
-        this.cols = cols;
-        this.board = new int[rows][cols];
-        this.gameState = gameState;
+        setRows(rows);
+        setCols(cols);
+        setBoard(new int[rows][cols]);
+        setGameState(gameState);
     }
 
     public void setPiece(int x, int y, int player)  {
-        board[x][y] = player;
+        getBoard()[x][y] = player;
         //System.out.println(checkWin(player));
     }
 
     public boolean checkWin(int player) {
         if (player == 1) {
-            for (int i = 0; i < rows; i++) {
-                if (board[0][i] == 1) {
+            for (int i = 0; i < getRows(); i++) {
+                if (getBoard()[0][i] == 1) {
                     if (depthFirstSearch(0, i, player)) {
                         replacePieces(player);
                         return true;
@@ -40,8 +42,8 @@ public class Board {
             }
         }
         if (player == 2) {
-            for (int i = 0; i < cols; i++) {
-                if (board[i][0] == 2) {
+            for (int i = 0; i < getCols(); i++) {
+                if (getBoard()[i][0] == 2) {
                     if (depthFirstSearch(i, 0, player)) {
                         replacePieces(player);
                         return true;
@@ -54,10 +56,10 @@ public class Board {
     }
 
     private void replacePieces(int player) {
-        for (int i = 0; i < cols; i++ ) {
-            for (int j = 0; j < rows; j++ ) {
-                if (board[i][j] == -1) {
-                    board[i][j] = player;
+        for (int i = 0; i < getCols(); i++ ) {
+            for (int j = 0; j < getRows(); j++ ) {
+                if (getBoard()[i][j] == -1) {
+                    getBoard()[i][j] = player;
                 }
             }
         }
@@ -65,52 +67,52 @@ public class Board {
     }
     private boolean depthFirstSearch(int x, int y, int player) {
         ArrayList<int[]> neighbours = getNeighbours(x, y, player);
-        board[x][y] = -1;
+        getBoard()[x][y] = -1;
         while (!neighbours.isEmpty()) {
             x = neighbours.get(0)[0];
             y = neighbours.get(0)[1];
-            if (player == 1 && x == cols-1){
+            if (player == 1 && x == getCols() -1){
                 return true;
             }
-            if (player == 2 && y == rows-1) {
+            if (player == 2 && y == getRows() -1) {
                 return true;
             }
             neighbours.remove(0);
             neighbours.addAll(getNeighbours(x, y, player));
-            board[x][y] = -1;
+            getBoard()[x][y] = -1;
         }
 
         return false;
     }
     private ArrayList<int[]> getNeighbours(int x, int y, int player)  {
         ArrayList<int[]> neighbours = new ArrayList<>();
-        if (x >= cols || y >= rows || x < 0 || y < 0) {
+        if (x >= getCols() || y >= getRows() || x < 0 || y < 0) {
             System.out.println("Out of bounds");
             return neighbours;
         }
-        if (x+1 < cols && board[x+1][y] == player) {
+        if (x+1 < getCols() && getBoard()[x+1][y] == player) {
             neighbours.add(new int[] {x+1, y});
         }
-        if (x > 0 && board[x-1][y] == player) {
+        if (x > 0 && getBoard()[x-1][y] == player) {
             neighbours.add(new int[] {x-1, y});
         }
-        if (y+1 < rows && board[x][y+1] == player) {
+        if (y+1 < getRows() && getBoard()[x][y+1] == player) {
             neighbours.add(new int[] {x, y+1});
         }
-        if (y > 0 && board[x][y-1] == player) {
+        if (y > 0 && getBoard()[x][y-1] == player) {
             neighbours.add(new int[] {x, y-1});
         }
-        if (x+1 < cols && y > 0 && board[x+1][y-1] == player) {
+        if (x+1 < getCols() && y > 0 && getBoard()[x+1][y-1] == player) {
             neighbours.add(new int[] {x+1, y-1});
         }
-        if (y+1 < rows && x > 0 && board[x-1][y+1] == player) {
+        if (y+1 < getRows() && x > 0 && getBoard()[x-1][y+1] == player) {
             neighbours.add(new int[] {x-1, y+1});
         }
         return neighbours;
     }
 
     public int getPiece(int x, int y){
-        return board[x][y];
+        return getBoard()[x][y];
     }
 
 }

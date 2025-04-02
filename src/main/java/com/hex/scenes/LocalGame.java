@@ -18,7 +18,7 @@ import javafx.scene.layout.VBox;
 public class LocalGame extends BaseScene {
     private GameState gameState = new GameState();
 
-    public LocalGame(HexApp hexApp) {
+    public LocalGame() {
         BorderPane root = new BorderPane();
 
         StackPane gameWrap = new StackPane();
@@ -28,8 +28,8 @@ public class LocalGame extends BaseScene {
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
-        Board board = new Board(5,5);
-        GameController gameController = new GameController(board, gameState, algorithm);
+        Board board = new Board(6,6);
+        GameController.createGameController(board, gameState, algorithm);
         BoardUI hexBoard = new BoardUI(board, 30, false);
 
 

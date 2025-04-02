@@ -5,15 +5,7 @@ import com.hex.components.Piece;
 
 public interface Controller {
 
-    static void gameIteration(BoardCoordinate coord) {
+    void gameIteration(BoardCoordinate coord);
 
-    }
-
-    private static void placePiece(BoardCoordinate coord) {
-
-    }
-
-    private static void updateBoard(int player) {
-
-    }
+    void placePiece(BoardCoordinate co);
 }

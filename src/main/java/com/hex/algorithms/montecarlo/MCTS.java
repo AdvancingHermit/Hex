@@ -4,7 +4,7 @@ import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
-import com.hex.gamecontroller.AlgoController;
+import com.hex.gamecontroller.SimulationController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,41 +12,29 @@ import java.util.List;
 
 public class MCTS implements Algorithm {
 
-    private final double exploreConstant = Math.sqrt(2);
-    private Node root;
-    private AlgoController algoController;
-
-    Board board;
-    int player;
-    Board simBoard;
-    GameState simGameState;
-    int val = -1;
-    boolean gameOver;
+    private final static double exploreConstant = Math.sqrt(2);
+    private boolean gameOver;
 
     @Override
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations) {
-        root = new Node(null, new ArrayList<>(), 0, null);
-        this.board = board;
-        this.player = player;
-
+        Node root = new Node(null, new ArrayList<>(), 0, null);
 
         int i = 0;
-        while (i<iterations+1){
+        while (i < iterations + 1){
             gameOver = false;
-            simBoard = new Board(board.rows,board.cols);
-            simBoard.board = Arrays.stream(board.board)
+            Board simBoard = new Board(board.getRows(), board.getCols());
+            simBoard.setBoard(Arrays.stream(board.getBoard())
                     .map(int[]::clone)
-                    .toArray(int[][]::new);
-            simGameState = new GameState(gameState);
-            algoController = new AlgoController(simBoard, simGameState, this);
-            Node selectedNode = selection();
-            expansion(selectedNode);
+                    .toArray(int[][]::new));
+            SimulationController simulationController = new SimulationController(simBoard, new GameState(gameState));
+            Node selectedNode = selection(root, simulationController);
+            expansion(selectedNode, simBoard, simulationController);
             if (i==0){
                 i++;
                 continue;
             }
            // System.out.println(selectedNode.value);
-            int win = simulation();
+            int win = simulation(simulationController);
             backpropagation(win, selectedNode);
             i++;
         }
@@ -55,20 +43,19 @@ public class MCTS implements Algorithm {
         return bestMove;
     }
 
-    private Node selection(){
+    private Node selection(Node root, SimulationController simulationController){
         Node cur = root;
         while (!cur.children.isEmpty()){
              cur = maxNode(cur);
-             algoController.placePiece(cur.move);
+             simulationController.placePiece(cur.move);
         }
-
         return cur;
 
     }
 
-    private void expansion(Node leaf){
-        if (!algoController.gameState.isGameFinished()) {
-            List<BoardCoordinate> moves = possibleMoves();
+    private void expansion(Node leaf, Board simBoard, SimulationController simulationController){
+        if (!simulationController.getGameState().isGameFinished()) {
+            List<BoardCoordinate> moves = possibleMoves(simBoard);
             for (BoardCoordinate move : moves) {
                 Node child = new Node(leaf, new ArrayList<>(), Integer.MAX_VALUE, move);
                 leaf.addChild(child);
@@ -79,14 +66,14 @@ public class MCTS implements Algorithm {
 
     }
 
-    private int simulation(){
+    private int simulation(SimulationController simulationController){
         if (!gameOver) {
-            int upPlayer = algoController.gameState.getCurrentPlayer();
+            int upPlayer = simulationController.getGameState().getCurrentPlayer();
 
-            while (!algoController.gameState.isGameFinished()) {
-                algoController.randomMove();
+            while (!simulationController.getGameState().isGameFinished()) {
+                simulationController.randomMove();
             }
-            int win = algoController.gameState.getCurrentPlayer() != upPlayer ? 1 : -1;
+            int win = simulationController.getGameState().getCurrentPlayer() != upPlayer ? 1 : -1;
             // int win = 1;
             //win = win * val;
             return win;
@@ -131,10 +118,10 @@ public class MCTS implements Algorithm {
         return bestNode;
     }
 
-    private ArrayList<BoardCoordinate> possibleMoves(){
+    private ArrayList<BoardCoordinate> possibleMoves(Board simBoard){
         ArrayList<BoardCoordinate> moves = new ArrayList<>();
-        for (int i = 0; i < board.cols; i++ ) {
-            for (int j = 0; j < board.rows; j++ ) {
+        for (int i = 0; i < simBoard.getCols(); i++ ) {
+            for (int j = 0; j < simBoard.getRows(); j++ ) {
                 if (simBoard.getPiece(i,j) == 0) {
                     moves.add(new BoardCoordinate(i,j));
                 }

@@ -4,33 +4,44 @@ import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
-import com.hex.components.Piece;
+import lombok.extern.java.Log;
 
-
+@Log
 public class GameController implements Controller {
-    private static Board board;
-    private static GameState gameState;
-    private static Algorithm algorithm;
-    private static boolean swap = true;
-    private static int iterations = 250_000;
 
+    private static GameController INSTANCE;
 
-    public GameController(Board board, GameState gameState, Algorithm algorithm){
-        GameController.board = board;
-        GameController.gameState = gameState;
-        GameController.algorithm = algorithm;
-        algoStart(board, gameState, algorithm);
+    private Board board;
+    private GameState gameState;
+    private Algorithm algorithm;
+    private boolean swap = true;
+    private int iterations = 750_000;
+
+    public static GameController getInstance() {
+        return INSTANCE;
     }
 
-    private static void algoStart(Board board, GameState gameState, Algorithm algorithm) {
+
+    public static void createGameController(Board board, GameState gameState, Algorithm algorith) {
+        INSTANCE = new GameController(board, gameState, algorith);
+    }
+
+    private GameController(Board board, GameState gameState, Algorithm algorithm) {
+        this.board = board;
+        this.gameState = gameState;
+        this.algorithm = algorithm;
+        this.algoStart(board, gameState, algorithm);
+    }
+
+    private void algoStart(Board board, GameState gameState, Algorithm algorithm) {
         BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations);
         placePiece(move);
         gameState.nextPlayer();
     }
 
-    public static void gameIteration(BoardCoordinate co) {
+    public void gameIteration(BoardCoordinate co) {
         //System.out.println("works");
-        if (gameState.isGameFinished()) {
+        if (gameState.isGameFinished() || board.getPiece(co.x, co.y) != 0) {
             return;
         }
         placePiece(co);
@@ -40,18 +51,19 @@ public class GameController implements Controller {
             placePiece(move);
         }
 
-        if (!gameState.isGameFinished()){
+        if (!gameState.isGameFinished()) {
             gameState.nextPlayer();
         }
     }
 
 
-    private static void placePiece(BoardCoordinate co) {
+    @Override
+    public void placePiece(BoardCoordinate co) {
         int player = gameState.getCurrentPlayer();
         int x = co.x;
         int y = co.y;
-        System.out.println("Hex clicked! " + x + " " + y);
-        if (board.getPiece(x, y) == 0 || swap){
+        log.info("Hex clicked! " + x + " " + y);
+        if (board.getPiece(x, y) == 0 || swap) {
             swap = false;
             board.setPiece(x, y, player);
             updateBoard(player);
@@ -59,13 +71,12 @@ public class GameController implements Controller {
 
     }
 
-    private static void updateBoard(int player){
-        if (board.checkWin(player)){
+    private void updateBoard(int player) {
+        if (board.checkWin(player)) {
             System.out.println("Player " + gameState.getCurrentPlayer() + " won");
             gameState.setGameFinished(true);
         }
     }
-
 
 
 }

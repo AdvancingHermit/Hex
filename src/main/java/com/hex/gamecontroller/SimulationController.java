@@ -2,51 +2,47 @@ package com.hex.gamecontroller;
 
 import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
+import com.hex.algorithms.RandomAlgorithm;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
-import com.hex.components.Piece;
+import lombok.Getter;
+import lombok.Setter;
 
 
-public class AlgoController{
+public class SimulationController {
     private Board board;
-    public GameState gameState;
+    @Getter
+    @Setter
+    private GameState gameState;
     private Algorithm algorithm;
-    private boolean swap = true;
 
 
-    public AlgoController(Board board, GameState gameState, Algorithm algorithm){
+    public SimulationController(Board board, GameState gameState){
         this.board = board;
-        this.gameState = gameState;
-        this.algorithm = algorithm;
+        this.setGameState(gameState);
+        this.algorithm = new RandomAlgorithm();
     }
 
     public void randomMove() {
-        BoardCoordinate move = algorithm.makeRandomValidMove(gameState.getCurrentPlayer(), board);
+        BoardCoordinate move = algorithm.makeMove(getGameState().getCurrentPlayer(), board, getGameState(), 0);
         placePiece(move);
-
     }
 
-
     public void placePiece(BoardCoordinate co) {
-        int player = gameState.getCurrentPlayer();
+        int player = getGameState().getCurrentPlayer();
         int x = co.x;
         int y = co.y;
         board.setPiece(x, y, player);
         updateBoard(player);
-        if (!gameState.isGameFinished()) {
-            gameState.nextPlayer();
+        if (!getGameState().isGameFinished()) {
+            getGameState().nextPlayer();
         }
-
-
     }
 
     private void updateBoard(int player){
         if (board.checkWin(player)){
          //   System.out.println("Player " + gameState.getCurrentPlayer() + " won");
-            gameState.setGameFinished(true);
+            getGameState().setGameFinished(true);
         }
     }
-
-
-
 }
