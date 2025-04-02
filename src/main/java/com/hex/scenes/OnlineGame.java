@@ -1,9 +1,9 @@
 package com.hex.scenes;
-
 import com.hex.GameState;
 import com.hex.SceneManager.SceneType;
 import com.hex.SceneManager;
 import com.hex.components.Board;
+import com.hex.HexApp;
 import com.hex.components.BoardUI;
 import com.hex.gamecontroller.OnlineController;
 import javafx.application.Platform;
@@ -26,7 +26,6 @@ public class OnlineGame extends BaseScene {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private Board board = new Board(11, 11);
-    private OnlineController controller;
     private Label turnLabel;
 
     public OnlineGame(SceneManager sceneManager, Socket socket,
@@ -35,16 +34,7 @@ public class OnlineGame extends BaseScene {
         this.in = in;
         this.out = out;
 
-        controller = new OnlineController(board, gameState, coords -> {
-            try {
-                String move = coords[0] + " " + coords[1];
-                out.writeObject(move);
-                out.flush();
-                updateTurnLabel("Opponents turn ");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        OnlineController.createOnlineController(board, gameState, this::flushMove);
 
         drawGame(sceneManager);
         getGameInfo();
@@ -180,6 +170,15 @@ public class OnlineGame extends BaseScene {
             if (in != null) in.close();
             if (socket != null && !socket.isClosed()) socket.close();
             System.out.println("Client disconnected gracefully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void flushMove(int[] coords) {
+        try {
+            String move = coords[0] + " " + coords[1];
+            out.writeObject(move);
+            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

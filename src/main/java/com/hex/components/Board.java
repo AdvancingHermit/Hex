@@ -1,14 +1,16 @@
 package com.hex.components;
 
 import com.hex.GameState;
+import lombok.Data;
 
 import java.util.ArrayList;
 
+@Data
 public class Board {
-    public int[][] board;
-    public GameState gameState;
-    public int rows;
-    public int cols;
+    private int[][] board;
+    private GameState gameState;
+    private int rows;
+    private int cols;
 
     public Board(int rows, int cols) {
         this.rows = rows;

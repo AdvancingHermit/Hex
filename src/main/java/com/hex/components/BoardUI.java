@@ -1,7 +1,6 @@
 package com.hex.components;
 
 import com.hex.GameState;
-import com.hex.gamecontroller.Controller;
 import com.hex.gamecontroller.GameController;
 import com.hex.gamecontroller.OnlineController;
 import javafx.scene.layout.Pane;
@@ -11,23 +10,19 @@ import javafx.scene.shape.Line;
 import static java.lang.Math.sqrt;
 
 public class BoardUI extends Pane {
-    int rows;
-    int cols;
-    double size;
-    GameState gameState;
-    Board board;
-    boolean online;
+    private int rows;
+    private int cols;
+    private double size;
+    private GameState gameState;
+    private Board board;
+    private boolean online;
 
     public BoardUI(Board board, double hexagonSize,  boolean online){
         this.size = hexagonSize;
-        this.board = board;
-        this.rows = board.rows;
-        this.cols = board.cols;
+        this.setBoard(board);
+        this.rows = board.getRows();
+        this.cols = board.getCols();
         this.online = online;
-    }
-
-    public Board getBoard() {
-        return board;
     }
 
     public void drawBoard() {
@@ -41,20 +36,20 @@ public class BoardUI extends Pane {
                 hex.setOnMouseClicked(event -> {
                     BoardCoordinate coord = new BoardCoordinate((int) hex.getGridPosition()[0], (int) hex.getGridPosition()[1]);
                     if(online) {
-                        OnlineController.gameIteration(coord);
+                        OnlineController.getInstance().gameIteration(coord);
                     } else {
-                        GameController.gameIteration(coord);
+                        GameController.getInstance().gameIteration(coord);
                     }
                     getChildren().clear();
                     drawBoard();
                 });
 
 
-                if (board.getPiece(i, j) == 0) {
+                if (getBoard().getPiece(i, j) == 0) {
                     hex.setFill(Color.TRANSPARENT);
-                } else if (board.getPiece(i, j) == 1) {
+                } else if (getBoard().getPiece(i, j) == 1) {
                     hex.setFill(Color.BLUE);
-                } else if (board.getPiece(i, j) == 2) {
+                } else if (getBoard().getPiece(i, j) == 2) {
                     hex.setFill(Color.RED);
                 }
                 // Set the default stroke for the hexagon
@@ -98,4 +93,11 @@ public class BoardUI extends Pane {
         return (3.0/2.0) * size * rows;
     }
 
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
 }

@@ -1,9 +1,9 @@
 package com.hex.scenes;
 import com.hex.GameState;
-import com.hex.SceneManager;
 import com.hex.algorithms.Algorithm;
 import com.hex.algorithms.montecarlo.MCTS;
 import com.hex.components.Board;
+import com.hex.HexApp;
 import com.hex.components.BoardUI;
 import com.hex.gamecontroller.GameController;
 import javafx.geometry.Pos;
@@ -18,7 +18,7 @@ import javafx.scene.layout.VBox;
 public class LocalGame extends BaseScene {
     private GameState gameState = new GameState();
 
-    public LocalGame(SceneManager sceneManager) {
+    public LocalGame() {
         BorderPane root = new BorderPane();
 
         StackPane gameWrap = new StackPane();
@@ -28,8 +28,8 @@ public class LocalGame extends BaseScene {
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
-        Board board = new Board(5,5);
-        GameController gameController = new GameController(board, gameState, algorithm);
+        Board board = new Board(6,6);
+        GameController.createGameController(board, gameState, algorithm);
         BoardUI hexBoard = new BoardUI(board, 30, false);
 
 
@@ -48,7 +48,7 @@ public class LocalGame extends BaseScene {
         rightBox.setPrefWidth(100);
 
         // Add the things to game wrapper
-        gameWrap.getChildren().add((Group) boardWrap);
+        gameWrap.getChildren().add(boardWrap);
         //topBox.setTranslateY(-boardWrap.getHeight() / 2 - 20);
         //rightBox.setTranslateX(-boardWrap.getWidth() / 2 - 50);
         //gameWrap.getChildren().addAll( topBox, rightBox);

@@ -1,10 +1,19 @@
 package com.hex;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class GameState {
 
+    @Getter
     private int currentPlayer = 1;
+    @Setter
+    @Getter
     private int playerNum;
+    @Setter
+    @Getter
     private boolean gameFinished = false;
+    @Setter
     private boolean swap = true;
 
 
@@ -18,34 +27,12 @@ public class GameState {
         this.swap = other.swap;
     }
 
-    public int getCurrentPlayer() {
-        return currentPlayer;
-    }
-
-    public int getPlayerNum() {
-        return playerNum;
-    }
-
-    public void setPlayerNum(int playerNum) {
-        this.playerNum = playerNum;
-    }
-
     public void nextPlayer() {
         currentPlayer = currentPlayer == 1 ? 2 : 1;
-    }
-
-    public void setSwap(boolean swap) {
-        this.swap = swap;
     }
 
     public boolean getSwap() {
         return swap;
     }
 
-    public boolean isGameFinished(){
-        return gameFinished;
-    }
-    public void setGameFinished(boolean gameFinished){
-        this.gameFinished = gameFinished;
-    }
 }
