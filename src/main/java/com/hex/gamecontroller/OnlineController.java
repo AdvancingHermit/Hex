@@ -56,13 +56,4 @@ public class OnlineController implements Controller {
 
     }
 
-    private static void updateBoard(int player){
-        if (board.checkWin(player)){
-            System.out.println("Player " + gameState.getCurrentPlayer() + " won");
-            gameState.setGameFinished(true);
-        }
-    }
-
-
-
 }

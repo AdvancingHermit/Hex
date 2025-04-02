@@ -1,7 +1,7 @@
 package com.hex.components;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-<<<<<<< HEAD
 import javafx.scene.shape.Line;
 import javafx.scene.Group;
 
@@ -12,20 +12,6 @@ public class Piece extends Group {
     private double[] gridPosition;
     private double[][] vertices;
     private Line[] edges;
-=======
-import lombok.Getter;
-
-
-import static java.lang.Math.*;
-
-public class Piece extends Polygon {
-    @Getter
-    private double[] gridPosition;
-    public Piece(double[] gridPosition, double size) {
-        super();
-        getPoints().clear();
-        this.gridPosition = gridPosition;
->>>>>>> 29a39c8a8833c67f2b008931a3fbb760a1094077
 
     public Piece(double[] gridPosition, double size) {
         this.gridPosition = gridPosition;
@@ -43,7 +29,6 @@ public class Piece extends Polygon {
         double second = sin(angle) * size;
         double realSize = size * sqrt(3) / 2.0;
 
-<<<<<<< HEAD
         // Store vertices for the hexagon (and for edge drawing)
         vertices = new double[][] {
                 {center[0], center[1] - size},               // top (0)
@@ -70,16 +55,6 @@ public class Piece extends Polygon {
 
     public void setStroke(Color color) {
         hexagon.setStroke(color);
-=======
-        getPoints().addAll(center[0], center[1] -size, // highest
-                center[0] + realSize, -second + center[1], // 2nd highest right
-                center[0] + realSize, second + center[1], // 3rd highest right
-                center[0], center[1] + size, // lowest
-                center[0] - realSize, second + center[1], // 3rd highest left
-                center[0] - realSize, -second + center[1]); // 2nd highest left
-
-
->>>>>>> 29a39c8a8833c67f2b008931a3fbb760a1094077
     }
 
     public double[] getGridPosition() {

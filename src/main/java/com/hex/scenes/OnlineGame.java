@@ -34,7 +34,7 @@ public class OnlineGame extends BaseScene {
         this.in = in;
         this.out = out;
 
-        OnlineController.createOnlineController(board, gameState, this::flushMove);
+        OnlineController.createOnlineController(board, gameState, this::sendMove);
 
         drawGame(sceneManager);
         getGameInfo();
@@ -174,11 +174,12 @@ public class OnlineGame extends BaseScene {
             e.printStackTrace();
         }
     }
-    private void flushMove(int[] coords) {
+    private void sendMove(int[] coords) {
         try {
             String move = coords[0] + " " + coords[1];
             out.writeObject(move);
             out.flush();
+            updateTurnLabel("Opponents turn");
         } catch (IOException e) {
             e.printStackTrace();
         }

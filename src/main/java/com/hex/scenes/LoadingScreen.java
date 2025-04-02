@@ -102,7 +102,7 @@ public class LoadingScreen extends BaseScene {
     private void retry() {
         content.getChildren().clear();
         progressIndicator = new ProgressIndicator();
-        progressIndicator.setStyle("-fx-progress-color: #1ed760;");
+        progressIndicator.setStyle("-fx-progress-color: #1e1f22;");
         statusLabel = new Label("Looking for an opponent...");
         content.getChildren().addAll(progressIndicator, statusLabel);
         statusTextAnim.play();
