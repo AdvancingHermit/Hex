@@ -15,7 +15,7 @@ public class GameController implements Controller {
     private GameState gameState;
     private Algorithm algorithm;
     private boolean swap = true;
-    private int iterations = 750_000;
+    private int iterations = 100_000;
 
     public static GameController getInstance() {
         return INSTANCE;

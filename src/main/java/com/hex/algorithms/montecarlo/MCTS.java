@@ -5,11 +5,17 @@ import com.hex.algorithms.Algorithm;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
 import com.hex.gamecontroller.SimulationController;
+import lombok.extern.java.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+@Log
 public class MCTS implements Algorithm {
 
     private final static double exploreConstant = Math.sqrt(2);
@@ -18,8 +24,44 @@ public class MCTS implements Algorithm {
     @Override
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations) {
         Node root = new Node(null, new ArrayList<>(), 0, null);
+        int nThreads = 1;
+        ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+        List<Future<Node>> futures = new ArrayList<>();
 
+        for (int i = 0; i < nThreads; i++) {
+            int n = i;
+            Callable<Node> task = () -> makeTree(board, gameState, iterations, new Node(null, new ArrayList<>(), 0, null), n);
+            futures.add(executor.submit(task));
+        }
+
+        List<Node> trees = new ArrayList<>();
+        for (Future<Node> future : futures) {
+            try {
+                trees.add(future.get());
+            } catch (InterruptedException |  ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        executor.shutdown();
+
+
+        for (Node tree : trees){
+            for (Node child : tree.children){
+                root.mergeChild(child);
+            }
+        }
+        for (Node child : root.children){
+            child.value = UCT(child.winStats.wins, child.winStats.nSims, root.winStats.nSims, exploreConstant);
+        }
+
+        BoardCoordinate bestMove = maxNode(root).move;
+
+        return bestMove;
+    }
+
+    private Node makeTree(Board board, GameState gameState, int iterations, Node root, int n) {
         int i = 0;
+        log.info("start " + n);
         while (i < iterations + 1){
             gameOver = false;
             Board simBoard = new Board(board.getRows(), board.getCols());
@@ -29,7 +71,7 @@ public class MCTS implements Algorithm {
             SimulationController simulationController = new SimulationController(simBoard, new GameState(gameState));
             Node selectedNode = selection(root, simulationController);
             expansion(selectedNode, simBoard, simulationController);
-            if (i==0){
+            if (i ==0){
                 i++;
                 continue;
             }
@@ -38,9 +80,8 @@ public class MCTS implements Algorithm {
             backpropagation(win, selectedNode);
             i++;
         }
-        BoardCoordinate bestMove = maxNode(root).move;
-
-        return bestMove;
+        log.info("done " + n);
+        return root;
     }
 
     private Node selection(Node root, SimulationController simulationController){
@@ -133,4 +174,5 @@ public class MCTS implements Algorithm {
     private List<Node> visitedChildren(Node node) {
         return node.children.stream().filter(n -> n.value < Integer.MAX_VALUE).toList();
     }
+
 }
