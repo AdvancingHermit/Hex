@@ -1,9 +1,9 @@
 package com.hex.scenes;
 import com.hex.GameState;
+import com.hex.SceneManager;
 import com.hex.algorithms.Algorithm;
 import com.hex.algorithms.MCTS;
 import com.hex.components.Board;
-import com.hex.HexApp;
 import com.hex.components.BoardUI;
 import com.hex.gamecontroller.GameController;
 import javafx.geometry.Pos;
@@ -20,7 +20,7 @@ import java.util.Stack;
 public class LocalGame extends BaseScene {
     private GameState gameState = new GameState();
 
-    public LocalGame(HexApp hexApp) {
+    public LocalGame(SceneManager sceneManager) {
         BorderPane root = new BorderPane();
 
         StackPane gameWrap = new StackPane();
@@ -50,7 +50,7 @@ public class LocalGame extends BaseScene {
         rightBox.setPrefWidth(100);
 
         // Add the things to game wrapper
-        gameWrap.getChildren().add(boardWrap);
+        gameWrap.getChildren().add((Group) boardWrap);
         //topBox.setTranslateY(-boardWrap.getHeight() / 2 - 20);
         //rightBox.setTranslateX(-boardWrap.getWidth() / 2 - 50);
         //gameWrap.getChildren().addAll( topBox, rightBox);

@@ -1,18 +1,19 @@
 package com.hex.scenes;
+
 import com.hex.GameState;
+import com.hex.SceneManager.SceneType;
+import com.hex.SceneManager;
 import com.hex.components.Board;
-import com.hex.HexApp;
-import com.hex.components.BoardCoordinate;
 import com.hex.components.BoardUI;
 import com.hex.gamecontroller.OnlineController;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.io.*;
@@ -20,59 +21,52 @@ import java.net.*;
 
 public class OnlineGame extends BaseScene {
     private GameState gameState = new GameState();
-    private static final String SERVER_IP = "localhost";
-    private static final int SERVER_PORT = 5917;
-    private boolean hasMoved = false;
     private BoardUI hexBoard;
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    private Board board = new Board(11, 11);;
-    private OnlineController controller = new OnlineController(board, gameState,
-                                                            coords -> {
-                                                                            try {
-                                                                                String move = coords[0] + " " + coords[1];
-                                                                                out.writeObject(move);
-                                                                                out.flush();
-                                                                            }
-                                                                            catch (IOException e) {
-                                                                                e.printStackTrace();
-                                                                            }
-                                                                            });
+    private Board board = new Board(11, 11);
+    private OnlineController controller;
+    private Label turnLabel;
 
+    public OnlineGame(SceneManager sceneManager, Socket socket,
+                      ObjectInputStream in, ObjectOutputStream out) {
+        this.socket = socket;
+        this.in = in;
+        this.out = out;
 
-    public OnlineGame(HexApp hexApp) {
-
-        try {
-            socket = new Socket(SERVER_IP, SERVER_PORT);
-            out = new ObjectOutputStream(socket.getOutputStream());
-            in = new ObjectInputStream(socket.getInputStream());
-
-            drawGame();
-
-            getGameInfo();
-
-            new Thread(() -> {
-                try {
-                    String serverMove;
-                    while ((serverMove = (String) in.readObject()) != null ) {
-                        String[] parts = serverMove.split(" ");
-                        if (parts[0].equals("w")) {
-                            handleGameEnd(parts);
-                        } else {
-                            handleReceivedMove(parts);
-                        }
-
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }).start();
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        controller = new OnlineController(board, gameState, coords -> {
+            try {
+                String move = coords[0] + " " + coords[1];
+                out.writeObject(move);
+                out.flush();
+                updateTurnLabel("Opponents turn ");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        });
 
+        drawGame(sceneManager);
+        getGameInfo();
+        listenForMoves();
+    }
+
+    public void listenForMoves() {
+        new Thread(() -> {
+            try {
+                String serverMove;
+                while ((serverMove = (String) in.readObject()) != null) {
+                    String[] parts = serverMove.split(" ");
+                    if (parts[0].equals("w")) {
+                        handleGameEnd(parts);
+                    } else {
+                        handleReceivedMove(parts);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     public void getGameInfo() {
@@ -80,14 +74,21 @@ public class OnlineGame extends BaseScene {
             String playerNum;
             if ((playerNum = (String) in.readObject()) != null) {
                 gameState.setPlayerNum(Integer.parseInt(playerNum));
-                System.out.println(Integer.parseInt(playerNum));
+                updateTurnLabel("You are Player " + gameState.getPlayerNum());
             } else {
-                System.out.println("Error here playernum fr");
+                System.out.println("Error getting player number");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    private void updateTurnLabel(String text) {
+        if (turnLabel != null) {
+            Platform.runLater(() -> turnLabel.setText(text));
+        }
+    }
+
     public void handleReceivedMove(String[] parts) {
         int x = Integer.parseInt(parts[0]);
         int y = Integer.parseInt(parts[1]);
@@ -104,55 +105,83 @@ public class OnlineGame extends BaseScene {
             gameState.nextPlayer();
             hexBoard.getChildren().clear();
             hexBoard.drawBoard();
+            updateTurnLabel("Your turn ");
         });
     }
 
-    public void handleGameEnd(String[] parts){
-        System.out.println("Ayo, player " + parts[1] + " won!");
-        if (gameState.getPlayerNum() == Integer.parseInt(parts[1])) {
-            System.out.println("(thats you)");
+    public void handleGameEnd(String[] parts) {
+        int winner = Integer.parseInt(parts[1]);
+        String msg = "Player " + winner + " won!";
+
+        if (gameState.getPlayerNum() == winner) {
+            msg += " (Thats you)";
         } else {
-            System.out.println("(you lost bitch)");
+            msg += " (You lost bozo)";
         }
+
+        final String finalMsg = msg;
+
+        Platform.runLater(() -> {
+            Label gameFinishLabel = new Label(finalMsg);
+            gameFinishLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+            BorderPane root = (BorderPane) scene.getRoot();
+            VBox centerBox = new VBox(20);
+            centerBox.setAlignment(Pos.CENTER);
+            centerBox.getChildren().addAll(gameFinishLabel);
+            root.setCenter(centerBox);
+        });
+
+        System.out.println(finalMsg);
     }
 
-    public void drawGame() {
+    public void drawGame(SceneManager sceneManager) {
         BorderPane root = new BorderPane();
-
-        StackPane gameWrap = new StackPane();
-
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
-
         hexBoard = new BoardUI(board, 30, true);
         hexBoard.drawBoard();
         boardWrap.getChildren().add(hexBoard);
 
         // Top Info
-        Label infoTop = new Label("Hex / Score");
+        Label infoTop = new Label("Hex Game");
         HBox topBox = new HBox(infoTop);
         topBox.setAlignment(Pos.CENTER);
         topBox.setPrefHeight(50);
 
         // Right Info
-        VBox rightBox = new VBox(new Label("Player Info"), new Label("Other Stats"));
+        VBox rightBox = new VBox(10);
         rightBox.setAlignment(Pos.CENTER);
-        rightBox.setPrefWidth(100);
+        rightBox.setPrefWidth(150);
 
-        // Add the things to game wrapper
-        gameWrap.getChildren().add(boardWrap);
-        //topBox.setTranslateY(-boardWrap.getHeight() / 2 - 20);
-        //rightBox.setTranslateX(-boardWrap.getWidth() / 2 - 50);
-        //gameWrap.getChildren().addAll( topBox, rightBox);
+        Label playerInfoLabel = new Label("Player Info");
+        turnLabel = new Label("Connecting...");
 
-        // Add things to root
-        root.setCenter(gameWrap);
+        Button backButton = new Button("Go back");
+        backButton.setOnAction(e -> {
+            closeConnection();
+            sceneManager.clearConnection();
+            sceneManager.switchScene(SceneType.MAIN_MENU);
+        });
 
+        rightBox.getChildren().addAll(playerInfoLabel, turnLabel, backButton);
 
+        root.setTop(topBox);
+        root.setRight(rightBox);
+        root.setCenter(boardWrap);
 
         scene = new Scene(root, 800, 600);
-
     }
 
+    public void closeConnection() {
+        try {
+            if (out != null) out.close();
+            if (in != null) in.close();
+            if (socket != null && !socket.isClosed()) socket.close();
+            System.out.println("Client disconnected gracefully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

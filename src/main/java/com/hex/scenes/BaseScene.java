@@ -3,9 +3,9 @@ package com.hex.scenes;
 import javafx.scene.Scene;
 
 public abstract class BaseScene {
-    protected Scene scene;
+    protected javafx.scene.Scene scene;
 
-    public Scene getScene() {
+    public javafx.scene.Scene getScene() {
         return scene;
     }
 }

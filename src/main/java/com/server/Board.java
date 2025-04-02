@@ -27,24 +27,15 @@ public class Board {
     }
 
     public boolean checkWin(int player) {
-        if (player == 1) {
-            for (int i = 0; i < rows; i++) {
-                if (board[0][i] == 1) {
-                    if (depthFirstSearch(0, i, player)) {
-                        replacePieces(player);
-                        return true;
-                    }
-                }
-            }
-        }
-        if (player == 2) {
-            for (int i = 0; i < cols; i++) {
-                if (board[i][0] == 2) {
-                    if (depthFirstSearch(i, 0, player)) {
-                        replacePieces(player);
-                        return true;
-                    }
-                }
+        int limit = (player == 1) ? rows : cols;
+
+        for (int i = 0; i < limit; i++) {
+            int row = (player == 1) ? 0 : i;
+            int col = (player == 2) ? 0 : i;
+
+            if (board[row][col] == player && depthFirstSearch(row, col, player)) {
+                replacePieces(player);
+                return true;
             }
         }
         replacePieces(player);
@@ -82,27 +73,16 @@ public class Board {
     }
     private ArrayList<int[]> getNeighbours(int x, int y, int player)  {
         ArrayList<int[]> neighbours = new ArrayList<>();
-        if (x >= cols || y >= rows || x < 0 || y < 0) {
-            System.out.println("Out of bounds");
-            return neighbours;
-        }
-        if (x+1 < cols && board[x+1][y] == player) {
-            neighbours.add(new int[] {x+1, y});
-        }
-        if (x > 0 && board[x-1][y] == player) {
-            neighbours.add(new int[] {x-1, y});
-        }
-        if (y+1 < rows && board[x][y+1] == player) {
-            neighbours.add(new int[] {x, y+1});
-        }
-        if (y > 0 && board[x][y-1] == player) {
-            neighbours.add(new int[] {x, y-1});
-        }
-        if (x+1 < cols && y > 0 && board[x+1][y-1] == player) {
-            neighbours.add(new int[] {x+1, y-1});
-        }
-        if (y+1 < rows && x > 0 && board[x-1][y+1] == player) {
-            neighbours.add(new int[] {x-1, y+1});
+        int[][] directions = {
+                {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+                {1, -1}, {-1, 1}
+        };
+
+        for (int[] dir : directions) {
+            int newX = x + dir[0], newY = y + dir[1];
+            if (newX >= 0 && newX < cols && newY >= 0 && newY < rows && board[newX][newY] == player) {
+                neighbours.add(new int[]{newX, newY});
+            }
         }
         return neighbours;
     }

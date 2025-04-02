@@ -31,10 +31,7 @@ public class BoardUI extends Pane {
     }
 
     public void drawBoard() {
-        Line line = new Line(-size, 0, -size + rows* sqrt(3.0)*size / 2.0, computePrefHeight(0) + 10);
-        line.setStrokeWidth(10);  // Set thickness
-        line.setStroke(Color.BLUE);
-        getChildren().add(line);
+        
 
         for (int i = 0; i < cols; i++ ) {
             for (int j = 0; j < rows; j++ ) {
@@ -60,25 +57,36 @@ public class BoardUI extends Pane {
                 } else if (board.getPiece(i, j) == 2) {
                     hex.setFill(Color.RED);
                 }
+                // Set the default stroke for the hexagon
+                hex.setStroke(Color.grayRgb(45));
 
-                if ((i == 0 || i == cols-1) && (j == 0 || j == rows-1)) {
-                    hex.setStroke(Color.rgb(255, 0, 255));
+                // Add border highlights
+                // Top row red borders
+                if (j == 0) {
+                    hex.setTopLeftEdge(Color.RED);
+                    hex.setTopRightEdge(Color.RED);
                 }
-                else if (i == 0 || i == cols-1) {
-                    hex.setStroke(Color.BLUE);
+
+                // Bottom row red borders
+                if (j == rows - 1) {
+                    hex.setBottomLeftEdge(Color.RED);
+                    hex.setBottomRightEdge(Color.RED);
                 }
-                else if (j == 0 || j == rows-1) {
-                    hex.setStroke(Color.RED);
+
+                // Left column blue borders
+                if (i == 0) {
+                    hex.setLeftEdge(Color.BLUE);
+                    hex.setBottomLeftEdge(Color.BLUE);
                 }
-                else {
-                    hex.setStroke(Color.grayRgb(45));
+
+                // Right column blue borders
+                if (i == cols - 1) {
+                    hex.setTopRightEdge(Color.BLUE);
+                    hex.setRightEdge(Color.BLUE);
                 }
 
                 getChildren().add(hex);
-
-
             }
-
         }
     }
     @Override

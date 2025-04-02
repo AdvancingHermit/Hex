@@ -68,7 +68,7 @@ public class GameSession implements Runnable {
     }
     private void sendWinInfo() throws IOException {
         out1.writeObject("w " + gameState.getCurrentPlayer());
-        out2.writeObject("w " + gameState.getCurrentClient());
+        out2.writeObject("w " + gameState.getCurrentPlayer());
     }
 
     private void parseMove(ObjectInputStream in, ObjectOutputStream out) {
@@ -82,12 +82,11 @@ public class GameSession implements Runnable {
                 } else {
                     System.err.println("Client sent invalid move");
                 }
-
             }
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Client disconnected: " + e.getMessage());
-        } catch (NumberFormatException e) {
-            System.err.println("Client sent invalid move: " + e.getMessage());
+            gameState.setGameFinished(true);
+            closeResources();
         }
 
     }
@@ -112,10 +111,17 @@ public class GameSession implements Runnable {
 
     private void closeResources() {
         try {
-            if (client1 != null) client1.close();
-            if (client2 != null) client2.close();
+            if (in1 != null) in1.close();
+            if (out1 != null) out1.close();
+            if (client1 != null && !client1.isClosed()) client1.close();
+    
+            if (in2 != null) in2.close();
+            if (out2 != null) out2.close();
+            if (client2 != null && !client2.isClosed()) client2.close();
+    
+            System.out.println("Game session ended. Connections closed gracefully.");
         } catch (IOException e) {
-            System.err.println("Error closing sockets: " + e.getMessage());
+            System.err.println("Error closing resources: " + e.getMessage());
         }
     }
 }
