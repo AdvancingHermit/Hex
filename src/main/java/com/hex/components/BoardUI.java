@@ -43,7 +43,7 @@ public class BoardUI extends Pane {
                     if(online) {
                         OnlineController.gameIteration(coord);
                     } else {
-                        GameController.gameIteration(hex);
+                        GameController.gameIteration(coord);
                     }
                     getChildren().clear();
                     drawBoard();

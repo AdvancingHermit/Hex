@@ -7,6 +7,17 @@ public class GameState {
     private boolean gameFinished = false;
     private boolean swap = true;
 
+
+    public GameState() {
+    }
+
+    public GameState(GameState other) {
+        this.currentPlayer = other.currentPlayer;
+        this.playerNum = other.playerNum;
+        this.gameFinished = other.gameFinished;
+        this.swap = other.swap;
+    }
+
     public int getCurrentPlayer() {
         return currentPlayer;
     }

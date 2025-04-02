@@ -1,18 +1,12 @@
 package com.hex.components;
 
 import com.hex.GameState;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
-import java.util.Collections;
-
-import static java.lang.Math.sqrt;
 
 public class Board {
-    private int[][] board;
-
+    public int[][] board;
+    public GameState gameState;
     public int rows;
     public int cols;
 
@@ -22,8 +16,16 @@ public class Board {
         this.board = new int[rows][cols];
     }
 
+    public Board(int rows, int cols, GameState gameState) {
+        this.rows = rows;
+        this.cols = cols;
+        this.board = new int[rows][cols];
+        this.gameState = gameState;
+    }
+
     public void setPiece(int x, int y, int player)  {
         board[x][y] = player;
+        //System.out.println(checkWin(player));
     }
 
     public boolean checkWin(int player) {

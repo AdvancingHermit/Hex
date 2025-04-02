@@ -2,7 +2,7 @@ package com.hex.scenes;
 import com.hex.GameState;
 import com.hex.SceneManager;
 import com.hex.algorithms.Algorithm;
-import com.hex.algorithms.MCTS;
+import com.hex.algorithms.montecarlo.MCTS;
 import com.hex.components.Board;
 import com.hex.components.BoardUI;
 import com.hex.gamecontroller.GameController;
@@ -14,8 +14,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-
-import java.util.Stack;
 
 public class LocalGame extends BaseScene {
     private GameState gameState = new GameState();
@@ -30,7 +28,7 @@ public class LocalGame extends BaseScene {
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
-        Board board = new Board(3,3);
+        Board board = new Board(5,5);
         GameController gameController = new GameController(board, gameState, algorithm);
         BoardUI hexBoard = new BoardUI(board, 30, false);
 
