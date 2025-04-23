@@ -24,7 +24,8 @@ public class MCTS implements Algorithm {
     @Override
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations) {
         Node root = new Node(null, new ArrayList<>(), 0, null);
-        int nThreads = 1;
+        int nThreads = Runtime.getRuntime().availableProcessors();
+      //  nThreads = 1;
         ExecutorService executor = Executors.newFixedThreadPool(nThreads);
         List<Future<Node>> futures = new ArrayList<>();
 

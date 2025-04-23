@@ -4,6 +4,7 @@ import com.hex.GameState;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class Board {
@@ -11,6 +12,11 @@ public class Board {
     private GameState gameState;
     private int rows;
     private int cols;
+    private int[][] directions = {
+            {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+            {1, -1}, {-1, 1}
+    };
+
 
     public Board(int rows, int cols) {
         this.rows = rows;
@@ -56,7 +62,7 @@ public class Board {
 
     }
     private boolean depthFirstSearch(int x, int y, int player) {
-        ArrayList<int[]> neighbours = getNeighbours(x, y, player);
+        List<int[]> neighbours = getNeighbours(x, y, player);
         board[x][y] = -1;
         while (!neighbours.isEmpty()) {
             x = neighbours.get(0)[0];
@@ -74,13 +80,8 @@ public class Board {
 
         return false;
     }
-    private ArrayList<int[]> getNeighbours(int x, int y, int player)  {
-        ArrayList<int[]> neighbours = new ArrayList<>();
-        int[][] directions = {
-                {1, 0}, {-1, 0}, {0, 1}, {0, -1},
-                {1, -1}, {-1, 1}
-        };
-
+    private List<int[]> getNeighbours(int x, int y, int player)  {
+        List<int[]> neighbours = new ArrayList<>(cols*2);
         for (int[] dir : directions) {
             int newX = x + dir[0], newY = y + dir[1];
             if (newX >= 0 && newX < cols && newY >= 0 && newY < rows && board[newX][newY] == player) {
