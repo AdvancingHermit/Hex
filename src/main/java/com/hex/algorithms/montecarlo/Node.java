@@ -23,4 +23,18 @@ public class Node {
         children.add(child);
     }
 
+    public void mergeChild(Node child){
+        for (Node pChild : children){
+            if (pChild.move.x == child.move.x && pChild.move.y == child.move.y){
+                pChild.winStats.wins += child.winStats.wins;
+                pChild.winStats.nSims += child.winStats.nSims;
+
+                winStats.nSims += child.winStats.nSims;
+                return;
+            }
+        }
+        addChild(child);
+        winStats.nSims += child.winStats.nSims;
+    }
+
 }
