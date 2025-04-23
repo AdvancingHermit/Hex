@@ -16,7 +16,7 @@ public class RandomAlgorithm implements Algorithm{
         int cols = board.getCols();
         int emptyCount = 0;
 
-// First pass: count empty cells
+
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
                 if (board.getPiece(i, j) == 0) {
@@ -29,11 +29,11 @@ public class RandomAlgorithm implements Algorithm{
             throw new IllegalStateException("No empty cells available on the board");
         }
 
-// Generate a random index from 0 to emptyCount - 1
+
         Random random = new Random();
         int targetIndex = random.nextInt(emptyCount);
 
-// Second pass: find the target empty cell
+
         int currentIndex = 0;
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
@@ -46,7 +46,7 @@ public class RandomAlgorithm implements Algorithm{
             }
         }
 
-// This line should never be reached due to the emptyCount check
+
         return null;
         }
 }
