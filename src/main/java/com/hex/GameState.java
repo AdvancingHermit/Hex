@@ -6,7 +6,7 @@ import lombok.Setter;
 public class GameState {
 
     @Getter
-    private int currentPlayer = 1;
+    private int currentPlayer = 2;
     @Setter
     @Getter
     private int playerNum;

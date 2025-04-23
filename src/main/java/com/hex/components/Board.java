@@ -95,4 +95,15 @@ public class Board {
         return board[x][y];
     }
 
+    public boolean swapAvailable() {
+        int counter = 0;
+        for (int i = 0; i < cols; i++ ) {
+            for (int j = 0; j < rows; j++ ) {
+                if (board[i][j] != 0) {
+                    counter++;
+                }
+            }
+        }
+        return counter == 1;
+    }
 }

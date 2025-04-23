@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class RandomAlgorithm implements Algorithm{
     @Override
-    public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations) {
+    public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
         int rows = board.getRows();
         int cols = board.getCols();
         int emptyCount = 0;

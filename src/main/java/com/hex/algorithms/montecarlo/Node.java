@@ -10,12 +10,14 @@ public class Node {
     public double value;
     public BoardCoordinate move;
     public WinStats winStats;
+    public boolean swap;
 
-    public Node(Node parent, List<Node> children, double value, BoardCoordinate move) {
+    public Node(Node parent, List<Node> children, double value, BoardCoordinate move, boolean swap) {
         this.parent = parent;
         this.children = children;
         this.value = value;
         this.move = move;
+        this.swap = swap;
         winStats = new WinStats(0,0);
     }
 
