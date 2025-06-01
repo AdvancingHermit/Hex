@@ -33,7 +33,7 @@ public class MCTS implements Algorithm {
 
         for (int i = 0; i < nThreads; i++) {
             int n = i;
-            Callable<Node> task = () -> makeTree(board, gameState, iterations, new Node(null, new ArrayList<>(), 0, null, false), n);
+            Callable<Node> task = () -> makeTree(board, gameState, iterations/nThreads, new Node(null, new ArrayList<>(), 0, null, false), n);
             futures.add(executor.submit(task));
         }
 
