@@ -9,8 +9,9 @@ public class Node {
     public List<Node> children;
     public double value;
     public BoardCoordinate move;
-    public WinStats winStats;
     public boolean swap;
+    public int wins = 0;
+    public int nSims = 0;
 
     public Node(Node parent, List<Node> children, double value, BoardCoordinate move, boolean swap) {
         this.parent = parent;
@@ -18,7 +19,6 @@ public class Node {
         this.value = value;
         this.move = move;
         this.swap = swap;
-        winStats = new WinStats(0,0);
     }
 
     public void addChild(Node child){
@@ -28,15 +28,15 @@ public class Node {
     public void mergeChild(Node child){
         for (Node pChild : children){
             if (pChild.move.x == child.move.x && pChild.move.y == child.move.y){
-                pChild.winStats.wins += child.winStats.wins;
-                pChild.winStats.nSims += child.winStats.nSims;
+                pChild.wins += child.wins;
+                pChild.nSims += child.nSims;
 
-                winStats.nSims += child.winStats.nSims;
+                nSims += child.nSims;
                 return;
             }
         }
         addChild(child);
-        winStats.nSims += child.winStats.nSims;
+        nSims += child.nSims;
     }
 
 }

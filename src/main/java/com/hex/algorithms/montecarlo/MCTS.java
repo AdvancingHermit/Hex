@@ -54,7 +54,7 @@ public class MCTS implements Algorithm {
             }
         }
         for (Node child : root.children){
-            child.value = UCT(child.winStats.wins, child.winStats.nSims, root.winStats.nSims, exploreConstant);
+            child.value = UCT(child.wins, child.nSims, root.nSims, exploreConstant);
         }
 
         BoardCoordinate bestMove = maxNode(root).move;
@@ -151,16 +151,16 @@ public class MCTS implements Algorithm {
     private void backpropagation(int win, Node leaf){
         Node cur = leaf;
         while (true){
-            cur.winStats.wins += win;
-            cur.winStats.nSims += 1;
+            cur.wins += win;
+            cur.nSims += 1;
             List<Node> children = visitedChildren(cur);
             for (Node child : children){
-                child.value = UCT(child.winStats.wins, child.winStats.nSims, cur.winStats.nSims, exploreConstant);
+                child.value = UCT(child.wins, child.nSims, cur.nSims, exploreConstant);
             }
             if (cur.parent == null){
                 break;
             }
-            cur.value = UCT(cur.winStats.wins, cur.winStats.nSims, cur.parent.winStats.nSims+1, exploreConstant);
+            cur.value = UCT(cur.wins, cur.nSims, cur.parent.nSims+1, exploreConstant);
             win = -1 * win;
             cur = cur.parent;
         }

@@ -4,9 +4,6 @@ import com.hex.GameState;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 public class RandomAlgorithm implements Algorithm{
