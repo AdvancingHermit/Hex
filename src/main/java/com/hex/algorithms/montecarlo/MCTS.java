@@ -27,7 +27,7 @@ public class MCTS implements Algorithm {
         Node root = new Node(null, new ArrayList<>(), 0, null, false);
         this.swap = swap;
         int nThreads = Runtime.getRuntime().availableProcessors();
-       // nThreads = 1;
+      // int nThreads = 1;
         ExecutorService executor = Executors.newFixedThreadPool(nThreads);
         List<Future<Node>> futures = new ArrayList<>();
 
@@ -74,10 +74,6 @@ public class MCTS implements Algorithm {
             SimulationController simulationController = new SimulationController(simBoard, new GameState(gameState));
             Node selectedNode = selection(root, simBoard, simulationController);
             selectedNode = expansion(selectedNode, simBoard, simulationController);
-            if (i ==0){
-                i++;
-                continue;
-            }
            // System.out.println(selectedNode.value);
             int win = simulation(simulationController);
             backpropagation(win, selectedNode);
@@ -89,7 +85,7 @@ public class MCTS implements Algorithm {
 
     private Node selection(Node root, Board simBoard, SimulationController simulationController){
         Node cur = root;
-        while (cur.children.size() == possibleMoves(simBoard).size()){
+        while (cur.children.size() == possibleMoves(simBoard).size() && !possibleMoves(simBoard).isEmpty()){
              cur = maxNode(cur);
              if (cur.swap){
                  simulationController.removePiece(cur.move);
@@ -160,8 +156,7 @@ public class MCTS implements Algorithm {
         while (true){
             cur.wins += win;
             cur.nSims += 1;
-            List<Node> children = visitedChildren(cur);
-            for (Node child : children){
+            for (Node child : cur.children){
                 child.value = UCT(child.wins, child.nSims, cur.nSims, exploreConstant);
             }
             if (cur.parent == null){
@@ -185,6 +180,9 @@ public class MCTS implements Algorithm {
                 bestNode = child;
                 maxVal = child.value;
             }
+        }
+        if (bestNode.move == null){
+            throw new RuntimeException("Next node not found");
         }
         return bestNode;
     }

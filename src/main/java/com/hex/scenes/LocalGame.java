@@ -28,7 +28,7 @@ public class LocalGame extends BaseScene {
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
-        Board board = new Board(3,3);
+        Board board = new Board(7,7);
         GameController.createGameController(board, gameState, algorithm);
         BoardUI hexBoard = new BoardUI(board, 30, false);
 
