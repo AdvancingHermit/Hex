@@ -72,8 +72,8 @@ public class MCTS implements Algorithm {
                     .map(int[]::clone)
                     .toArray(int[][]::new));
             SimulationController simulationController = new SimulationController(simBoard, new GameState(gameState));
-            Node selectedNode = selection(root, simulationController);
-            expansion(selectedNode, simBoard, simulationController);
+            Node selectedNode = selection(root, simBoard, simulationController);
+            selectedNode = expansion(selectedNode, simBoard, simulationController);
             if (i ==0){
                 i++;
                 continue;
@@ -87,9 +87,9 @@ public class MCTS implements Algorithm {
         return root;
     }
 
-    private Node selection(Node root, SimulationController simulationController){
+    private Node selection(Node root, Board simBoard, SimulationController simulationController){
         Node cur = root;
-        while (!cur.children.isEmpty()){
+        while (cur.children.size() == possibleMoves(simBoard).size()){
              cur = maxNode(cur);
              if (cur.swap){
                  simulationController.removePiece(cur.move);
@@ -103,13 +103,8 @@ public class MCTS implements Algorithm {
 
     }
 
-    private void expansion(Node leaf, Board simBoard, SimulationController simulationController){
+    private Node expansion(Node leaf, Board simBoard, SimulationController simulationController){
         if (!simulationController.getGameState().isGameFinished()) {
-            List<BoardCoordinate> moves = possibleMoves(simBoard);
-            for (BoardCoordinate move : moves) {
-                Node child = new Node(leaf, new ArrayList<>(), Integer.MAX_VALUE, move, false);
-                leaf.addChild(child);
-            }
             if (swap && simBoard.swapAvailable()) {
                 BoardCoordinate swapMove = null;
                 for (int i = 0; i < simBoard.getCols(); i++ ) {
@@ -121,11 +116,23 @@ public class MCTS implements Algorithm {
                 }
                 Node child = new Node(leaf, new ArrayList<>(), Integer.MAX_VALUE, swapMove, true);
                 leaf.addChild(child);
+                simulationController.removePiece(child.move);
+                simulationController.placePiece(new BoardCoordinate(child.move.y, child.move.x));
                 swap = false;
+                return child;
+            } else {
+                List<BoardCoordinate> moves = possibleMoves(simBoard);
+                Node child = new Node(leaf, new ArrayList<>(), Integer.MAX_VALUE, moves.get(leaf.children.size()), false);
+                leaf.addChild(child);
+                simulationController.placePiece(child.move);
+                return child;
             }
+
+
 
         } else {
             gameOver = true;
+            return leaf;
         }
 
     }
