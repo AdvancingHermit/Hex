@@ -24,7 +24,7 @@ public class SimulationController {
     }
 
     public void randomMove() {
-        BoardCoordinate move = algorithm.makeMove(getGameState().getCurrentPlayer(), board, getGameState(), 0);
+        BoardCoordinate move = algorithm.makeMove(getGameState().getCurrentPlayer(), board, getGameState(), 0, false);
         placePiece(move);
     }
 
@@ -39,10 +39,15 @@ public class SimulationController {
         }
     }
 
-    private void updateBoard(int player){
-        if (board.checkWin(player)){
-         //   System.out.println("Player " + gameState.getCurrentPlayer() + " won");
+    private void updateBoard(int player) {
+        if (board.checkWin(player)) {
+            //   System.out.println("Player " + gameState.getCurrentPlayer() + " won");
             getGameState().setGameFinished(true);
         }
+    }
+
+    public void removePiece(BoardCoordinate co) {
+        board.setPiece(co.x, co.y, 0);
+
     }
 }

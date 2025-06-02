@@ -5,6 +5,6 @@ import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
 
 public interface Algorithm {
-    BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations);
+    BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap);
 }
 

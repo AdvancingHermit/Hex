@@ -20,18 +20,20 @@ public class MCTS implements Algorithm {
 
     private final static double exploreConstant = Math.sqrt(2);
     private boolean gameOver;
+    private boolean swap;
 
     @Override
-    public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations) {
-        Node root = new Node(null, new ArrayList<>(), 0, null);
+    public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
+        Node root = new Node(null, new ArrayList<>(), 0, null, false);
+        this.swap = swap;
         int nThreads = Runtime.getRuntime().availableProcessors();
-      //  nThreads = 1;
+       // nThreads = 1;
         ExecutorService executor = Executors.newFixedThreadPool(nThreads);
         List<Future<Node>> futures = new ArrayList<>();
 
         for (int i = 0; i < nThreads; i++) {
             int n = i;
-            Callable<Node> task = () -> makeTree(board, gameState, iterations, new Node(null, new ArrayList<>(), 0, null), n);
+            Callable<Node> task = () -> makeTree(board, gameState, iterations/nThreads, new Node(null, new ArrayList<>(), 0, null, false), n);
             futures.add(executor.submit(task));
         }
 
@@ -89,7 +91,13 @@ public class MCTS implements Algorithm {
         Node cur = root;
         while (!cur.children.isEmpty()){
              cur = maxNode(cur);
-             simulationController.placePiece(cur.move);
+             if (cur.swap){
+                 simulationController.removePiece(cur.move);
+                 simulationController.placePiece(new BoardCoordinate(cur.move.y, cur.move.x));
+             }
+             else {
+                 simulationController.placePiece(cur.move);
+             }
         }
         return cur;
 
@@ -99,9 +107,23 @@ public class MCTS implements Algorithm {
         if (!simulationController.getGameState().isGameFinished()) {
             List<BoardCoordinate> moves = possibleMoves(simBoard);
             for (BoardCoordinate move : moves) {
-                Node child = new Node(leaf, new ArrayList<>(), Integer.MAX_VALUE, move);
+                Node child = new Node(leaf, new ArrayList<>(), Integer.MAX_VALUE, move, false);
                 leaf.addChild(child);
             }
+            if (swap && simBoard.swapAvailable()) {
+                BoardCoordinate swapMove = null;
+                for (int i = 0; i < simBoard.getCols(); i++ ) {
+                    for (int j = 0; j < simBoard.getRows(); j++ ) {
+                        if (simBoard.getPiece(i,j) != 0) {
+                            swapMove = new BoardCoordinate(i,j);
+                        }
+                    }
+                }
+                Node child = new Node(leaf, new ArrayList<>(), Integer.MAX_VALUE, swapMove, true);
+                leaf.addChild(child);
+                swap = false;
+            }
+
         } else {
             gameOver = true;
         }
@@ -150,7 +172,7 @@ public class MCTS implements Algorithm {
 
     private Node maxNode(Node cur){
         double maxVal = -10000;
-        Node bestNode = new Node(null,null,0, null);
+        Node bestNode = new Node(null,null,0, null, false);
         for (Node child : cur.children){
             if (child.value > maxVal){
                 bestNode = child;
