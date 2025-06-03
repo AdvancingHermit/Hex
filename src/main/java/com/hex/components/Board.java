@@ -67,35 +67,27 @@ public class Board {
 
     }
     private boolean depthFirstSearch(int x, int y, int player) {
-        LinkedList<int[]> neighbours = getNeighbours(x, y, player);
         board[x][y] = -1;
-        while (!neighbours.isEmpty()) {
-            int[] xy = neighbours.removeFirst();
-            x = xy[0];
-            y = xy[1];
-            if (player == 1 && x == cols-1){
-                return true;
-            }
-            if (player == 2 && y == rows-1) {
-                return true;
-            }
-            neighbours.addAll(getNeighbours(x, y, player));
-            board[x][y] = -1;
+
+        if (player == 1 && x == cols - 1) {
+            return true;
+        }
+        if (player == 2 && y == rows - 1) {
+            return true;
         }
 
-        return false;
+        return getNeighbours(x, y, player);
     }
-    private LinkedList<int[]> getNeighbours(int x, int y, int player)  {
-        LinkedList<int[]> neighbours = new LinkedList<>();
+    private boolean getNeighbours(int x, int y, int player)  {
+        boolean finished = false;
         for (int[] dir : directions) {
             int newX = x + dir[0], newY = y + dir[1];
             if (newX >= 0 && newX < cols && newY >= 0 && newY < rows && board[newX][newY] == player) {
-                int[] temp = new int[]{newX, newY};
-                neighbours.addLast(temp);
+               finished = depthFirstSearch(newX, newY, player) || finished;
 
             }
         }
-        return neighbours;
+        return finished;
     }
 
     public int getPiece(int x, int y){
