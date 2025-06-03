@@ -3,8 +3,13 @@ package com.hex.components;
 import com.hex.GameState;
 import lombok.Data;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @Data
 public class Board {
@@ -62,30 +67,32 @@ public class Board {
 
     }
     private boolean depthFirstSearch(int x, int y, int player) {
-        List<int[]> neighbours = getNeighbours(x, y, player);
+        LinkedList<int[]> neighbours = getNeighbours(x, y, player);
         board[x][y] = -1;
         while (!neighbours.isEmpty()) {
-            x = neighbours.get(0)[0];
-            y = neighbours.get(0)[1];
+            int[] xy = neighbours.removeFirst();
+            x = xy[0];
+            y = xy[1];
             if (player == 1 && x == cols-1){
                 return true;
             }
             if (player == 2 && y == rows-1) {
                 return true;
             }
-            neighbours.remove(0);
             neighbours.addAll(getNeighbours(x, y, player));
             board[x][y] = -1;
         }
 
         return false;
     }
-    private List<int[]> getNeighbours(int x, int y, int player)  {
-        List<int[]> neighbours = new ArrayList<>(cols*2);
+    private LinkedList<int[]> getNeighbours(int x, int y, int player)  {
+        LinkedList<int[]> neighbours = new LinkedList<>();
         for (int[] dir : directions) {
             int newX = x + dir[0], newY = y + dir[1];
             if (newX >= 0 && newX < cols && newY >= 0 && newY < rows && board[newX][newY] == player) {
-                neighbours.add(new int[]{newX, newY});
+                int[] temp = new int[]{newX, newY};
+                neighbours.addLast(temp);
+
             }
         }
         return neighbours;
