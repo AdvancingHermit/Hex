@@ -3,13 +3,6 @@ package com.hex.components;
 import com.hex.GameState;
 import lombok.Data;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
 
 @Data
 public class Board {
@@ -69,22 +62,19 @@ public class Board {
     private boolean depthFirstSearch(int x, int y, int player) {
         board[x][y] = -1;
 
-        if (player == 1 && x == cols - 1) {
-            return true;
-        }
-        if (player == 2 && y == rows - 1) {
+        if (player == 1 && x == cols - 1 || player == 2 && y == rows - 1) {
             return true;
         }
 
-        return getNeighbours(x, y, player);
+        return visitNeighbours(x, y, player);
     }
-    private boolean getNeighbours(int x, int y, int player)  {
+
+    private boolean visitNeighbours(int x, int y, int player)  {
         boolean finished = false;
         for (int[] dir : directions) {
             int newX = x + dir[0], newY = y + dir[1];
             if (newX >= 0 && newX < cols && newY >= 0 && newY < rows && board[newX][newY] == player) {
                finished = depthFirstSearch(newX, newY, player) || finished;
-
             }
         }
         return finished;

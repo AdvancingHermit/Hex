@@ -188,7 +188,7 @@ public class MCTS implements Algorithm {
     }
 
     private ArrayList<BoardCoordinate> possibleMoves(Board simBoard){
-        ArrayList<BoardCoordinate> moves = new ArrayList<>();
+        ArrayList<BoardCoordinate> moves = new ArrayList<>(simBoard.getCols() * simBoard.getCols());
         for (int i = 0; i < simBoard.getCols(); i++ ) {
             for (int j = 0; j < simBoard.getRows(); j++ ) {
                 if (simBoard.getPiece(i,j) == 0) {
@@ -197,10 +197,6 @@ public class MCTS implements Algorithm {
             }
         }
         return moves;
-    }
-
-    private List<Node> visitedChildren(Node node) {
-        return node.children.stream().filter(n -> n.value < Integer.MAX_VALUE).toList();
     }
 
 }

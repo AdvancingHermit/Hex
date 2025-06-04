@@ -6,7 +6,9 @@ import com.hex.components.BoardCoordinate;
 
 import java.util.Random;
 
+
 public class RandomAlgorithm implements Algorithm{
+    Random random = new Random();
     @Override
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
         int rows = board.getRows();
@@ -27,7 +29,7 @@ public class RandomAlgorithm implements Algorithm{
         }
 
 
-        Random random = new Random();
+
         int targetIndex = random.nextInt(emptyCount);
 
 
