@@ -85,7 +85,7 @@ public class MCTS implements Algorithm {
 
     private Node selection(Node root, Board simBoard, SimulationController simulationController){
         Node cur = root;
-        while (cur.children.size() == possibleMoves(simBoard).size() && !possibleMoves(simBoard).isEmpty()){
+        while (cur.children.size() == possibleMoves(simBoard).size() && !cur.children.isEmpty()){
              cur = maxNode(cur);
              if (cur.swap){
                  simulationController.removePiece(cur.move);
