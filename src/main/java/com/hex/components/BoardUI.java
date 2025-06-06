@@ -1,8 +1,10 @@
 package com.hex.components;
 
 import com.hex.GameState;
+import com.hex.gamecontroller.AlgorithmTesterController;
 import com.hex.gamecontroller.GameController;
 import com.hex.gamecontroller.OnlineController;
+import com.hex.scenes.LocalGame;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -17,16 +19,22 @@ public class BoardUI extends Pane {
     private Board board;
     private boolean online;
 
-    public BoardUI(Board board, double hexagonSize,  boolean online){
+    public enum ControllerType {
+        LOCAL_GAME,
+        ONLINE,
+        ALGORITHM_TESTER
+    }
+    ControllerType type;
+
+    public BoardUI(Board board, double hexagonSize, ControllerType type){
         this.size = hexagonSize;
         this.setBoard(board);
         this.rows = board.getRows();
         this.cols = board.getCols();
-        this.online = online;
+        this.type = type;
     }
 
     public void drawBoard() {
-        
 
         for (int i = 0; i < cols; i++ ) {
             for (int j = 0; j < rows; j++ ) {
@@ -35,10 +43,16 @@ public class BoardUI extends Pane {
 
                 hex.setOnMouseClicked(event -> {
                     BoardCoordinate coord = new BoardCoordinate((int) hex.getGridPosition()[0], (int) hex.getGridPosition()[1]);
-                    if(online) {
-                        OnlineController.getInstance().gameIteration(coord);
-                    } else {
-                        GameController.getInstance().gameIteration(coord);
+                    switch (type){
+                        case LOCAL_GAME:
+                            GameController.getInstance().gameIteration(coord);
+                            break;
+                        case ONLINE:
+                            OnlineController.getInstance().gameIteration(coord);
+                            break;
+                        case ALGORITHM_TESTER:
+                            AlgorithmTesterController.getInstance().gameIteration(coord);
+                            break;
                     }
                     getChildren().clear();
                     drawBoard();

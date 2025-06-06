@@ -1,0 +1,82 @@
+package com.hex.algorithms.minimax;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class VirtualConnection implements Comparable<VirtualConnection> {
+
+    Move x, y;
+    Set<Move> carrier;
+    int depth;
+
+    VirtualConnection(Move x, Move y, Set<Move> carrier, int depth){
+        this.x = x;
+        this.y = y;
+        this.carrier = new HashSet<>(carrier);
+        this.depth = depth;
+    }
+
+    public int compareTo(VirtualConnection other) {
+        return this.depth - other.depth;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof VirtualConnection)) {
+            return false;
+        }
+
+        VirtualConnection other = (VirtualConnection) o; // WHY JAVA WHY?
+        return equalEnds(other) && carrier.equals(other.carrier);
+    }
+
+    public boolean equalEnds(VirtualConnection other) {
+        return (x.equals(other.x) && y.equals(other.y))
+                || (y.equals(other.x) && x.equals(other.y));
+    }
+
+    public Move[] getConnectingEnd(VirtualConnection other){ // 0: Connection, 1: New X, 2: new Y
+        if (equalEnds(other)){
+            return null;
+        }
+        if (x.equals(other.y)) {
+            return new Move[]{x, y, other.x};
+        }
+        if (y.equals(other.x)) {
+            return new Move[]{y, x, other.y};
+        }
+        if (x.equals(other.x)) {
+            return new Move[]{x, y, other.y};
+        }
+        if (y.equals(other.y)) {
+            return new Move[]{y, x, other.x};
+        }
+        return null;
+    }
+
+    // Tjekker om denne er sub af anden.
+    public boolean isSubset(VirtualConnection other){
+        if (other.carrier.size() > carrier.size() && equalEnds(other)){
+            for (Move elem : carrier){
+                if (!other.carrier.contains(elem)){
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean endIsCarrier(VirtualConnection other){
+        return other.carrier.contains(x) || other.carrier.contains(y);
+    }
+
+    @Override
+    public String toString(){
+        return "Pos X: " + x + ", Pos Y: " + y + " With Depth: " + depth;
+    }
+}
