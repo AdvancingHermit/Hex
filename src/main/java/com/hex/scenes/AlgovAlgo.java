@@ -1,10 +1,12 @@
 package com.hex.scenes;
+
 import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
 import com.hex.algorithms.minimax.ConnectionPlayer;
+import com.hex.algorithms.montecarlo.MCTS;
 import com.hex.components.Board;
 import com.hex.components.BoardUI;
-import com.hex.gamecontroller.GameController;
+import com.hex.gamecontroller.AlgorithmTesterController;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -14,22 +16,23 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class LocalGame extends BaseScene {
+public class AlgovAlgo extends BaseScene {
     private GameState gameState = new GameState();
 
-    public LocalGame() {
+    public AlgovAlgo() {
         BorderPane root = new BorderPane();
 
         StackPane gameWrap = new StackPane();
 
         //Algorithm
         Algorithm algorithm = new ConnectionPlayer();
+        Algorithm otherAlgo = new MCTS();
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
-        Board board = new Board(3,3);
-        GameController.createGameController(board, gameState, algorithm);
-        BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME);
+        Board board = new Board(5,5);
+        AlgorithmTesterController.createGameController(board, gameState, algorithm, otherAlgo);
+        BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.ALGORITHM_TESTER);
 
 
         hexBoard.drawBoard();
@@ -46,19 +49,12 @@ public class LocalGame extends BaseScene {
         rightBox.setAlignment(Pos.CENTER);
         rightBox.setPrefWidth(100);
 
-        // Add the things to game wrapper
+
         gameWrap.getChildren().add(boardWrap);
-        //topBox.setTranslateY(-boardWrap.getHeight() / 2 - 20);
-        //rightBox.setTranslateX(-boardWrap.getWidth() / 2 - 50);
-        //gameWrap.getChildren().addAll( topBox, rightBox);
 
-        // Add things to root
         root.setCenter(gameWrap);
-
-
 
         scene = new Scene(root, 800, 600);
 
     }
-
 }

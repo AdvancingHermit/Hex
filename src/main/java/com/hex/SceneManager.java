@@ -1,9 +1,6 @@
 package com.hex;
 
-import com.hex.scenes.LoadingScreen;
-import com.hex.scenes.LocalGame;
-import com.hex.scenes.MainMenu;
-import com.hex.scenes.OnlineGame;
+import com.hex.scenes.*;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -24,6 +21,7 @@ public class SceneManager {
     public enum SceneType {
         MAIN_MENU,
         LOCAL_GAME,
+        ALGO_V_ALGO,
         ONLINE_GAME,
         LOADING_SCREEN
     }
@@ -38,6 +36,7 @@ public class SceneManager {
         return switch (type) {
             case MAIN_MENU -> new MainMenu(this).getScene();
             case LOCAL_GAME -> new LocalGame().getScene();
+            case ALGO_V_ALGO -> new AlgovAlgo().getScene();
             case ONLINE_GAME -> {
                 if (currentSocket != null && currentIn != null && currentOut != null) {
                     yield new OnlineGame(this, currentSocket, currentIn, currentOut).getScene();

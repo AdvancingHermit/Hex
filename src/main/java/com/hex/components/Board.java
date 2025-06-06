@@ -8,11 +8,11 @@ import java.util.List;
 
 @Data
 public class Board {
-    private int[][] board;
-    private GameState gameState;
-    private int rows;
-    private int cols;
-    private int[][] directions = {
+    protected int[][] board;
+    protected GameState gameState;
+    protected int rows;
+    protected int cols;
+    protected int[][] directions = {
             {1, 0}, {-1, 0}, {0, 1}, {0, -1},
             {1, -1}, {-1, 1}
     };
@@ -29,6 +29,14 @@ public class Board {
         this.cols = cols;
         this.board = new int[rows][cols];
         this.gameState = gameState;
+    }
+
+    public Board(Board other) {
+        this(other.getRows(), other.getCols(), other.getGameState());
+
+        for (int i = 0; i < other.getRows(); i++) {
+            System.arraycopy(other.getBoard()[i], 0, this.getBoard()[i], 0, other.getCols());
+        }
     }
 
     public void setPiece(int x, int y, int player)  {

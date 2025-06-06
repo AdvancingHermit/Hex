@@ -130,7 +130,7 @@ public class OnlineGame extends BaseScene {
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
-        hexBoard = new BoardUI(board, 30, true);
+        hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.ONLINE);
         hexBoard.drawBoard();
         boardWrap.getChildren().add(hexBoard);
 
