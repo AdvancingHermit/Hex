@@ -22,10 +22,26 @@ public class Connections extends Board {
     VirtualConnection bestBlueSemiVC;
     VirtualConnection bestRedVC;
     VirtualConnection bestRedSemiVC;
+    ArrayList<VirtualConnection> edgeConnections;
+
+    static enum Colors {
+        RED(2),
+        BLUE(1);
+
+        private final int value;
+
+        Colors(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
 
 
     private void addToAdj(VirtualConnection vc, int type, int color) { // VC = 0, Semi = 1
-        if (color == 1) {
+        if (color == Colors.BLUE.getValue()) {
             if (movesOnBothBlueEdges(vc.x, vc.y)) {
                 if (type == 0) {
                     blueWinConnections.add(vc);
@@ -34,7 +50,7 @@ public class Connections extends Board {
                 }
             }
         }
-        if (color == 2) {
+        if (color == Colors.RED.getValue()) {
             if (movesOnBothRedEdges(vc.x, vc.y)) {
                 if (type == 0) {
                     redWinConnections.add(vc);
@@ -72,11 +88,11 @@ public class Connections extends Board {
             while (parentIterator.hasNext()) {
                 vcParent = parentIterator.next();
 
-                if (vcParent.equals(vcToBeAdded) || vcToBeAdded.isSubset(vcParent)) {
+                if (vcParent.equals(vcToBeAdded) || vcParent.isSubset(vcToBeAdded)) {
                     add = false;
                     toAddIterator.remove();
                     break;
-                } else if (vcParent.isSubset(vcToBeAdded)) {
+                } else if (vcToBeAdded.isSubset(vcParent)) {
                     parentIterator.remove();
                 }
             }
@@ -160,8 +176,8 @@ public class Connections extends Board {
                 VirtualConnection currVC = new VirtualConnection(move, y, carrier, 0);
 
                 if (cell == 0 ) {
-                    currVC.depth = 1;
                     if (!semiVCs.contains(currVC)){
+                        currVC.depth = 1;
                         semiVCs.add(currVC);
                     }
                 } if (cell == color && !VCs.contains(currVC)) {
@@ -279,7 +295,7 @@ public class Connections extends Board {
 
         for (int i = 0; i < semiVCs.size(); i++) {
             VirtualConnection vc1 = semiVCs.get(i);
-            if (vc1.depth != 0){
+            if (vc1.depth != 1){
                 continue;
             }
 
@@ -296,7 +312,7 @@ public class Connections extends Board {
                     HashSet<Move> combinedCarrier = new HashSet<>(vc1.carrier);
                     combinedCarrier.addAll(vc2.carrier);
 
-                    VirtualConnection currVC = new VirtualConnection(connection[1], connection[2], combinedCarrier, vc1.depth + vc2.depth);
+                    VirtualConnection currVC = new VirtualConnection(connection[1], connection[2], combinedCarrier, vc2.depth);
                     if (cell == 0){
                         combinedCarrier.add(connection[0]);
                         if (semiVCs.contains(currVC)){ continue; }
@@ -324,10 +340,10 @@ public class Connections extends Board {
 
                 VirtualConnection vc2 = vcList.get(j);
 
-                if (vc2.isSubset(vc1) || vc2.equals(vc1)) {
-                    indicesToRemove.add(j);
-                } else if (vc1.isSubset(vc2)) {
+                if (vc2.isSubset(vc1) ) {
                     indicesToRemove.add(i);
+                } else if (vc1.isSubset(vc2) || vc2.equals(vc1)) {
+                    indicesToRemove.add(j);
                     break;
                 }
             }
@@ -356,24 +372,28 @@ public class Connections extends Board {
     }
 
     public void HProcess() {
-        boolean a, b, c, d, e, f;
-
         blueVCs = new ArrayList<>();
         blueSemiVCs = new ArrayList<>();
         redVCs = new ArrayList<>();
         redSemiVCs = new ArrayList<>();
-        findBaseVCs(blueCells, blueSemiVCs, blueVCs, 1);
-        findBaseVCs(redCells, redSemiVCs, redVCs, 2);
+        findBaseVCs(blueCells, blueSemiVCs, blueVCs, Colors.BLUE.getValue());
+        findBaseVCs(redCells, redSemiVCs, redVCs, Colors.RED.getValue());
 
-        boolean changed = true;
+        cleanConnections();
+
+        boolean a = applyAndRule(blueSemiVCs, blueVCs, Colors.BLUE.getValue());
+        boolean b = applyAndRule(redSemiVCs, redVCs, Colors.RED.getValue());
+        boolean c = false, d = false, e = false, f = false;
+
+        boolean changed = (a || b);
 
         while (changed) {
-            a = applyAndRule(blueSemiVCs, blueVCs, 1);
-            b = applyAndRule(redSemiVCs, redVCs, 2);
-            c = applyOrRule(blueSemiVCs, blueVCs, 1);
-            d = applyOrRule(redSemiVCs, redVCs, 2);
-            e = applyIDEKRule(blueSemiVCs, 1);
-            f = applyIDEKRule(redSemiVCs, 2);
+            a = applyAndRule(blueSemiVCs, blueVCs, Colors.BLUE.getValue());
+            b = applyAndRule(redSemiVCs, redVCs, Colors.RED.getValue());
+            c = applyOrRule(blueSemiVCs, blueVCs, Colors.BLUE.getValue());
+            d = applyOrRule(redSemiVCs, redVCs, Colors.RED.getValue());
+            e = applyIDEKRule(blueSemiVCs, Colors.BLUE.getValue());
+            f = applyIDEKRule(redSemiVCs, Colors.RED.getValue());
             changed = (a || b || c || d || e || f);
         }
 
@@ -418,10 +438,10 @@ public class Connections extends Board {
     }
 
     private void findAllEndVCs(){
-        findEndVCsFromList(blueVCs, 0, 1);
-        findEndVCsFromList(blueSemiVCs, 1, 1);
-        findEndVCsFromList(redVCs, 0, 2);
-        findEndVCsFromList(redSemiVCs, 1, 2);
+        findEndVCsFromList(blueVCs, 0, Colors.BLUE.getValue());
+        findEndVCsFromList(blueSemiVCs, 1, Colors.BLUE.getValue());
+        findEndVCsFromList(redVCs, 0, Colors.RED.getValue());
+        findEndVCsFromList(redSemiVCs, 1, Colors.RED.getValue());
     }
 
     @Override
@@ -430,19 +450,12 @@ public class Connections extends Board {
         elecBoard[x + 1][y + 1] = player;
         Move setMove = new Move(x + 1, y + 1);
         emptyCells.remove(setMove);
-        //ArrayList<Move> helper = new ArrayList<>();
-        //helper.add(setMove);
 
-        //removeFromAllVCsWithMove(setMove);
-
-        if(player == 1){
+        if(player == Colors.BLUE.getValue()){
             blueCells.add(setMove);
-            //findBaseVCs(helper, blueSemiVCs, blueVCs, 1);
         } else {
             redCells.add(setMove);
-            //findBaseVCs(helper, redSemiVCs, redVCs, 2);
         }
-        //HProcess();
     }
 
     private void initializer(){
@@ -483,17 +496,17 @@ public class Connections extends Board {
                 if (cell == 0){
                     emptyCells.add(new Move(x+1, y+1));
                 }
-                else if (cell == 1){
+                else if (cell == Colors.BLUE.getValue()){
                     blueCells.add(new Move(x+1, y+1));
                 }
-                else if (cell == 2){
+                else if (cell == Colors.RED.getValue()){
                     redCells.add(new Move(x+1, y+1));
                 }
             }
         }
         initializer();
-        findBaseVCs(blueCells, blueSemiVCs, blueVCs, 1);
-        findBaseVCs(redCells, redSemiVCs, redVCs, 2);
+        findBaseVCs(blueCells, blueSemiVCs, blueVCs, Colors.BLUE.getValue());
+        findBaseVCs(redCells, redSemiVCs, redVCs, Colors.RED.getValue());
         cleanConnections();
     }
 

@@ -1,23 +1,40 @@
 package com.hex.algorithms.minimax;
 
+import java.lang.reflect.Array;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class MiniMax {
 
-    protected final int maxDepth = 8;
+    protected final int maxDepth = 5;
+
+    private HashMap<BigInteger, Float> evalMap;
 
     public MiniMax(){}
+
+    private int funnyFac(int size){
+        int res = size;
+        for (int i = 1; i < maxDepth; i++){
+            res = res * (size-i);
+        }
+        return res;
+    }
 
     public Move findBestMove(Position position, int player) {
         float bestValue = Float.NEGATIVE_INFINITY;
         Move bestMove = null;
 
-        if (position.getPossibleMoves().size() == position.getSize()){
+        evalMap = new HashMap<>(Integer.MAX_VALUE);
+
+        if (position.getPossibleMoves().size() == position.getSize()*position.getSize()){
             bestMove = position.getMiddleMove();
             Position newPosition = position.Move(bestMove, player);
             bestValue = alphabeta(newPosition, maxDepth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player);
         }
 
         for (Move move : position.getPossibleMoves()) {
-        //Move move = new Move(0, 0);
+            //Move move = new Move(0, 0);
             Position newPosition = position.Move(move, player);
             System.out.println(move);
             float value = alphabeta(newPosition, maxDepth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player);
@@ -33,6 +50,17 @@ public class MiniMax {
         return bestMove;
     }
 
+    private BigInteger getEvalmapKey(Position pos){
+        int[][] currBoard = pos.getBoard();
+        BigInteger id = BigInteger.ZERO;
+        for (int[] row : currBoard) {
+            for (int cell : row) {
+                id = id.multiply(BigInteger.valueOf(3)).add(BigInteger.valueOf(cell));
+            }
+        }
+        return id;
+    }
+
     private float alphabeta(Position pos, int depth, float alpha, float beta, boolean maximizingPlayer, int currentPlayer, int originalPlayer) {
 
         if (pos.checkWin(originalPlayer))   return Float.POSITIVE_INFINITY;
@@ -40,7 +68,13 @@ public class MiniMax {
 
 
         if (depth == 0 || pos.getPossibleMoves().isEmpty()) {
-            return pos.evaluate(originalPlayer);
+            BigInteger key = getEvalmapKey(pos);
+            if (evalMap.containsKey(key)){
+                return evalMap.get(key);
+            }
+            float eval = pos.evaluate(originalPlayer);
+            evalMap.put(key, eval);
+            return eval;
         }
 
         if (maximizingPlayer) {
