@@ -8,7 +8,7 @@ import com.hex.components.BoardCoordinate;
 public class ConnectionPlayer extends MiniMax implements Algorithm {
     public ConnectionPlayer(){};
     @Override
-    public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations) {
+    public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
         Position startPos = new ConnectionPosition(board);
         if (maxDepth % 2 == 0){
             startPos.setplayerOnTurn(true);

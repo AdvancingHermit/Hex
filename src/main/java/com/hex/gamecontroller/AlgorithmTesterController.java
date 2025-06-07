@@ -43,8 +43,7 @@ public class AlgorithmTesterController implements Controller {
 
     private void init() {
         if (algorithm != null) {
-            BoardCoordinate move = algorithm.makeMove(
-                    gameState.getCurrentPlayer(), board, gameState, iterations);
+            BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
             placePiece(move);
             gameState.nextPlayer();
         }
@@ -70,7 +69,7 @@ public class AlgorithmTesterController implements Controller {
         }
 
         BoardCoordinate otherMove = otherAlgo.makeMove(
-                gameState.getCurrentPlayer(), board, gameState, iterations);
+                gameState.getCurrentPlayer(), board, gameState, iterations, false);
         placePiece(otherMove);
         if (gameState.isGameFinished()) {
             return;
@@ -78,7 +77,7 @@ public class AlgorithmTesterController implements Controller {
         gameState.nextPlayer();
 
         BoardCoordinate move = algorithm.makeMove(
-                gameState.getCurrentPlayer(), board, gameState, iterations);
+                gameState.getCurrentPlayer(), board, gameState, iterations, false);
         placePiece(move);
         if (gameState.isGameFinished()) {
             return;
