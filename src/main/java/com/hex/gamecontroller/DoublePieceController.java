@@ -2,6 +2,7 @@ package com.hex.gamecontroller;
 
 import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
+import com.hex.algorithms.montecarlo.BoardCoordinateMoves;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
 import lombok.Getter;
@@ -19,8 +20,18 @@ public class DoublePieceController extends AbstractGameController {
     }
 
     private DoublePieceController(Board board, GameState gameState, Algorithm algorithm, boolean algoStart, int algoIterations, boolean swap) {
-        super(board, gameState, algorithm, algoStart, algoIterations, swap);
+        super(board, gameState, algorithm, false, algoIterations, swap);
         this.swap = false;
+        if (algoStart){
+            BoardCoordinateMoves moves = algorithm.makeDoubleMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
+            placePiece(moves.firstMove());
+            gameState.doubleTurnIncrement();
+            if (!gameState.isGameFinished()) {
+                placePiece(moves.secondMove());
+
+            }
+            gameState.nextPlayer();
+        }
     }
 
 
@@ -39,12 +50,11 @@ public class DoublePieceController extends AbstractGameController {
 
         if (algorithm != null && !gameState.isGameFinished()) {
             gameState.nextPlayer();
-            BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
-            placePiece(move);
+            BoardCoordinateMoves moves = algorithm.makeDoubleMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
+            placePiece(moves.firstMove());
             gameState.doubleTurnIncrement();
             if (!gameState.isGameFinished()) {
-                BoardCoordinate move2 = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
-                placePiece(move2);
+                placePiece(moves.secondMove());
 
             }
         }

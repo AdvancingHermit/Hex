@@ -2,6 +2,7 @@ package com.hex.scenes;
 import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
 import com.hex.algorithms.montecarlo.MCTS;
+import com.hex.algorithms.montecarlo.MCTSDouble;
 import com.hex.components.Board;
 import com.hex.HexApp;
 import com.hex.components.BoardUI;
@@ -26,12 +27,13 @@ public class LocalGame extends BaseScene {
 
         //Algorithm
         Algorithm mcts = new MCTS();
+        Algorithm mctsDouble = new MCTSDouble();
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
-        Board board = new Board(11,11);
+        Board board = new Board(7,7);
         //GameController.createGameController(board, gameState, algorithm, true);
-        DoublePieceController.createDoublePieceController(board, gameState, mcts, false,
+        DoublePieceController.createDoublePieceController(board, gameState, mctsDouble, true,
                 6*100_000, false);
         BoardUI hexBoard = new BoardUI(board, 30, false);
 
