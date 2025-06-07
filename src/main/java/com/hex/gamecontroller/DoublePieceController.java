@@ -32,17 +32,20 @@ public class DoublePieceController extends AbstractGameController {
         placePiece(co);
         if (getCounter() == 0){
             setCounter(1);
+            gameState.doubleTurnIncrement();
             return;
         }
         setCounter(0);
 
         if (algorithm != null && !gameState.isGameFinished()) {
             gameState.nextPlayer();
-            BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, swap);
+            BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
             placePiece(move);
+            gameState.doubleTurnIncrement();
             if (!gameState.isGameFinished()) {
-                BoardCoordinate move2 = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, swap);
+                BoardCoordinate move2 = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
                 placePiece(move2);
+
             }
         }
 

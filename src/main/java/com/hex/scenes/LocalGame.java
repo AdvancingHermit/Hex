@@ -25,13 +25,13 @@ public class LocalGame extends BaseScene {
         StackPane gameWrap = new StackPane();
 
         //Algorithm
-        Algorithm algorithm = new MCTS();
+        Algorithm mcts = new MCTS();
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
         Board board = new Board(11,11);
         //GameController.createGameController(board, gameState, algorithm, true);
-        DoublePieceController.createDoublePieceController(board, gameState, null, false,
+        DoublePieceController.createDoublePieceController(board, gameState, mcts, false,
                 6*100_000, false);
         BoardUI hexBoard = new BoardUI(board, 30, false);
 

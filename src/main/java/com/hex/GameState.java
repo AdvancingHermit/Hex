@@ -42,5 +42,8 @@ public class GameState {
     public void swapTurnDecrement(){
         boardPieces--;
     }
+    public void doubleTurnIncrement(){
+        boardPieces++;
+    }
 
 }
