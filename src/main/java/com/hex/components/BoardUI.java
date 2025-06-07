@@ -1,11 +1,14 @@
 package com.hex.components;
 
 import com.hex.GameState;
+import com.hex.gamecontroller.AbstractGameController;
+import com.hex.gamecontroller.DoublePieceController;
 import com.hex.gamecontroller.GameController;
 import com.hex.gamecontroller.OnlineController;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import lombok.Getter;
 
 import static java.lang.Math.sqrt;
 
@@ -17,12 +20,14 @@ public class BoardUI extends Pane {
     private Board board;
     private boolean online;
 
-    public BoardUI(Board board, double hexagonSize,  boolean online){
+
+    public BoardUI(Board board, double hexagonSize, boolean online){
         this.size = hexagonSize;
         this.setBoard(board);
         this.rows = board.getRows();
         this.cols = board.getCols();
         this.online = online;
+
     }
 
     public void drawBoard() {
@@ -38,7 +43,7 @@ public class BoardUI extends Pane {
                     if(online) {
                         OnlineController.getInstance().gameIteration(coord);
                     } else {
-                        GameController.getInstance().gameIteration(coord);
+                        DoublePieceController.getInstance().gameIteration(coord);
                     }
                     getChildren().clear();
                     drawBoard();

@@ -9,18 +9,19 @@ import lombok.Setter;
 import lombok.extern.java.Log;
 
 @Log
-public class GameController extends AbstractGameController {
+public class DoublePieceController extends AbstractGameController {
+    @Getter
+    @Setter
+    private int counter = 0;
 
-
-
-    public static void createGameController(Board board, GameState gameState, Algorithm algorith, boolean algoStart, int algoIterations, boolean swap) {
-        INSTANCE = new GameController(board, gameState, algorith, algoStart, algoIterations, swap);
+    public static void createDoublePieceController(Board board, GameState gameState, Algorithm algorith, boolean algoStart, int algoIterations, boolean swap) {
+        INSTANCE = new DoublePieceController(board, gameState, algorith, algoStart, algoIterations, swap);
     }
 
-    private GameController(Board board, GameState gameState, Algorithm algorithm, boolean algoStart, int algoIterations, boolean swap) {
+    private DoublePieceController(Board board, GameState gameState, Algorithm algorithm, boolean algoStart, int algoIterations, boolean swap) {
         super(board, gameState, algorithm, algoStart, algoIterations, swap);
+        this.swap = false;
     }
-
 
 
     public void gameIteration(BoardCoordinate co) {
@@ -29,11 +30,20 @@ public class GameController extends AbstractGameController {
             return;
         }
         placePiece(co);
+        if (getCounter() == 0){
+            setCounter(1);
+            return;
+        }
+        setCounter(0);
 
         if (algorithm != null && !gameState.isGameFinished()) {
             gameState.nextPlayer();
             BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, swap);
             placePiece(move);
+            if (!gameState.isGameFinished()) {
+                BoardCoordinate move2 = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, swap);
+                placePiece(move2);
+            }
         }
 
         if (!gameState.isGameFinished()) {

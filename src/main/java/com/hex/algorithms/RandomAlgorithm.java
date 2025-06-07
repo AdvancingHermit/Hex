@@ -4,7 +4,11 @@ import com.hex.GameState;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 public class RandomAlgorithm implements Algorithm{
@@ -13,16 +17,7 @@ public class RandomAlgorithm implements Algorithm{
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
         int rows = board.getRows();
         int cols = board.getCols();
-        int emptyCount = 0;
-
-
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
-                if (board.getPiece(i, j) == 0) {
-                    emptyCount++;
-                }
-            }
-        }
+        int emptyCount =  cols * rows - gameState.getBoardPieces();
 
         if (emptyCount == 0) {
             throw new IllegalStateException("No empty cells available on the board");
@@ -47,5 +42,9 @@ public class RandomAlgorithm implements Algorithm{
 
 
         return null;
+
+
         }
+
+
 }

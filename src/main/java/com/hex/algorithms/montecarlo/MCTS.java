@@ -65,7 +65,7 @@ public class MCTS implements Algorithm {
     private Node makeTree(Board board, GameState gameState, int iterations, Node root, int n) {
         int i = 0;
         log.info("start " + n);
-        while (i < iterations + 1){
+        while (i < iterations){
             gameOver = false;
             Board simBoard = new Board(board.getRows(), board.getCols());
             simBoard.setBoard(Arrays.stream(board.getBoard())
@@ -85,7 +85,7 @@ public class MCTS implements Algorithm {
 
     private Node selection(Node root, Board simBoard, SimulationController simulationController){
         Node cur = root;
-        while (cur.children.size() == possibleMoves(simBoard).size() && !cur.children.isEmpty()){
+        while (!cur.children.isEmpty() && cur.children.size() == possibleMoves(simBoard).size()){
              cur = maxNode(cur);
              if (cur.swap){
                  simulationController.removePiece(cur.move);

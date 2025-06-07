@@ -40,6 +40,12 @@ public class SimulationController {
     }
 
     private void updateBoard(int player) {
+        int checkThreshold = Math.min(board.getRows()*2, board.getCols()*2);
+        if (gameState.getBoardPieces() < checkThreshold){
+            return;
+        }
+
+
         if (board.checkWin(player)) {
             //   System.out.println("Player " + gameState.getCurrentPlayer() + " won");
             getGameState().setGameFinished(true);
@@ -48,6 +54,7 @@ public class SimulationController {
 
     public void removePiece(BoardCoordinate co) {
         board.setPiece(co.x, co.y, 0);
+        getGameState().swapTurnDecrement();
 
     }
 }

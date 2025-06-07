@@ -5,6 +5,7 @@ import com.hex.algorithms.montecarlo.MCTS;
 import com.hex.components.Board;
 import com.hex.HexApp;
 import com.hex.components.BoardUI;
+import com.hex.gamecontroller.DoublePieceController;
 import com.hex.gamecontroller.GameController;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -29,7 +30,9 @@ public class LocalGame extends BaseScene {
         // Hex Board and wrapper
         Group boardWrap = new Group();
         Board board = new Board(11,11);
-        GameController.createGameController(board, gameState, algorithm);
+        //GameController.createGameController(board, gameState, algorithm, true);
+        DoublePieceController.createDoublePieceController(board, gameState, null, false,
+                6*100_000, false);
         BoardUI hexBoard = new BoardUI(board, 30, false);
 
 
