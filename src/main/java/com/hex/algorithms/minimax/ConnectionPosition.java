@@ -30,7 +30,7 @@ public class ConnectionPosition implements Position{
 
     @Override
     public int getSize(){
-        return board.getRows()* board.getCols();
+        return board.getRows();
     }
 
     @Override

@@ -13,16 +13,10 @@ public class Move {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (!(o instanceof Move)) {
-            return false;
-        }
-
-        Move other = (Move) o; // WHY JAVA WHY?
-        return x == other.x && y == other.y;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Move move = (Move) o;
+        return x == move.x && y == move.y;
     }
 
     @Override

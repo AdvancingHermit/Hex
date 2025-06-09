@@ -22,7 +22,6 @@ public class Connections extends Board {
     VirtualConnection bestBlueSemiVC;
     VirtualConnection bestRedVC;
     VirtualConnection bestRedSemiVC;
-    ArrayList<VirtualConnection> edgeConnections;
 
     static enum Colors {
         RED(2),
@@ -155,37 +154,36 @@ public class Connections extends Board {
         }
     }
 
-    public void findBaseVCs(ArrayList<Move> CellList, ArrayList<VirtualConnection> semiVCs, ArrayList<VirtualConnection> VCs, int color) {
+    public void findBaseVCs(Move move, ArrayList<VirtualConnection> semiVCs, ArrayList<VirtualConnection> VCs, int color) {
         int[] cellVals = new int[6];
-        for (Move move : CellList) {
-            for (int i = 0; i < directions.length; i++) {
-                int[] dir = directions[i];
-                int tempx = move.x + dir[0];
-                int tempy = move.y + dir[1];
+        for (int i = 0; i < directions.length; i++) {
+            int[] dir = directions[i];
+            int tempx = move.x + dir[0];
+            int tempy = move.y + dir[1];
 
-                if (tempy == -1 || tempy == elecRows || tempx == -1 || tempx == elecCols || (tempx == 0 && (tempy == 0 || tempy == elecRows - 1)) || (tempx == elecCols - 1 && (tempy == 0 || tempy == elecRows - 1))) {
-                    continue;
-                }
-                Move y = new Move(tempx, tempy);
-                Set<Move> carrier = new HashSet<>();
+            if (tempy == -1 || tempy == elecRows || tempx == -1 || tempx == elecCols || (tempx == 0 && (tempy == 0 || tempy == elecRows - 1)) || (tempx == elecCols - 1 && (tempy == 0 || tempy == elecRows - 1))) {
+                continue;
+            }
+            Move y = new Move(tempx, tempy);
+            Set<Move> carrier = new HashSet<>();
 
-                int cell = elecBoard[tempx][tempy];
+            int cell = elecBoard[tempx][tempy];
 
-                cellVals[i] = cell;
+            cellVals[i] = cell;
 
-                VirtualConnection currVC = new VirtualConnection(move, y, carrier, 0);
+            VirtualConnection currVC = new VirtualConnection(move, y, carrier, 0);
 
-                if (cell == 0 ) {
-                    if (!semiVCs.contains(currVC)){
-                        currVC.depth = 1;
-                        semiVCs.add(currVC);
-                    }
-                } if (cell == color && !VCs.contains(currVC)) {
-                    VCs.add(currVC);
+            if (cell == 0) {
+                if (!semiVCs.contains(currVC)) {
+                    currVC.depth = 1;
+                    semiVCs.add(currVC);
                 }
             }
-            findBridges(VCs, semiVCs, move, cellVals, color);
+            if (cell == color && !VCs.contains(currVC)) {
+                VCs.add(currVC);
+            }
         }
+        findBridges(VCs, semiVCs, move, cellVals, color);
     }
 
     private ArrayList<ArrayList<VirtualConnection>> equalEndsOrRules(ArrayList<VirtualConnection> semiVCs) {
@@ -292,6 +290,8 @@ public class Connections extends Board {
     public boolean applyIDEKRule(ArrayList<VirtualConnection> semiVCs, int color) { //Måske en regel
         ArrayList<VirtualConnection> toAddList = new ArrayList<>();
         ArrayList<VirtualConnection> toAddSemiList = new ArrayList<>();
+        Move[] connection;
+        HashSet<Move> combinedCarrier;
 
         for (int i = 0; i < semiVCs.size(); i++) {
             VirtualConnection vc1 = semiVCs.get(i);
@@ -305,11 +305,11 @@ public class Connections extends Board {
                     continue;
                 }
 
-                Move[] connection = vc1.getConnectingEnd(vc2);
+                connection = vc1.getConnectingEnd(vc2);
                 if (connection != null && (!vc1.endIsCarrier(vc2) && !vc2.endIsCarrier(vc1)) ) {
                     int cell = elecBoard[connection[0].x][connection[0].y];
 
-                    HashSet<Move> combinedCarrier = new HashSet<>(vc1.carrier);
+                    combinedCarrier = new HashSet<>(vc1.carrier);
                     combinedCarrier.addAll(vc2.carrier);
 
                     VirtualConnection currVC = new VirtualConnection(connection[1], connection[2], combinedCarrier, vc2.depth);
@@ -372,15 +372,6 @@ public class Connections extends Board {
     }
 
     public void HProcess() {
-        blueVCs = new ArrayList<>();
-        blueSemiVCs = new ArrayList<>();
-        redVCs = new ArrayList<>();
-        redSemiVCs = new ArrayList<>();
-        findBaseVCs(blueCells, blueSemiVCs, blueVCs, Colors.BLUE.getValue());
-        findBaseVCs(redCells, redSemiVCs, redVCs, Colors.RED.getValue());
-
-        cleanConnections();
-
         boolean a = applyAndRule(blueSemiVCs, blueVCs, Colors.BLUE.getValue());
         boolean b = applyAndRule(redSemiVCs, redVCs, Colors.RED.getValue());
         boolean c = false, d = false, e = false, f = false;
@@ -410,24 +401,6 @@ public class Connections extends Board {
         }
     }
 
-    private void removeFromVCsWithMove(Move move, ArrayList<VirtualConnection> VCs){
-        Iterator<VirtualConnection> iterator = VCs.iterator();
-        VirtualConnection vc;
-        while (iterator.hasNext()) {
-            vc = iterator.next();
-            if (vc.x.equals(move) || vc.y.equals(move) || vc.carrier.contains(move)) {
-                iterator.remove();
-            }
-        }
-    }
-
-    private void removeFromAllVCsWithMove(Move move){
-        removeFromVCsWithMove(move, blueVCs);
-        removeFromVCsWithMove(move, blueSemiVCs);
-        removeFromVCsWithMove(move, redVCs);
-        removeFromVCsWithMove(move, redSemiVCs);
-    }
-
     private void findEndVCsFromList(ArrayList<VirtualConnection> VCs, int type, int color){
         Iterator<VirtualConnection> iterator = VCs.iterator();
         VirtualConnection vc;
@@ -453,8 +426,10 @@ public class Connections extends Board {
 
         if(player == Colors.BLUE.getValue()){
             blueCells.add(setMove);
+            findBaseVCs(setMove, blueSemiVCs, blueVCs, Colors.BLUE.getValue());
         } else {
             redCells.add(setMove);
+            findBaseVCs(setMove, redSemiVCs, redVCs, Colors.RED.getValue());
         }
     }
 
@@ -505,8 +480,12 @@ public class Connections extends Board {
             }
         }
         initializer();
-        findBaseVCs(blueCells, blueSemiVCs, blueVCs, Colors.BLUE.getValue());
-        findBaseVCs(redCells, redSemiVCs, redVCs, Colors.RED.getValue());
+        for (Move move : blueCells){
+            findBaseVCs(move, blueSemiVCs, blueVCs, Colors.BLUE.getValue());
+        }
+        for (Move move : redCells){
+            findBaseVCs(move, redSemiVCs, redVCs, Colors.RED.getValue());
+        }
         cleanConnections();
     }
 
@@ -517,6 +496,14 @@ public class Connections extends Board {
             System.arraycopy(other.getBoard()[i], 0, this.getBoard()[i], 0, other.getCols());
         }
 
+        elecCols = cols + 2;
+        elecRows = rows + 2;
+        elecBoard = new int[elecCols][elecRows];
+
+        for (int i = 0; i < other.elecCols; i++) {
+            System.arraycopy(other.elecBoard[i], 0, this.elecBoard[i], 0, other.elecCols);
+        }
+
         emptyCells = new ArrayList<>(other.emptyCells);
         redCells = new ArrayList<>(other.redCells);
         blueCells = new ArrayList<>(other.blueCells);
@@ -525,17 +512,11 @@ public class Connections extends Board {
         redVCs = new ArrayList<>(other.redVCs);
         redSemiVCs = new ArrayList<>(other.redSemiVCs);
 
-        blueWinConnections = new ArrayList<>(10);
-        blueSemiWinConnections = new ArrayList<>(10);
-        redWinConnections = new ArrayList<>(10);
-        redSemiWinConnections = new ArrayList<>(10);
+        blueWinConnections = new ArrayList<>(3);
+        blueSemiWinConnections = new ArrayList<>(3);
+        redWinConnections = new ArrayList<>(3);
+        redSemiWinConnections = new ArrayList<>(3);
 
-        elecCols = cols + 2;
-        elecRows = rows + 2;
-        elecBoard = new int[elecCols][elecRows];
 
-        for (int i = 0; i < other.elecCols; i++) {
-            System.arraycopy(other.elecBoard[i], 0, this.elecBoard[i], 0, other.elecCols);
-        }
     }
 }

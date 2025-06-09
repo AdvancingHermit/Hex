@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class MiniMax {
 
-    protected final int maxDepth = 5;
+    protected final int maxDepth = 4;
 
     private HashMap<BigInteger, Float> evalMap;
 
