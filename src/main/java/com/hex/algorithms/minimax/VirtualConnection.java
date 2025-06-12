@@ -6,11 +6,12 @@ import java.util.Set;
 
 public class VirtualConnection implements Comparable<VirtualConnection> {
 
-    Move x, y;
-    Set<Move> carrier;
-    int depth;
+    public Move x;
+    public Move y;
+    public Set<Move> carrier;
+    public int depth;
 
-    VirtualConnection(Move x, Move y, Set<Move> carrier, int depth){
+    public VirtualConnection(Move x, Move y, Set<Move> carrier, int depth){
         this.x = x;
         this.y = y;
         this.carrier = new HashSet<>(carrier);
