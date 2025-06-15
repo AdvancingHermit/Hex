@@ -27,7 +27,7 @@ public class MCTS implements Algorithm {
         Node root = new Node(null, new ArrayList<>(), 0, null, false);
         this.swap = swap;
         int nThreads = Runtime.getRuntime().availableProcessors();
-      // int nThreads = 1;
+       //int nThreads = 1;
         ExecutorService executor = Executors.newFixedThreadPool(nThreads);
         List<Future<Node>> futures = new ArrayList<>();
 
@@ -58,7 +58,7 @@ public class MCTS implements Algorithm {
         }
 
         BoardCoordinate bestMove = maxNode(root).move;
-
+        Node debugNode = maxNode(root);
         return bestMove;
     }
 

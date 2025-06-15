@@ -21,7 +21,6 @@ public class MCTSDouble implements Algorithm {
 
     private final static double exploreConstant = Math.sqrt(2);
     private boolean gameOver;
-    private boolean swap;
 
     @Override
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
@@ -31,7 +30,6 @@ public class MCTSDouble implements Algorithm {
     @Override
     public BoardCoordinateMoves makeDoubleMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
         Node root = new Node(null, new ArrayList<>(), 0, null, false);
-        this.swap = false;
       //  int nThreads = Runtime.getRuntime().availableProcessors();
         int nThreads = 1;
         ExecutorService executor = Executors.newFixedThreadPool(nThreads);
@@ -62,11 +60,12 @@ public class MCTSDouble implements Algorithm {
         for (Node child : root.children){
             child.value = UCT(child.wins, child.nSims, root.nSims, exploreConstant);
         }
+        Node firstMove = maxNode(root);
 
-        BoardCoordinate bestMove1 = maxNode(root).move;
+        BoardCoordinate bestMove1 = firstMove.move;
         BoardCoordinate bestMove2 = null;
         if (!maxNode(root).children.isEmpty()){
-            bestMove2 = maxNode(maxNode(root)).move;
+            bestMove2 = maxNode(firstMove).move;
         }
         return new BoardCoordinateMoves(bestMove1,bestMove2);
     }

@@ -1,4 +1,5 @@
 package com.hex.scenes;
+import com.hex.GameMode;
 import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
 import com.hex.algorithms.montecarlo.MCTS;
@@ -20,7 +21,7 @@ import javafx.scene.layout.VBox;
 public class LocalGame extends BaseScene {
     private GameState gameState = new GameState();
 
-    public LocalGame() {
+    public LocalGame(int boardSize, boolean algoStart, int algoIterations, GameMode mode) {
         BorderPane root = new BorderPane();
 
         StackPane gameWrap = new StackPane();
@@ -32,9 +33,10 @@ public class LocalGame extends BaseScene {
         // Hex Board and wrapper
         Group boardWrap = new Group();
         Board board = new Board(7,7);
-        //GameController.createGameController(board, gameState, algorithm, true);
-        DoublePieceController.createDoublePieceController(board, gameState, mctsDouble, true,
-                6*100_000, false);
+        GameController.createGameController(board, gameState, mcts, false,
+                20*100_000, false);
+       // DoublePieceController.createDoublePieceController(board, gameState, mctsDouble, true,
+         //       10*100_000, false);
         BoardUI hexBoard = new BoardUI(board, 30, false);
 
 
