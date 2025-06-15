@@ -37,13 +37,13 @@ public class LocalGame extends BaseScene {
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
-        Board board = new Board(3,3);
-            GameController.createGameController(board, gameState, mcts, false,
+        Board board = new Board(11,11);
+        GameController.createGameController(board, gameState, mcts, false,
                     20*100_000, false);
             // DoublePieceController.createDoublePieceController(board, gameState, mctsDouble, true,
             //       10*100_000, false);
 
-            BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME);
+        BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME);
 
 
         hexBoard.drawBoard();

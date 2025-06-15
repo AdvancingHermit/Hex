@@ -9,6 +9,7 @@ import com.hex.gamecontroller.DoublePieceController;
 import com.hex.gamecontroller.GameController;
 import com.hex.gamecontroller.OnlineController;
 import com.hex.scenes.LocalGame;
+import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -43,6 +44,22 @@ public class BoardUI extends Pane {
         this.cols = board.getCols();
         this.type = type;
 
+        if (type == ControllerType.LOCAL_GAME) {
+            GameController.getInstance().setMoveListener(co -> {
+                int curr = GameController.getInstance().getGameState().getCurrentPlayer();
+                int algoPlayerNum = GameController.getInstance().getAlgoPlayerNum();
+                if ( curr != algoPlayerNum ) {
+                    this.setDisable(false);
+                } else {
+                    this.setDisable(true);
+                }
+                Platform.runLater(() -> {
+                    this.getChildren().clear();
+                    this.drawBoard();
+                });
+            });
+        }
+
     }
 
     public void drawBoard() {
@@ -57,7 +74,20 @@ public class BoardUI extends Pane {
 
                     switch (type){
                         case LOCAL_GAME:
+
                             GameController.getInstance().gameIteration(coord);
+                            /*
+                            GameController.getInstance().handlePlayerMove(coord);
+                            this.getChildren().clear();
+                            drawBoard();
+                            new Thread(() -> {
+                                GameController.getInstance().handleAIMove();
+                                Platform.runLater(() -> {
+                                    this.getChildren().clear();
+                                    this.drawBoard();
+                                    });
+                                }).start();*/
+
                             break;
                         case ONLINE:
                             OnlineController.getInstance().gameIteration(coord);
@@ -66,8 +96,8 @@ public class BoardUI extends Pane {
                             AlgorithmTesterController.getInstance().gameIteration(coord);
                             break;
                     }
-                    getChildren().clear();
-                    drawBoard();
+                    //getChildren().clear();
+                    //drawBoard();
                 });
 
 

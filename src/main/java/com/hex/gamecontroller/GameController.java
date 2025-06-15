@@ -20,26 +20,28 @@ public class GameController extends AbstractGameController {
     private GameController(Board board, GameState gameState, Algorithm algorithm, boolean algoStart, int algoIterations, boolean swap) {
         super(board, gameState, algorithm, algoStart, algoIterations, swap);
     }
-
-
-
+    
     public void gameIteration(BoardCoordinate co) {
+
         //System.out.println("works");
         if (gameState.isGameFinished() || (board.getPiece(co.x, co.y) != 0 && !swap)) {
             return;
         }
         placePiece(co);
+        gameState.nextPlayer();
 
-        if (algorithm != null && !gameState.isGameFinished()) {
-            gameState.nextPlayer();
-            BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, swap);
-            placePiece(move);
-        }
+        new Thread(() ->{
+            if (algorithm != null && !gameState.isGameFinished()) {
+                BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, swap);
+                placePiece(move);
+            }
 
-        if (!gameState.isGameFinished()) {
-            gameState.nextPlayer();
-        }
+            if (!gameState.isGameFinished()) {
+                gameState.nextPlayer();
+            }
+        }).start();
     }
+
 
 
 }
