@@ -3,8 +3,6 @@ package com.hex.components;
 import com.hex.GameState;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 public class Board {
@@ -70,33 +68,24 @@ public class Board {
 
     }
     private boolean depthFirstSearch(int x, int y, int player) {
-        List<int[]> neighbours = getNeighbours(x, y, player);
         board[x][y] = -1;
-        while (!neighbours.isEmpty()) {
-            x = neighbours.get(0)[0];
-            y = neighbours.get(0)[1];
-            if (player == 1 && x == cols-1){
-                return true;
-            }
-            if (player == 2 && y == rows-1) {
-                return true;
-            }
-            neighbours.remove(0);
-            neighbours.addAll(getNeighbours(x, y, player));
-            board[x][y] = -1;
+
+        if (player == 1 && x == cols - 1 || player == 2 && y == rows - 1) {
+            return true;
         }
 
-        return false;
+        return visitNeighbours(x, y, player);
     }
-    private List<int[]> getNeighbours(int x, int y, int player)  {
-        List<int[]> neighbours = new ArrayList<>(cols*2);
+
+    private boolean visitNeighbours(int x, int y, int player)  {
+        boolean finished = false;
         for (int[] dir : directions) {
             int newX = x + dir[0], newY = y + dir[1];
             if (newX >= 0 && newX < cols && newY >= 0 && newY < rows && board[newX][newY] == player) {
-                neighbours.add(new int[]{newX, newY});
+               finished = depthFirstSearch(newX, newY, player) || finished;
             }
         }
-        return neighbours;
+        return finished;
     }
 
     public int getPiece(int x, int y){

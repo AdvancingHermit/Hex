@@ -2,12 +2,18 @@ package com.hex.components;
 
 import com.hex.GameState;
 import com.hex.gamecontroller.AlgorithmTesterController;
+
+import com.hex.gamecontroller.AbstractGameController;
+import com.hex.gamecontroller.DoublePieceController;
+
 import com.hex.gamecontroller.GameController;
 import com.hex.gamecontroller.OnlineController;
 import com.hex.scenes.LocalGame;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import lombok.Getter;
+import lombok.Setter;
 
 import static java.lang.Math.sqrt;
 
@@ -16,6 +22,8 @@ public class BoardUI extends Pane {
     private int cols;
     private double size;
     private GameState gameState;
+    @Getter
+    @Setter
     private Board board;
     private boolean online;
 
@@ -27,11 +35,14 @@ public class BoardUI extends Pane {
     ControllerType type;
 
     public BoardUI(Board board, double hexagonSize, ControllerType type){
+
+        
         this.size = hexagonSize;
         this.setBoard(board);
         this.rows = board.getRows();
         this.cols = board.getCols();
         this.type = type;
+
     }
 
     public void drawBoard() {
@@ -43,6 +54,7 @@ public class BoardUI extends Pane {
 
                 hex.setOnMouseClicked(event -> {
                     BoardCoordinate coord = new BoardCoordinate((int) hex.getGridPosition()[0], (int) hex.getGridPosition()[1]);
+
                     switch (type){
                         case LOCAL_GAME:
                             GameController.getInstance().gameIteration(coord);
@@ -107,11 +119,4 @@ public class BoardUI extends Pane {
         return (3.0/2.0) * size * rows;
     }
 
-    public Board getBoard() {
-        return board;
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
-    }
 }

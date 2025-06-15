@@ -4,7 +4,7 @@ import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
-import com.hex.gamecontroller.SimulationController;
+import com.hex.gamecontroller.DoubleSimulationController;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
@@ -15,19 +15,23 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
 @Log
-public class MCTS implements Algorithm {
+public class MCTSDouble implements Algorithm {
 
     private final static double exploreConstant = Math.sqrt(2);
     private boolean gameOver;
-    private boolean swap;
 
     @Override
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public BoardCoordinateMoves makeDoubleMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
         Node root = new Node(null, new ArrayList<>(), 0, null, false);
-        this.swap = swap;
-        int nThreads = Runtime.getRuntime().availableProcessors();
-       //int nThreads = 1;
+      //  int nThreads = Runtime.getRuntime().availableProcessors();
+        int nThreads = 1;
         ExecutorService executor = Executors.newFixedThreadPool(nThreads);
         List<Future<Node>> futures = new ArrayList<>();
 
@@ -56,10 +60,14 @@ public class MCTS implements Algorithm {
         for (Node child : root.children){
             child.value = UCT(child.wins, child.nSims, root.nSims, exploreConstant);
         }
+        Node firstMove = maxNode(root);
 
-        BoardCoordinate bestMove = maxNode(root).move;
-        Node debugNode = maxNode(root);
-        return bestMove;
+        BoardCoordinate bestMove1 = firstMove.move;
+        BoardCoordinate bestMove2 = null;
+        if (!maxNode(root).children.isEmpty()){
+            bestMove2 = maxNode(firstMove).move;
+        }
+        return new BoardCoordinateMoves(bestMove1,bestMove2);
     }
 
     private Node makeTree(Board board, GameState gameState, int iterations, Node root, int n) {
@@ -71,60 +79,37 @@ public class MCTS implements Algorithm {
             simBoard.setBoard(Arrays.stream(board.getBoard())
                     .map(int[]::clone)
                     .toArray(int[][]::new));
-            SimulationController simulationController = new SimulationController(simBoard, new GameState(gameState));
+            DoubleSimulationController simulationController = new DoubleSimulationController(simBoard, new GameState(gameState));
             Node selectedNode = selection(root, simBoard, simulationController);
             selectedNode = expansion(selectedNode, simBoard, simulationController);
            // System.out.println(selectedNode.value);
             int win = simulation(simulationController);
-            backpropagation(win, selectedNode);
+            boolean lastPlayer2Turns = simulationController.getGameState().getCurrentPlayer() == simulationController.getLastPlayer();
+            backpropagation(win, selectedNode, lastPlayer2Turns);
             i++;
         }
         log.info("done " + n);
         return root;
     }
 
-    private Node selection(Node root, Board simBoard, SimulationController simulationController){
+    private Node selection(Node root, Board simBoard, DoubleSimulationController simulationController){
         Node cur = root;
         while (!cur.children.isEmpty() && cur.children.size() == possibleMoves(simBoard).size()){
              cur = maxNode(cur);
-             if (cur.swap){
-                 simulationController.removePiece(cur.move);
-                 simulationController.placePiece(new BoardCoordinate(cur.move.y, cur.move.x));
-             }
-             else {
-                 simulationController.placePiece(cur.move);
-             }
+             simulationController.placePiece(cur.move);
+
         }
         return cur;
 
     }
 
-    private Node expansion(Node leaf, Board simBoard, SimulationController simulationController){
+    private Node expansion(Node leaf, Board simBoard, DoubleSimulationController simulationController){
         if (!simulationController.getGameState().isGameFinished()) {
-            if (swap && simBoard.swapAvailable()) {
-                BoardCoordinate swapMove = null;
-                for (int i = 0; i < simBoard.getCols(); i++ ) {
-                    for (int j = 0; j < simBoard.getRows(); j++ ) {
-                        if (simBoard.getPiece(i,j) != 0) {
-                            swapMove = new BoardCoordinate(i,j);
-                        }
-                    }
-                }
-                Node child = new Node(leaf, new ArrayList<>(), Integer.MAX_VALUE, swapMove, true);
-                leaf.addChild(child);
-                simulationController.removePiece(child.move);
-                simulationController.placePiece(new BoardCoordinate(child.move.y, child.move.x));
-                swap = false;
-                return child;
-            } else {
                 List<BoardCoordinate> moves = possibleMoves(simBoard);
                 Node child = new Node(leaf, new ArrayList<>(), Integer.MAX_VALUE, moves.get(leaf.children.size()), false);
                 leaf.addChild(child);
                 simulationController.placePiece(child.move);
                 return child;
-            }
-
-
 
         } else {
             gameOver = true;
@@ -133,14 +118,15 @@ public class MCTS implements Algorithm {
 
     }
 
-    private int simulation(SimulationController simulationController){
+    private int simulation(DoubleSimulationController simulationController){
         if (!gameOver) {
-            int upPlayer = simulationController.getGameState().getCurrentPlayer();
+            int lastPlayer = simulationController.getLastPlayer();
 
             while (!simulationController.getGameState().isGameFinished()) {
                 simulationController.randomMove();
             }
-            int win = simulationController.getGameState().getCurrentPlayer() != upPlayer ? 1 : -1;
+
+            int win = simulationController.getGameState().getCurrentPlayer() == lastPlayer ? 1 : -1;
             // int win = 1;
             //win = win * val;
             return win;
@@ -151,8 +137,9 @@ public class MCTS implements Algorithm {
 
     }
 
-    private void backpropagation(int win, Node leaf){
+    private void backpropagation(int win, Node leaf, boolean lastPlayer2Turns){
         Node cur = leaf;
+        int counter = 0;
         while (true){
             cur.wins += win;
             cur.nSims += 1;
@@ -163,7 +150,17 @@ public class MCTS implements Algorithm {
                 break;
             }
             cur.value = UCT(cur.wins, cur.nSims, cur.parent.nSims+1, exploreConstant);
-            win = -1 * win;
+            if (!lastPlayer2Turns) {
+                win = -1 * win;
+                lastPlayer2Turns = true;
+            } else {
+                if (counter == 0){
+                    counter++;
+                } else {
+                    win = -1 * win;
+                    counter = 0;
+                }
+            }
             cur = cur.parent;
         }
     }
@@ -186,7 +183,6 @@ public class MCTS implements Algorithm {
         }
         return bestNode;
     }
-
     private ArrayList<BoardCoordinate> possibleMoves(Board simBoard){
         ArrayList<BoardCoordinate> moves = new ArrayList<>(simBoard.getCols() * simBoard.getCols());
         for (int i = 0; i < simBoard.getCols(); i++ ) {

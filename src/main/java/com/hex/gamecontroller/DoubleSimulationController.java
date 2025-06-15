@@ -9,15 +9,18 @@ import lombok.Getter;
 import lombok.Setter;
 
 
-public class SimulationController {
+public class DoubleSimulationController {
     private Board board;
     @Getter
     @Setter
     private GameState gameState;
     private Algorithm algorithm;
+    @Getter
+    @Setter
+    private int lastPlayer = 0;
 
 
-    public SimulationController(Board board, GameState gameState){
+    public DoubleSimulationController(Board board, GameState gameState){
         this.board = board;
         this.setGameState(gameState);
         this.algorithm = new RandomAlgorithm();
@@ -35,6 +38,11 @@ public class SimulationController {
         board.setPiece(x, y, player);
         updateBoard(player);
         if (!getGameState().isGameFinished()) {
+            if (!(lastPlayer == player)){
+                lastPlayer = player;
+                getGameState().doubleTurnIncrement();
+                return;
+            }
             getGameState().nextPlayer();
         }
     }
@@ -44,17 +52,11 @@ public class SimulationController {
         if (gameState.getBoardPieces() < checkThreshold){
             return;
         }
-
-
         if (board.checkWin(player)) {
             //   System.out.println("Player " + gameState.getCurrentPlayer() + " won");
             getGameState().setGameFinished(true);
         }
     }
 
-    public void removePiece(BoardCoordinate co) {
-        board.setPiece(co.x, co.y, 0);
-        getGameState().swapTurnDecrement();
 
-    }
 }
