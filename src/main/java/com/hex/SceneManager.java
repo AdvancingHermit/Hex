@@ -37,7 +37,7 @@ public class SceneManager {
     public Scene createScene(SceneType type) {
         return switch (type) {
             case MAIN_MENU -> new MainMenu(this).getScene();
-            case LOCAL_GAME -> new LocalGame().getScene();
+            case LOCAL_GAME -> new LocalGame(1, false, 1, GameMode.NORMAL).getScene();
             case ONLINE_GAME -> {
                 if (currentSocket != null && currentIn != null && currentOut != null) {
                     yield new OnlineGame(this, currentSocket, currentIn, currentOut).getScene();
