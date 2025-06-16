@@ -106,14 +106,10 @@ public class Connections extends SimpleConnectionsLogic {
         return toAdd(toAddSemiList, newCheckSemiVCs, semiVCs, color, 1);
     }
 
-    private int[][] createGraph(VirtualConnection semiVC, HashSet<VirtualConnection> VCs) {
-        int n = elecCols * elecRows;
+    private int[][] createGraph(HashSet<VirtualConnection> VCs, int n) {
         int[][] adjMatrix = new int[n][n];
-
         for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                adjMatrix[i][j] = 100;
-            }
+            Arrays.fill(adjMatrix[i], 100);
         }
         int x;
         int y;
@@ -127,16 +123,25 @@ public class Connections extends SimpleConnectionsLogic {
                 adjMatrix[y][x] = vc.depth;
             }
         }
+        return adjMatrix;
+    }
 
-        x = semiVC.x.val(elecCols);
-        y = semiVC.y.val(elecCols);
+    private int[][] semiGraph(int[][] baseGraph, VirtualConnection semiVC, int n) {
 
-        if (adjMatrix[x][y] > semiVC.depth) {
-            adjMatrix[x][y] = semiVC.depth;
-            adjMatrix[y][x] = semiVC.depth;
+        int[][] newGraph = new int[n][n];
+
+        for (int i = 0; i < n; i++) {
+            System.arraycopy(baseGraph[i], 0, newGraph[i], 0, n);
         }
 
-        return adjMatrix;
+        int x = semiVC.x.val(elecCols);
+        int y = semiVC.y.val(elecCols);
+
+        if (newGraph[x][y] > semiVC.depth) {
+            newGraph[x][y] = semiVC.depth;
+            newGraph[y][x] = semiVC.depth;
+        }
+        return newGraph;
     }
 
     private int tryAllSemis(HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs){
@@ -146,9 +151,11 @@ public class Connections extends SimpleConnectionsLogic {
         int bestDist = 1000;
         int currDist;
         int[][] currGraph;
+        int n = elecCols * elecRows;
+        int[][] baseGraph = createGraph(VCs, n);
 
         for (VirtualConnection semiVC : semiVCs){
-            currGraph = createGraph(semiVC, VCs);
+            currGraph = semiGraph(baseGraph, semiVC, n);
             currDist = dijkstra(currGraph, source)[sink];
             if (bestDist > currDist){
                 bestDist = currDist;
@@ -178,7 +185,6 @@ public class Connections extends SimpleConnectionsLogic {
                 }
             }
         }
-
         return dist;
     }
 
