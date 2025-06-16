@@ -30,7 +30,7 @@ public class ConnectionPosition implements Position{
 
     @Override
     public int getSize(){
-        return board.getRows()* board.getCols();
+        return board.getRows();
     }
 
     @Override
@@ -49,6 +49,8 @@ public class ConnectionPosition implements Position{
         int redDepth = defVal;
         int redSemiDepth = defVal;
 
+        board.HProcess();
+
         if (board.bestBlueVC != null){
             blueDepth = board.bestBlueVC.depth;
         } if (board.bestBlueSemiVC != null){
@@ -59,7 +61,7 @@ public class ConnectionPosition implements Position{
             redSemiDepth = board.bestRedSemiVC.depth;
         }
 
-        if (player == 1) {
+        if (player == Colors.BLUE.getValue()) {
             if (playerOnTurn) {
                 return redDepth - Math.min(blueDepth, blueSemiDepth);
             }
@@ -95,5 +97,9 @@ public class ConnectionPosition implements Position{
     @Override
     public void setplayerOnTurn(boolean playerOnTurn) {
         this.playerOnTurn = playerOnTurn;
+    }
+
+    public int[][] getBoard(){
+        return board.getBoard();
     }
 }

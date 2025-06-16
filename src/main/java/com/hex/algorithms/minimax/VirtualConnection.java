@@ -1,15 +1,17 @@
 package com.hex.algorithms.minimax;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class VirtualConnection implements Comparable<VirtualConnection> {
 
-    Move x, y;
-    Set<Move> carrier;
-    int depth;
+    public Move x;
+    public Move y;
+    public Set<Move> carrier;
+    public int depth;
 
-    VirtualConnection(Move x, Move y, Set<Move> carrier, int depth){
+    public VirtualConnection(Move x, Move y, Set<Move> carrier, int depth){
         this.x = x;
         this.y = y;
         this.carrier = new HashSet<>(carrier);
@@ -22,41 +24,32 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        if (!(o instanceof VirtualConnection)) {
-            return false;
-        }
-
-        VirtualConnection other = (VirtualConnection) o; // WHY JAVA WHY?
-        return equalEnds(other) && carrier.equals(other.carrier);
+        VirtualConnection other = (VirtualConnection) o;
+        return equalEnds(other) && Objects.equals(carrier, other.carrier);
     }
+
+
 
     public boolean equalEnds(VirtualConnection other) {
-        return (x.equals(other.x) && y.equals(other.y))
-                || (y.equals(other.x) && x.equals(other.y));
+        return (x.equals(other.x) && y.equals(other.y)) || (y.equals(other.x) && x.equals(other.y));
     }
 
-    public Move[] getConnectingEnd(VirtualConnection other){ // 0: Connection, 1: New X, 2: new Y
-        if (equalEnds(other)){
+    public Move[] getConnectingEnd(VirtualConnection other) {
+        if (equalEnds(other)) {
             return null;
         }
-        if (x.equals(other.y)) {
-            return new Move[]{x, y, other.x};
-        }
-        if (y.equals(other.x)) {
-            return new Move[]{y, x, other.y};
-        }
-        if (x.equals(other.x)) {
-            return new Move[]{x, y, other.y};
-        }
-        if (y.equals(other.y)) {
-            return new Move[]{y, x, other.x};
-        }
+
+        if (x.equals(other.y)) return new Move[]{x, y, other.x};
+        if (y.equals(other.x)) return new Move[]{y, x, other.y};
+        if (x.equals(other.x)) return new Move[]{x, y, other.y};
+        if (y.equals(other.y)) return new Move[]{y, x, other.x};
+
         return null;
     }
+
 
     // Tjekker om denne er sub af anden.
     public boolean isSubset(VirtualConnection other){
@@ -78,5 +71,16 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
     @Override
     public String toString(){
         return "Pos X: " + x + ", Pos Y: " + y + " With Depth: " + depth;
+    }
+
+    @Override
+    public int hashCode() {
+        // Ensure symmetric ends (x,y) and (y,x) have same hash
+        int endHash = x.hashCode() + y.hashCode();
+        return Integer.parseInt("" + endHash + depth);
+
+        // Prøver noget hurtigere men mindre unikt
+        //int carrierHash = carrier != null ? carrier.hashCode() : 0;
+        //return Objects.hash(endHash, carrierHash);
     }
 }
