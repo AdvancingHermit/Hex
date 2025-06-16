@@ -49,7 +49,7 @@ public class ConnectionPosition implements Position{
         int redDepth = defVal;
         int redSemiDepth = defVal;
 
-        board.HProcess();
+        int[] semiArr = board.HProcess();
 
         if (board.bestBlueVC != null){
             blueDepth = board.bestBlueVC.depth;
@@ -60,6 +60,9 @@ public class ConnectionPosition implements Position{
         } if (board.bestRedSemiVC != null){
             redSemiDepth = board.bestRedSemiVC.depth;
         }
+
+        if (blueSemiDepth > semiArr[0]) blueSemiDepth = semiArr[0];
+        if (redSemiDepth > semiArr[1]) redSemiDepth = semiArr[1];
 
         if (player == Colors.BLUE.getValue()) {
             if (playerOnTurn) {

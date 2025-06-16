@@ -32,7 +32,6 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
     }
 
 
-
     public boolean equalEnds(VirtualConnection other) {
         return (x.equals(other.x) && y.equals(other.y)) || (y.equals(other.x) && x.equals(other.y));
     }
@@ -77,10 +76,6 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
     public int hashCode() {
         // Ensure symmetric ends (x,y) and (y,x) have same hash
         int endHash = x.hashCode() + y.hashCode();
-        return Integer.parseInt("" + endHash + depth);
-
-        // Prøver noget hurtigere men mindre unikt
-        //int carrierHash = carrier != null ? carrier.hashCode() : 0;
-        //return Objects.hash(endHash, carrierHash);
+        return endHash*10 + depth; // Er betydelig hurtigere og unik nok
     }
 }
