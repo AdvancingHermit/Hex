@@ -21,7 +21,7 @@ public class Move {
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        return x * 21 + y; // Antager at x og y har vals [0; 20]
     }
 
     public int val(int mult){

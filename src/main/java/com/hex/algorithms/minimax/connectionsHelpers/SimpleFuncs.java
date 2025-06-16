@@ -6,6 +6,7 @@ import com.hex.algorithms.minimax.VirtualConnection;
 import com.hex.components.Board;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class SimpleFuncs extends Board {
 
@@ -13,14 +14,19 @@ public class SimpleFuncs extends Board {
     protected ArrayList<Move> blueCells;
     protected ArrayList<Move> redCells;
 
-    protected ArrayList<VirtualConnection> blueVCs;
-    protected ArrayList<VirtualConnection> redVCs;
-    protected ArrayList<VirtualConnection> blueSemiVCs;
-    protected ArrayList<VirtualConnection> redSemiVCs;
+    protected HashSet<VirtualConnection> blueVCs;
+    protected HashSet<VirtualConnection> redVCs;
+    protected HashSet<VirtualConnection> blueSemiVCs;
+    protected HashSet<VirtualConnection> redSemiVCs;
 
     protected int[][] elecBoard;
     protected int elecRows;
     protected int elecCols;
+
+    protected Move[] neighborMove = {
+            new Move(1, 0), new Move(-1, 0), new Move(0, 1),
+            new Move(0, -1), new Move(1, -1), new Move(-1, 1)
+    };
 
     protected static enum Colors {
         RED(2),
@@ -77,6 +83,15 @@ public class SimpleFuncs extends Board {
 
     protected boolean movesOnRightRedEdge(VirtualConnection vc) {
         return vc.x.y == elecRows - 1 || vc.y.y == elecRows - 1;
+    }
+
+    protected boolean checkIfNeighbor(Move m1, Move m2) {
+        for (Move neighbor : neighborMove){
+            if (neighbor.equals(new Move(m1.x - m2.x, m1.y - m2.y))){
+                return true;
+            }
+        }
+        return false;
     }
 
 

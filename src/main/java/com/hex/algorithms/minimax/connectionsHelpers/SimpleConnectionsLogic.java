@@ -9,12 +9,11 @@ import java.util.*;
 
 public class SimpleConnectionsLogic extends SimpleFuncs {
 
-    protected boolean toAdd(ArrayList<VirtualConnection> toAddList, ArrayList<VirtualConnection> parentList, int color, int type) {
-        ArrayList<VirtualConnection> hasBeenChecked = new ArrayList<>();
-        boolean somethingChanged = false;
+    protected void toAdd(HashSet<VirtualConnection> toAddList, HashSet<VirtualConnection> parentList, int color, int type) {
+        HashSet<VirtualConnection> hasBeenChecked = new HashSet<>();
         VirtualConnection vcParent;
         VirtualConnection vcToBeAdded;
-
+        Iterator<VirtualConnection> parentIterator;
 
         Iterator<VirtualConnection> toAddIterator = toAddList.iterator();
         boolean add = false;
@@ -22,11 +21,11 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
             vcToBeAdded = toAddIterator.next();
             add = true;
 
-            Iterator<VirtualConnection> parentIterator = parentList.iterator();
+            parentIterator = parentList.iterator();
             while (parentIterator.hasNext()) {
                 vcParent = parentIterator.next();
 
-                if (vcParent.equals(vcToBeAdded) || vcParent.isSubset(vcToBeAdded)) {
+                if (vcParent.isSubset(vcToBeAdded)) {
                     add = false;
                     toAddIterator.remove();
                     break;
@@ -39,38 +38,30 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
             }
         }
         checkRedundancies(hasBeenChecked);
-        for (VirtualConnection elem : hasBeenChecked) {
-            parentList.add(elem);
-            somethingChanged = true;
-        }
-        return somethingChanged;
+        parentList.addAll(hasBeenChecked);
     }
 
-    protected void checkRedundancies(List<VirtualConnection> vcList) {
-        Set<Integer> indicesToRemove = new HashSet<>();
+    protected void checkRedundancies(HashSet<VirtualConnection> vcList) {
+        Set<VirtualConnection> indicesToRemove = new HashSet<>();
 
-        for (int i = 0; i < vcList.size(); i++) {
-            if (indicesToRemove.contains(i)) continue;
+        for (VirtualConnection vc1 : vcList) {
+            if (indicesToRemove.contains(vc1)) continue;
 
-            VirtualConnection vc1 = vcList.get(i);
+            for (VirtualConnection vc2 : vcList) {
+                if (indicesToRemove.contains(vc2) || vc1 == vc2) continue;
 
-            for (int j = i + 1; j < vcList.size(); j++) {
-                if (indicesToRemove.contains(j)) continue;
-
-                VirtualConnection vc2 = vcList.get(j);
-
-                if (vc2.isSubset(vc1) ) {
-                    indicesToRemove.add(i);
-                } else if (vc1.isSubset(vc2) || vc2.equals(vc1)) {
-                    indicesToRemove.add(j);
+                if (vc2.isSubset(vc1)) {
+                    indicesToRemove.add(vc1);
+                } else if (vc1.isSubset(vc2)) {
+                    indicesToRemove.add(vc2);
                     break;
                 }
             }
         }
-        List<VirtualConnection> filtered = new ArrayList<>();
-        for (int i = 0; i < vcList.size(); i++) {
-            if (!indicesToRemove.contains(i)) {
-                filtered.add(vcList.get(i));
+        HashSet<VirtualConnection> filtered = new HashSet<>();
+        for (VirtualConnection vc1 : vcList) {
+            if (!indicesToRemove.contains(vc1)) {
+                filtered.add(vc1);
             }
         }
         vcList.clear();
@@ -95,7 +86,7 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
     };
 
 
-    private void findBridges(ArrayList<VirtualConnection> VCs, ArrayList<VirtualConnection> semiVCs, Move move, int[] cellVals, int color) {// Word
+    private void findBridges(HashSet<VirtualConnection> VCs, HashSet<VirtualConnection> semiVCs, Move move, int[] cellVals, int color) {// Word
         for (int i = 0; i < deltaMoves.length; i++){
             if (cellVals[deltaMoves[i][1].x] == 0 && cellVals[deltaMoves[i][1].y] == 0) {
                 int tempx = move.x + deltaMoves[i][0].x;
@@ -108,24 +99,20 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
                         tempCarrier.add(new Move(move.x + brHelper[i][0].x, move.y + brHelper[i][0].y));
                         tempCarrier.add(new Move(move.x + brHelper[i][1].x, move.y + brHelper[i][1].y));
                         VirtualConnection tempVC = new VirtualConnection(move, new Move(tempx, tempy), tempCarrier, 2);
-                        if (!VCs.contains(tempVC)){
-                            VCs.add(tempVC);
-                        }
+                        VCs.add(tempVC);
                     } if (cell == 0) {
                         HashSet<Move> tempCarrier = new HashSet<>(2);
                         tempCarrier.add(new Move(move.x + brHelper[i][0].x, move.y + brHelper[i][0].y));
                         tempCarrier.add(new Move(move.x + brHelper[i][1].x, move.y + brHelper[i][1].y));
                         VirtualConnection tempVC = new VirtualConnection(move, new Move(tempx, tempy), tempCarrier, 3);
-                        if (!semiVCs.contains(tempVC)){
-                            semiVCs.add(tempVC);
-                        }
+                        semiVCs.add(tempVC);
                     }
                 }
             }
         }
     }
 
-    public void findBaseVCs(Move move, ArrayList<VirtualConnection> semiVCs, ArrayList<VirtualConnection> VCs, int color) {
+    public void findBaseVCs(Move move, HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs, int color) {
         int[] cellVals = new int[6];
         for (int i = 0; i < directions.length; i++) {
             int[] dir = directions[i];
@@ -145,40 +132,35 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
             VirtualConnection currVC = new VirtualConnection(move, y, carrier, 0);
 
             if (cell == 0) {
-                if (!semiVCs.contains(currVC)) {
                     currVC.depth = 1;
                     semiVCs.add(currVC);
-                }
             }
-            if (cell == color && !VCs.contains(currVC)) {
+            if (cell == color) {
                 VCs.add(currVC);
             }
         }
         findBridges(VCs, semiVCs, move, cellVals, color);
     }
 
-    private ArrayList<ArrayList<VirtualConnection>> equalEndsOrRules(ArrayList<VirtualConnection> semiVCs) {
-        ArrayList<ArrayList<VirtualConnection>> orRulePrelim = new ArrayList<>();
-        HashSet<Integer> alreadyAdded = new HashSet<>();
-        ArrayList<VirtualConnection> currList;
+    private ArrayList<HashSet<VirtualConnection>> equalEndsOrRules(HashSet<VirtualConnection> semiVCs) {
+        ArrayList<HashSet<VirtualConnection>> orRulePrelim = new ArrayList<>();
+        HashSet<VirtualConnection> alreadyAdded = new HashSet<>();
+        HashSet<VirtualConnection> currList;
 
 
-        for (int i = 0; i < semiVCs.size(); i++) {
-            VirtualConnection vc1 = semiVCs.get(i);
-            if (alreadyAdded.contains(i)){
+        for (VirtualConnection vc1 : semiVCs) {
+            if (alreadyAdded.contains(vc1)){
                 continue;
             }
-            currList = new ArrayList<>();
+            currList = new HashSet<>();
             currList.add(vc1);
-            for (int j = i + 1; j < semiVCs.size(); j++) {
-                if (alreadyAdded.contains(j)){
+            for (VirtualConnection vc2 : semiVCs) {
+                if (alreadyAdded.contains(vc2)){
                     continue;
                 }
-                VirtualConnection vc2 = semiVCs.get(j);
-
                 if (vc1 != vc2 && vc1.equalEnds(vc2)) {
-                    alreadyAdded.add(i);
-                    alreadyAdded.add(j);
+                    alreadyAdded.add(vc1);
+                    alreadyAdded.add(vc2);
                     currList.add(vc2);
                 }
             }
@@ -190,43 +172,65 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
         return orRulePrelim;
     }
 
-    public boolean applyOrRule(ArrayList<VirtualConnection> semiVCs, ArrayList<VirtualConnection> VCs, int color) {
+    public void applyOrRule(HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs, int color) {
         int maxDepth = -1;
         HashSet<Move> currCarrier;
         Move x;
         Move y;
         VirtualConnection vc = new VirtualConnection(null, null, new HashSet<>(0), -1); // Så den builder. List kan ikke være tom
-        ArrayList<ArrayList<VirtualConnection>> orRulePrelim = equalEndsOrRules(semiVCs);
+        ArrayList<HashSet<VirtualConnection>> orRulePrelim = equalEndsOrRules(semiVCs);
         VirtualConnection tempVC;
 
-        boolean changed = false;
-        for (ArrayList<VirtualConnection> list : orRulePrelim){
+        for (HashSet<VirtualConnection> list : orRulePrelim){
             currCarrier = new HashSet<>();
-            for (int i = 0; i < list.size(); i++){
-                vc = list.get(i);
+            for (VirtualConnection vc_temp : list){
+                vc = vc_temp;
                 currCarrier.addAll(vc.carrier);
                 if (maxDepth < vc.depth){
                     maxDepth = vc.depth;
                 }
             }
             tempVC = new VirtualConnection(vc.x, vc.y, currCarrier, maxDepth + 2);
-            if (!VCs.contains(tempVC)){
-                VCs.add(tempVC);
-                changed = true;
-            }
+            VCs.add(tempVC);
         }
-        return changed;
     }
 
-    public boolean applyAndRule(ArrayList<VirtualConnection> semiVCs, ArrayList<VirtualConnection> VCs, int color) {
-        ArrayList<VirtualConnection> toAddList = new ArrayList<>();
-        ArrayList<VirtualConnection> toAddSemiList = new ArrayList<>();
+    public boolean andRuleCheck(HashSet<VirtualConnection> toAddVCs, HashSet<VirtualConnection> VCs, int color) {
+        boolean change = false;
 
-        for (int i = 0; i < VCs.size(); i++) {
-            VirtualConnection vc1 = VCs.get(i);
+        Iterator<VirtualConnection> iterator = toAddVCs.iterator();
+        VirtualConnection vc1;
+        while (iterator.hasNext()) {
+            vc1 = iterator.next();
+            for (VirtualConnection vc2 : VCs){
+                if (vc1.isSubset(vc2)){
+                    iterator.remove();
+                }
+            }
+        }
+        return change;
+    }
 
-            for (int j = i + 1; j < VCs.size(); j++) {
-                VirtualConnection vc2 = VCs.get(j);
+    private void semiAndRuleHelper(HashSet<VirtualConnection> toAdd, HashSet<VirtualConnection> VCs){
+        Iterator<VirtualConnection> iterator = toAdd.iterator();
+        VirtualConnection toAddVC;
+        while (iterator.hasNext()){
+            toAddVC = iterator.next();
+            for (VirtualConnection checkVC : VCs){
+                if (toAddVC.isSubset(checkVC)){
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
+    public void applyAndRule(HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs, int color) {
+        HashSet<VirtualConnection> toAddList = new HashSet<>();
+        HashSet<VirtualConnection> toAddSemiList = new HashSet<>();
+
+        for (VirtualConnection vc1 : VCs) {
+            for (VirtualConnection vc2 : VCs) {
+                if (vc1 == vc2) { continue; }
 
                 Move[] connection = vc1.getConnectingEnd(vc2);
                 if (connection != null && (!vc1.endIsCarrier(vc2) && !vc2.endIsCarrier(vc1)) ) {
@@ -237,25 +241,22 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
 
 
                     VirtualConnection currVC = new VirtualConnection(connection[1], connection[2], combinedCarrier, vc1.depth + vc2.depth);
+                    if ( (bothBlueMovesOnSameEdge(currVC) && (color == Colors.BLUE.getValue())) || (bothRedMovesOnSameEdge(currVC) && (color == Colors.RED.getValue())) ) { continue; }
                     if (cell == 0){
                         combinedCarrier.add(connection[0]);
-                        if (semiVCs.contains(currVC)){ continue; }
                         toAddSemiList.add(currVC);
-
                     } else if (cell == color) {
-                        if (VCs.contains(currVC)){ continue; }
                         toAddList.add(currVC);
                     }
                 }
             }
         }
         checkRedundancies(toAddSemiList);
-        boolean a = toAdd(toAddSemiList, semiVCs, color, 1);
+        semiAndRuleHelper(toAddSemiList, VCs);
+        toAdd(toAddSemiList, semiVCs, color, 1);
 
         checkRedundancies(toAddList);
-        boolean b = toAdd(toAddList, VCs, color, 0);
-
-        return b || a;
+        toAdd(toAddList, VCs, color, 0);
     }
 
 

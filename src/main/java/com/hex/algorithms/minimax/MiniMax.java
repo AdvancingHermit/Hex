@@ -1,5 +1,7 @@
 package com.hex.algorithms.minimax;
 
+import com.hex.components.Board;
+
 import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -13,19 +15,23 @@ public class MiniMax {
 
     public MiniMax(){}
 
-    private int funnyFac(int size){
-        int res = size;
-        for (int i = 1; i < maxDepth; i++){
-            res = res * (size-i);
-        }
-        return res;
-    }
-
     public Move findBestMove(Position position, int player) {
         float bestValue = Float.NEGATIVE_INFINITY;
         Move bestMove = null;
 
         evalMap = new HashMap<>(Integer.MAX_VALUE);
+
+        Board forTesting = new Board(5, 5);
+
+        forTesting.setPiece(0,4,1);
+        forTesting.setPiece(2,2,1);
+        forTesting.setPiece(3,3,1);
+
+        forTesting.setPiece(0,2,2);
+        forTesting.setPiece(2,4,2);
+        forTesting.setPiece(4,1,2);
+
+        //position = new ConnectionPosition(forTesting);
 
         if (position.getPossibleMoves().size() == position.getSize()*position.getSize()){
             bestMove = position.getMiddleMove();
@@ -34,7 +40,6 @@ public class MiniMax {
         }
 
         for (Move move : position.getPossibleMoves()) {
-            //Move move = new Move(0, 0);
             Position newPosition = position.Move(move, player);
             System.out.println(move);
             float value = alphabeta(newPosition, maxDepth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player);
@@ -63,11 +68,12 @@ public class MiniMax {
 
     private float alphabeta(Position pos, int depth, float alpha, float beta, boolean maximizingPlayer, int currentPlayer, int originalPlayer) {
 
-        if (pos.checkWin(originalPlayer))   return Float.POSITIVE_INFINITY;
-        if (pos.checkWin(3 - originalPlayer))     return Float.NEGATIVE_INFINITY;
+        if (pos.checkWin(originalPlayer)) { return Float.POSITIVE_INFINITY; }
+        if (pos.checkWin(3 - originalPlayer)) { return Float.NEGATIVE_INFINITY; }
 
 
         if (depth == 0 || pos.getPossibleMoves().isEmpty()) {
+
             BigInteger key = getEvalmapKey(pos);
             if (evalMap.containsKey(key)){
                 return evalMap.get(key);

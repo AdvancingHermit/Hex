@@ -72,4 +72,15 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
     public String toString(){
         return "Pos X: " + x + ", Pos Y: " + y + " With Depth: " + depth;
     }
+
+    @Override
+    public int hashCode() {
+        // Ensure symmetric ends (x,y) and (y,x) have same hash
+        int endHash = x.hashCode() + y.hashCode();
+        return Integer.parseInt("" + endHash + depth);
+
+        // Prøver noget hurtigere men mindre unikt
+        //int carrierHash = carrier != null ? carrier.hashCode() : 0;
+        //return Objects.hash(endHash, carrierHash);
+    }
 }
