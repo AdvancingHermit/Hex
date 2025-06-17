@@ -1,5 +1,6 @@
 package com.hex.algorithms.minimax;
 
+import com.hex.algorithms.minimax.connectionsHelpers.SetHolder;
 import com.hex.components.Board;
 
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public class YPosition implements Position  {
 
 
     @Override
-    public float evaluate(int player) {
+    public float evaluate(int player, SetHolder setHolder) {
         System.out.println("WOWIDEK");
         int n = yRows;
         float[][][] eval = new float[yRows][yCols][n];

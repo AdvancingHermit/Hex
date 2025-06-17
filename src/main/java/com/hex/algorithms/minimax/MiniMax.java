@@ -1,5 +1,6 @@
 package com.hex.algorithms.minimax;
 
+import com.hex.algorithms.minimax.connectionsHelpers.SetHolder;
 import com.hex.components.Board;
 
 import java.lang.reflect.Array;
@@ -24,7 +25,8 @@ public class MiniMax {
         for (Move move : position.getPossibleMoves()) {
             Position newPosition = position.Move(move, player);
             System.out.println(move);
-            float value = alphabeta(newPosition, maxDepth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player);
+            SetHolder setHolder = new SetHolder();
+            float value = alphabeta(newPosition, maxDepth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player, setHolder);
             if (value > bestValue) {
                 bestValue = value;
                 bestMove = move;
@@ -48,7 +50,7 @@ public class MiniMax {
         return id;
     }
 
-    private float alphabeta(Position pos, int depth, float alpha, float beta, boolean maximizingPlayer, int currentPlayer, int originalPlayer) {
+    private float alphabeta(Position pos, int depth, float alpha, float beta, boolean maximizingPlayer, int currentPlayer, int originalPlayer, SetHolder setHolder) {
 
         if (pos.checkWin(originalPlayer)) { return Float.POSITIVE_INFINITY; }
         if (pos.checkWin(3 - originalPlayer)) { return Float.NEGATIVE_INFINITY; }
@@ -60,7 +62,7 @@ public class MiniMax {
             if (evalMap.containsKey(key)){
                 return evalMap.get(key);
             }
-            float eval = pos.evaluate(originalPlayer);
+            float eval = pos.evaluate(originalPlayer, setHolder);
             evalMap.put(key, eval);
             return eval;
         }
@@ -70,7 +72,7 @@ public class MiniMax {
             for (Move move : pos.getPossibleMoves()) {
                 Position nextPos = pos.Move(move, currentPlayer);
 
-                value = Math.max(value, alphabeta(nextPos, depth - 1, alpha, beta, false, 3 - currentPlayer, originalPlayer));
+                value = Math.max(value, alphabeta(nextPos, depth - 1, alpha, beta, false, 3 - currentPlayer, originalPlayer, setHolder));
                 if (value >= beta) break;
                 alpha = Math.max(alpha, value);
 
@@ -80,7 +82,7 @@ public class MiniMax {
             float value = Float.POSITIVE_INFINITY;
             for (Move move : pos.getPossibleMoves()) {
                 Position nextPos = pos.Move(move, currentPlayer);
-                value = Math.min(value, alphabeta(nextPos, depth - 1, alpha, beta, true, 3 - currentPlayer, originalPlayer));
+                value = Math.min(value, alphabeta(nextPos, depth - 1, alpha, beta, true, 3 - currentPlayer, originalPlayer, setHolder));
                 if (value <= alpha) break;
                 beta = Math.min(beta, value);
             }

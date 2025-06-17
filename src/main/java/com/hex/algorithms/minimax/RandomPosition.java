@@ -1,5 +1,6 @@
 package com.hex.algorithms.minimax;
 
+import com.hex.algorithms.minimax.connectionsHelpers.SetHolder;
 import com.hex.components.Board;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class RandomPosition implements Position{
     }
 
     @Override
-    public float evaluate(int player) {
+    public float evaluate(int player, SetHolder setHolder) {
         long seed = System.currentTimeMillis();
         Random rand = new Random(seed);
         return rand.nextFloat(0,1);

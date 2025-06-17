@@ -23,7 +23,7 @@ public class SimpleFuncs extends Board {
     protected int elecRows;
     protected int elecCols;
 
-    protected Move[] neighborMove = {
+    protected static Move[] neighborMove = {
             new Move(1, 0), new Move(-1, 0), new Move(0, 1),
             new Move(0, -1), new Move(1, -1), new Move(-1, 1)
     };
@@ -97,16 +97,6 @@ public class SimpleFuncs extends Board {
     protected boolean moveOnRightBlueEdge(Move move) {
         return move.x == elecCols-1;
     }
-
-    protected boolean checkIfNeighbor(Move m1, Move m2) {
-        for (Move neighbor : neighborMove){
-            if (neighbor.equals(new Move(m1.x - m2.x, m1.y - m2.y))){
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     public SimpleFuncs(int rows, int cols) {
         super(rows, cols);

@@ -1,43 +1,13 @@
 package com.hex.algorithms.minimax;
+import com.hex.algorithms.minimax.connectionsHelpers.SetHolder;
 import com.hex.algorithms.minimax.connectionsHelpers.SimpleConnectionsLogic;
 import com.hex.components.Board;
 import java.util.*;
 
 public class Connections extends SimpleConnectionsLogic {
 
-    HashSet<VirtualConnection> blueSemiWinConnections;
-    HashSet<VirtualConnection> blueWinConnections;
-    HashSet<VirtualConnection> redSemiWinConnections;
-    HashSet<VirtualConnection> redWinConnections;
-    VirtualConnection bestBlueVC;
-    VirtualConnection bestBlueSemiVC;
-    VirtualConnection bestRedVC;
-    VirtualConnection bestRedSemiVC;
-
     HashSet<VirtualConnection> blueEdgeConnections;
     HashSet<VirtualConnection> redEdgeConnections;
-
-
-    private void addToAdj(VirtualConnection vc, int type, int color) { // VC = 0, Semi = 1
-        if (color == Colors.BLUE.getValue()) {
-            if (movesOnBothBlueEdges(vc.x, vc.y)) {
-                if (type == 0) {
-                    blueWinConnections.add(vc);
-                } else {
-                    blueSemiWinConnections.add(vc);
-                }
-            }
-        }
-        if (color == Colors.RED.getValue()) {
-            if (movesOnBothRedEdges(vc.x, vc.y)) {
-                if (type == 0) {
-                    redWinConnections.add(vc);
-                } else {
-                    redSemiWinConnections.add(vc);
-                }
-            }
-        }
-    }
 
     private int[][] createGraph(HashSet<VirtualConnection> VCs, int n) {
         int[][] adjMatrix = new int[n][n];
@@ -59,24 +29,6 @@ public class Connections extends SimpleConnectionsLogic {
         return adjMatrix;
     }
 
-    private int[][] semiGraph(int[][] baseGraph, VirtualConnection semiVC, int n) {
-
-        int[][] newGraph = new int[n][n];
-
-        for (int i = 0; i < n; i++) {
-            System.arraycopy(baseGraph[i], 0, newGraph[i], 0, n);
-        }
-
-        int x = semiVC.x.val(elecCols);
-        int y = semiVC.y.val(elecCols);
-
-        if (newGraph[x][y] > semiVC.depth) {
-            newGraph[x][y] = semiVC.depth;
-            newGraph[y][x] = semiVC.depth;
-        }
-        return newGraph;
-    }
-
     private int getShortestEnd(HashSet<VirtualConnection> VCs, int source, int target){
         int n = elecCols * elecRows;
         return dijkstra(createGraph(VCs, n), source)[target];
@@ -85,54 +37,70 @@ public class Connections extends SimpleConnectionsLogic {
     private int tryAllSemis(HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs, int source, int target){
         int bestDist = 10000;
         int currDist;
-        int[][] currGraph;
         int n = elecCols * elecRows;
         int[][] baseGraph = createGraph(VCs, n);
+        int oldVal;
 
         for (VirtualConnection semiVC : semiVCs){
-            currGraph = semiGraph(baseGraph, semiVC, n);
-            currDist = dijkstra(currGraph, source)[target];
+            int x = semiVC.x.val(elecCols);
+            int y = semiVC.y.val(elecCols);
+            oldVal = baseGraph[x][y];
+            if (oldVal > semiVC.depth) {
+                baseGraph[x][y] = semiVC.depth;
+                baseGraph[y][x] = semiVC.depth;
+            }
+            currDist = dijkstra(baseGraph, source)[target];
             if (bestDist > currDist){
                 bestDist = currDist;
             }
+            baseGraph[x][y] = oldVal;
+            baseGraph[y][x] = oldVal;
         }
         return bestDist;
     }
 
     public static int[] dijkstra(int[][] graph, int source) {
         int n = graph.length;
-        int[] dist = new int[n];          // Shortest distances from source
-        boolean[] visited = new boolean[n]; // Track visited vertices
-
-        // Initialize distances to infinity and visited to false
+        int[] dist = new int[n];
+        boolean[] visited = new boolean[n];
         Arrays.fill(dist, Integer.MAX_VALUE);
         dist[source] = 0;
 
-        for (int i = 0; i < n - 1; i++) {
-            int u = minDistance(dist, visited);
-            visited[u] = true;
+        // min‑heap of (distance, vertex)
+        PriorityQueue<Vertex> pq = new PriorityQueue<>();
+        pq.add(new Vertex(source, 0));
 
+        while (!pq.isEmpty()) {
+            Vertex u = pq.poll();
+            if (visited[u.id]) continue;
+            visited[u.id] = true;
+
+            // relax neighbors
             for (int v = 0; v < n; v++) {
-                if (!visited[v] &&
-                        dist[u] != Integer.MAX_VALUE &&
-                        dist[u] + graph[u][v] < dist[v]) {
-                    dist[v] = dist[u] + graph[u][v];
+                int weight = graph[u.id][v];
+                if (!visited[v] && u.dist + weight < dist[v]) {
+                    dist[v] = u.dist + weight;
+                    pq.add(new Vertex(v, dist[v]));
                 }
             }
         }
+
         return dist;
     }
 
-    private static int minDistance(int[] dist, boolean[] visited) {
-        int min = Integer.MAX_VALUE, minIndex = -1;
-        for (int v = 0; v < dist.length; v++) {
-            if (!visited[v] && dist[v] <= min) {
-                min = dist[v];
-                minIndex = v;
-            }
+    private static class Vertex implements Comparable<Vertex> {
+        final int id;
+        final int dist;
+        Vertex(int id, int dist) {
+            this.id = id;
+            this.dist = dist;
         }
-        return minIndex;
+        @Override
+        public int compareTo(Vertex other) {
+            return Integer.compare(this.dist, other.dist);
+        }
     }
+
 
     private void cleanConnections(){
         Iterator<VirtualConnection> iterator = blueVCs.iterator();
@@ -395,7 +363,7 @@ public class Connections extends SimpleConnectionsLogic {
         }
     }
 
-    public int[] HProcess() {
+    public int[] HProcess(SetHolder setHolder) {
         int[] retArr = new int[4];
         boolean changed = true;
         int ogSize;
@@ -403,15 +371,21 @@ public class Connections extends SimpleConnectionsLogic {
 
         cleanConnections();
 
-        HashSet<VirtualConnection> newBlueVCs = new HashSet<>();
-        HashSet<VirtualConnection> newBlueSemiVCs = new HashSet<>();
-        HashSet<VirtualConnection> newRedVCs = new HashSet<>();
-        HashSet<VirtualConnection> newRedSemiVCs = new HashSet<>();
+        setHolder.clearAll();
 
-        HashSet<VirtualConnection> checkNewBlueVCs = new HashSet<>(blueVCs);
-        HashSet<VirtualConnection> checkNewBlueSemiVCs = new HashSet<>(blueSemiVCs);
-        HashSet<VirtualConnection> checkNewRedVCs = new HashSet<>(redVCs);
-        HashSet<VirtualConnection> checkNewRedSemiVCs = new HashSet<>(redSemiVCs);
+        HashSet<VirtualConnection> newBlueVCs = setHolder.newBlueVCs;
+        HashSet<VirtualConnection> newBlueSemiVCs = setHolder.newBlueSemiVCs;
+        HashSet<VirtualConnection> newRedVCs = setHolder.newRedVCs;
+        HashSet<VirtualConnection> newRedSemiVCs = setHolder.newRedSemiVCs;
+        HashSet<VirtualConnection> checkNewBlueVCs = setHolder.checkNewBlueVCs;
+        HashSet<VirtualConnection> checkNewBlueSemiVCs = setHolder.checkNewBlueSemiVCs;
+        HashSet<VirtualConnection> checkNewRedVCs = setHolder.checkNewRedVCs;
+        HashSet<VirtualConnection> checkNewRedSemiVCs = setHolder.checkNewRedSemiVCs;
+
+        checkNewBlueVCs.addAll(blueVCs);
+        checkNewBlueSemiVCs.addAll(blueSemiVCs);
+        checkNewRedVCs.addAll(redVCs);
+        checkNewRedSemiVCs.addAll(redSemiVCs);
 
         blueVCs.clear();
         blueSemiVCs.clear();
@@ -476,15 +450,8 @@ public class Connections extends SimpleConnectionsLogic {
             if (!changed) { break; }
         }
 
-        if (!blueWinConnections.isEmpty()) bestBlueVC = Collections.min(blueWinConnections);
-        if (!blueSemiWinConnections.isEmpty()) bestBlueSemiVC = Collections.min(blueSemiWinConnections);
-        if (!redWinConnections.isEmpty()) bestRedVC = Collections.min(redWinConnections);
-        if (!redSemiWinConnections.isEmpty()) bestRedSemiVC = Collections.min(redSemiWinConnections);
-
         endRuleBlue(blueSemiVCs, blueVCs);
         endRuleRed(redSemiVCs, redVCs);
-
-        findAllEndVCs();
 
         blueVCs.addAll(blueEdgeConnections);
         redVCs.addAll(redEdgeConnections);
@@ -495,22 +462,6 @@ public class Connections extends SimpleConnectionsLogic {
         retArr[3] = tryAllSemis(redSemiVCs, redVCs, 1, (elecRows-1)*elecCols+1);
 
         return retArr;
-    }
-
-    private void findEndVCsFromList(HashSet<VirtualConnection> VCs, int type, int color){
-        Iterator<VirtualConnection> iterator = VCs.iterator();
-        VirtualConnection vc;
-        while (iterator.hasNext()) {
-            vc = iterator.next();
-            addToAdj(vc, type, color);
-        }
-    }
-
-    private void findAllEndVCs(){
-        findEndVCsFromList(blueVCs, 0, Colors.BLUE.getValue());
-        findEndVCsFromList(blueSemiVCs, 1, Colors.BLUE.getValue());
-        findEndVCsFromList(redVCs, 0, Colors.RED.getValue());
-        findEndVCsFromList(redSemiVCs, 1, Colors.RED.getValue());
     }
 
     private void removeAllWithMove(HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs, Move move){
@@ -568,10 +519,6 @@ public class Connections extends SimpleConnectionsLogic {
         blueVCs = new HashSet<VirtualConnection>();
         redSemiVCs = new HashSet<VirtualConnection>();
         redVCs = new HashSet<VirtualConnection>();
-        blueSemiWinConnections = new HashSet<VirtualConnection>();
-        blueWinConnections = new HashSet<VirtualConnection>();
-        redSemiWinConnections = new HashSet<VirtualConnection>();
-        redWinConnections = new HashSet<VirtualConnection>();
     }
 
     public Connections(Board board){
@@ -642,11 +589,6 @@ public class Connections extends SimpleConnectionsLogic {
         blueVCs = new HashSet<VirtualConnection>(other.blueVCs);
         redSemiVCs = new HashSet<VirtualConnection>(other.redSemiVCs);
         redVCs = new HashSet<VirtualConnection>(other.redVCs);
-
-        blueWinConnections = new HashSet<>();
-        blueSemiWinConnections = new HashSet<>();
-        redWinConnections = new HashSet<>();
-        redSemiWinConnections = new HashSet<>();
 
         blueEdgeConnections = new HashSet<VirtualConnection>(other.blueEdgeConnections);
         redEdgeConnections = new HashSet<VirtualConnection>(other.redEdgeConnections);

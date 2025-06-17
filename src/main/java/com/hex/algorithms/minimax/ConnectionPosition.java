@@ -1,5 +1,6 @@
 package com.hex.algorithms.minimax;
 
+import com.hex.algorithms.minimax.connectionsHelpers.SetHolder;
 import com.hex.components.Board;
 
 import java.util.ArrayList;
@@ -42,24 +43,14 @@ public class ConnectionPosition implements Position{
     }
 
     @Override
-    public float evaluate(int player) {
+    public float evaluate(int player, SetHolder setHolder) {
         int defVal = board.getRows() * board.getCols();
         int blueDepth = defVal;
         int blueSemiDepth = defVal;
         int redDepth = defVal;
         int redSemiDepth = defVal;
 
-        int[] evalArr = board.HProcess();
-
-        if (board.bestBlueVC != null){
-            blueDepth = board.bestBlueVC.depth;
-        } if (board.bestBlueSemiVC != null){
-            blueSemiDepth = board.bestBlueSemiVC.depth;
-        } if (board.bestRedVC != null){
-            redDepth = board.bestRedVC.depth;
-        } if (board.bestRedSemiVC != null){
-            redSemiDepth = board.bestRedSemiVC.depth;
-        }
+        int[] evalArr = board.HProcess(setHolder);
 
         if (blueDepth > evalArr[0]) blueDepth = evalArr[0];
         if (blueSemiDepth > evalArr[1]) blueSemiDepth = evalArr[1];
