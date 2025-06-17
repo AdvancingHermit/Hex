@@ -116,7 +116,7 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
                         HashSet<Move> tempCarrier = new HashSet<>(2);
                         tempCarrier.add(new Move(move.x + brHelper[i][0].x, move.y + brHelper[i][0].y));
                         tempCarrier.add(new Move(move.x + brHelper[i][1].x, move.y + brHelper[i][1].y));
-                        VirtualConnection tempVC = new VirtualConnection(move, new Move(tempx, tempy), tempCarrier, 3);
+                        VirtualConnection tempVC = new VirtualConnection(move, new Move(tempx, tempy), tempCarrier, 3, new Move(tempx, tempy));
                         semiVCs.add(tempVC);
                     }
                 }
@@ -144,8 +144,9 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
             VirtualConnection currVC = new VirtualConnection(move, y, carrier, 0);
 
             if (cell == 0) {
-                    currVC.depth = 1;
-                    semiVCs.add(currVC);
+                currVC.depth = 1;
+                currVC.criticalCell = y;
+                semiVCs.add(currVC);
             }
             if (cell == color) {
                 VCs.add(currVC);
@@ -254,9 +255,10 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
 
 
                     VirtualConnection currVC = new VirtualConnection(connection[1], connection[2], combinedCarrier, vc1.depth + vc2.depth);
-                    //if ( (bothBlueMovesOnSameEdge(currVC) && (color == Colors.BLUE.getValue())) || (bothRedMovesOnSameEdge(currVC) && (color == Colors.RED.getValue())) ) { continue; }
+                    if ( (bothBlueMovesOnSameEdge(currVC) && (color == Colors.BLUE.getValue())) || (bothRedMovesOnSameEdge(currVC) && (color == Colors.RED.getValue())) ) { continue; }
                     if (cell == 0){
                         combinedCarrier.add(connection[0]);
+                        currVC.criticalCell = connection[0];
                         toAddSemiList.add(currVC);
                     } else if (cell == color) {
                         toAddList.add(currVC);
@@ -273,9 +275,10 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
 
 
                     VirtualConnection currVC = new VirtualConnection(connection[1], connection[2], combinedCarrier, vc1.depth + vc2.depth);
-                    //if ( (bothBlueMovesOnSameEdge(currVC) && (color == Colors.BLUE.getValue())) || (bothRedMovesOnSameEdge(currVC) && (color == Colors.RED.getValue())) ) { continue; }
+                    if ( (bothBlueMovesOnSameEdge(currVC) && (color == Colors.BLUE.getValue())) || (bothRedMovesOnSameEdge(currVC) && (color == Colors.RED.getValue())) ) { continue; }
                     if (cell == 0){
                         combinedCarrier.add(connection[0]);
+                        currVC.criticalCell = connection[0];
                         toAddSemiList.add(currVC);
                     } else if (cell == color) {
                         toAddList.add(currVC);

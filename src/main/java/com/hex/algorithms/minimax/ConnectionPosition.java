@@ -49,7 +49,7 @@ public class ConnectionPosition implements Position{
         int redDepth = defVal;
         int redSemiDepth = defVal;
 
-        int[] semiArr = board.HProcess();
+        int[] evalArr = board.HProcess();
 
         if (board.bestBlueVC != null){
             blueDepth = board.bestBlueVC.depth;
@@ -61,18 +61,25 @@ public class ConnectionPosition implements Position{
             redSemiDepth = board.bestRedSemiVC.depth;
         }
 
-        if (blueSemiDepth > semiArr[0]) blueSemiDepth = semiArr[0];
-        if (redSemiDepth > semiArr[1]) redSemiDepth = semiArr[1];
+        if (blueDepth > evalArr[0]) blueDepth = evalArr[0];
+        if (blueSemiDepth > evalArr[1]) blueSemiDepth = evalArr[1];
+        if (redDepth > evalArr[2]) redDepth = evalArr[2];
+        if (redSemiDepth > evalArr[3]) redSemiDepth = evalArr[3];
+
 
         if (player == Colors.BLUE.getValue()) {
             if (playerOnTurn) {
+                if (blueDepth * 2 == redDepth + blueSemiDepth && blueDepth == defVal && redSemiDepth != defVal) return (float) (redSemiDepth*-0.01);
                 return redDepth - Math.min(blueDepth, blueSemiDepth);
             }
+            if (blueDepth * 2 == redDepth + redSemiDepth && blueDepth == defVal && blueSemiDepth != defVal) return (float) (blueSemiDepth*0.01);
             return Math.min(redDepth, redSemiDepth) - blueDepth;
         } else{
             if (playerOnTurn) {
+                if (blueDepth * 2 == redDepth + redSemiDepth && blueDepth == defVal && blueSemiDepth != defVal) return (float) (blueSemiDepth*-0.01);
                 return blueDepth - Math.min(redDepth, redSemiDepth);
             }
+            if (blueDepth * 2 == redDepth + blueSemiDepth && blueDepth == defVal && redSemiDepth != defVal) return (float) (redSemiDepth*0.01);
             return Math.min(blueDepth, blueSemiDepth) - redDepth;
         }
     }

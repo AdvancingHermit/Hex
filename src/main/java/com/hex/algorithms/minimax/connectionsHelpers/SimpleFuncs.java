@@ -85,6 +85,19 @@ public class SimpleFuncs extends Board {
         return vc.x.y == elecRows - 1 || vc.y.y == elecRows - 1;
     }
 
+    protected boolean moveOnLeftRedEdge(Move move) {
+        return move.y == 0;
+    }
+    protected boolean moveOnRightRedEdge(Move move) {
+        return move.y == elecRows-1;
+    }
+    protected boolean moveOnLeftBlueEdge(Move move) {
+        return move.x == 0;
+    }
+    protected boolean moveOnRightBlueEdge(Move move) {
+        return move.x == elecCols-1;
+    }
+
     protected boolean checkIfNeighbor(Move m1, Move m2) {
         for (Move neighbor : neighborMove){
             if (neighbor.equals(new Move(m1.x - m2.x, m1.y - m2.y))){

@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class MiniMax {
 
-    protected final int maxDepth = 1;
+    protected final int maxDepth = 3;
 
     private HashMap<BigInteger, Float> evalMap;
 
@@ -21,20 +21,7 @@ public class MiniMax {
 
         evalMap = new HashMap<>(Integer.MAX_VALUE);
 
-        /*
-        Board forTesting = new Board(5, 5);
-
-        forTesting.setPiece(0,4,1);
-        forTesting.setPiece(2,2,1);
-        forTesting.setPiece(3,3,1);
-
-        forTesting.setPiece(0,2,2);
-        forTesting.setPiece(2,4,2);
-        forTesting.setPiece(4,1,2);
-
-        position = new ConnectionPosition(forTesting);*/
-
-        if (position.getPossibleMoves().size() == position.getSize()*position.getSize() - 1){
+        if (position.getPossibleMoves().size() >= position.getSize()*position.getSize() - 1){
             bestMove = position.getMiddleMove();
             Position newPosition = position.Move(bestMove, player);
             bestValue = alphabeta(newPosition, maxDepth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player);
