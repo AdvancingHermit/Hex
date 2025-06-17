@@ -11,9 +11,7 @@ import lombok.extern.java.Log;
 
 @Log
 public class DoublePieceController extends AbstractGameController {
-    @Getter
-    @Setter
-    private int counter = 0;
+
 
     public static void createDoublePieceController(Board board, GameState gameState, Algorithm algorith, boolean algoStart, int algoIterations, boolean swap) {
         INSTANCE = new DoublePieceController(board, gameState, algorith, algoStart, algoIterations, swap);
@@ -47,21 +45,23 @@ public class DoublePieceController extends AbstractGameController {
             return;
         }
         setCounter(0);
+        new Thread(() ->{
+            if (algorithm != null && !gameState.isGameFinished()) {
+                gameState.nextPlayer();
+                BoardCoordinateMoves moves = algorithm.makeDoubleMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
+                placePiece(moves.firstMove());
+                gameState.doubleTurnIncrement();
+                if (!gameState.isGameFinished()) {
+                    placePiece(moves.secondMove());
 
-        if (algorithm != null && !gameState.isGameFinished()) {
-            gameState.nextPlayer();
-            BoardCoordinateMoves moves = algorithm.makeDoubleMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
-            placePiece(moves.firstMove());
-            gameState.doubleTurnIncrement();
-            if (!gameState.isGameFinished()) {
-                placePiece(moves.secondMove());
-
+                }
             }
-        }
+            if (!gameState.isGameFinished()) {
+                gameState.nextPlayer();
+            }
+        }).start();
 
-        if (!gameState.isGameFinished()) {
-            gameState.nextPlayer();
-        }
+
     }
 
 

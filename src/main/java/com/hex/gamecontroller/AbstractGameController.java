@@ -13,6 +13,10 @@ import java.util.function.Consumer;
 @Log
 public abstract class AbstractGameController extends Controller {
 
+
+    @Getter
+    @Setter
+    private int counter = 0;
     protected static AbstractGameController INSTANCE;
 
     protected Board board;

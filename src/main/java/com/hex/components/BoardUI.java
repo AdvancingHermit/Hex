@@ -42,16 +42,28 @@ public class BoardUI extends Pane {
         this.type = type;
         this.mode = mode;
         switch (type){
-            case LOCAL_GAME:
-                GameController.getInstance().setMoveListener(co -> {
-                    int curr = GameController.getInstance().getGameState().getCurrentPlayer();
-                    int algoPlayerNum = GameController.getInstance().getAlgoPlayerNum();
-                    this.setDisable(curr == algoPlayerNum);
-                    Platform.runLater(() -> {
-                        this.getChildren().clear();
-                        this.drawBoard();
+            case LOCAL_GAME: ;
+                if (mode == GameMode.NORMAL || mode == GameMode.SWAP) {
+                    GameController.getInstance().setMoveListener(co -> {
+                        int curr =  GameController.getInstance().getGameState().getCurrentPlayer();
+                        int algoPlayerNum =  GameController.getInstance().getAlgoPlayerNum();
+                        this.setDisable(curr == algoPlayerNum);
+                        Platform.runLater(() -> {
+                            this.getChildren().clear();
+                            this.drawBoard();
+                        });
                     });
-                });
+                } else if (mode == GameMode.DOUBLE){
+                    DoublePieceController.getInstance().setMoveListener(co -> {
+                        int curr = DoublePieceController.getInstance().getGameState().getCurrentPlayer();
+                        int algoPlayerNum = DoublePieceController.getInstance().getAlgoPlayerNum();
+                        this.setDisable(DoublePieceController.getInstance().getCounter() == 1);
+                        Platform.runLater(() -> {
+                            this.getChildren().clear();
+                            this.drawBoard();
+                        });
+                    });
+                }
                 break;
             case ONLINE:
                 break;
