@@ -6,6 +6,7 @@ import com.hex.algorithms.Algorithm;
 import com.hex.algorithms.minimax.ConnectionPlayer;
 
 import com.hex.algorithms.montecarlo.MCTS;
+import com.hex.algorithms.montecarlo.MCTSConnection;
 import com.hex.algorithms.montecarlo.MCTSDouble;
 
 import com.hex.components.Board;
@@ -34,16 +35,16 @@ public class LocalGame extends BaseScene {
         Algorithm algorithm = new ConnectionPlayer();
         Algorithm mcts = new MCTS();
         Algorithm mctsDouble = new MCTSDouble();
+        Algorithm mctsConnection = new MCTSDouble();
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
-        Board board = new Board(3,3);
-            GameController.createGameController(board, gameState, mcts, false,
+        Board board = new Board(5,5);
+        GameController.createGameController(board, gameState, mctsConnection, true,
                     20*100_000, false);
             // DoublePieceController.createDoublePieceController(board, gameState, mctsDouble, true,
             //       10*100_000, false);
-
-            BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME);
+        BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME);
 
 
         hexBoard.drawBoard();
