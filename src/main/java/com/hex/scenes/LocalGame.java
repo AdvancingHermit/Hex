@@ -43,7 +43,7 @@ public class LocalGame extends BaseScene {
             // DoublePieceController.createDoublePieceController(board, gameState, mctsDouble, true,
             //       10*100_000, false);
 
-            BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME);
+            BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME, mode);
 
 
         hexBoard.drawBoard();
