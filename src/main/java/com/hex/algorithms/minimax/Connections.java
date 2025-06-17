@@ -144,10 +144,7 @@ public class Connections extends SimpleConnectionsLogic {
         return newGraph;
     }
 
-    private int tryAllSemis(HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs){
-        int source = 7;
-        int sink = 13;
-
+    private int tryAllSemis(HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs, int source, int target){
         int bestDist = 1000;
         int currDist;
         int[][] currGraph;
@@ -156,7 +153,7 @@ public class Connections extends SimpleConnectionsLogic {
 
         for (VirtualConnection semiVC : semiVCs){
             currGraph = semiGraph(baseGraph, semiVC, n);
-            currDist = dijkstra(currGraph, source)[sink];
+            currDist = dijkstra(currGraph, source)[target];
             if (bestDist > currDist){
                 bestDist = currDist;
             }
@@ -302,9 +299,9 @@ public class Connections extends SimpleConnectionsLogic {
         if (!redSemiWinConnections.isEmpty()) bestRedSemiVC = Collections.min(redSemiWinConnections);
 
         blueVCs.addAll(blueEdgeConnections);
-        retArr[0] = tryAllSemis(blueSemiVCs, blueVCs);
+        retArr[0] = tryAllSemis(blueSemiVCs, blueVCs, 7, 13);
         redVCs.addAll(redEdgeConnections);
-        retArr[1] = tryAllSemis(redSemiVCs, redVCs);
+        retArr[1] = tryAllSemis(redSemiVCs, redVCs, 1, 43);
 
         return retArr;
     }
