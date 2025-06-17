@@ -8,7 +8,7 @@ import lombok.extern.java.Log;
 import java.util.Timer;
 import java.util.TimerTask;
 @Log
-public class AlgorithmTesterController implements Controller {
+public class AlgorithmTesterController extends Controller {
 
     private static AlgorithmTesterController INSTANCE;
 
@@ -74,7 +74,6 @@ public class AlgorithmTesterController implements Controller {
         if (gameState.isGameFinished()) {
             return;
         }
-
         gameState.nextPlayer();
 
         BoardCoordinate move = algorithm.makeMove(
@@ -98,6 +97,8 @@ public class AlgorithmTesterController implements Controller {
             board.setPiece(x, y, player);
             updateBoard(player);
         }
+
+        notifyMoveListener(co);
     }
 
     private void updateBoard(int player) {

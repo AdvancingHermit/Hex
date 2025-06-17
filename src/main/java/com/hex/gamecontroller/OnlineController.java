@@ -6,7 +6,7 @@ import com.hex.components.BoardCoordinate;
 
 import java.util.function.Consumer;
 
-public class OnlineController implements Controller {
+public class OnlineController extends Controller {
 
     private static OnlineController INSTANCE;
 

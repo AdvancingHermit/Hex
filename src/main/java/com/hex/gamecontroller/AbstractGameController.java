@@ -11,7 +11,7 @@ import lombok.extern.java.Log;
 import java.util.function.Consumer;
 
 @Log
-public abstract class AbstractGameController implements Controller {
+public abstract class AbstractGameController extends Controller {
 
     protected static AbstractGameController INSTANCE;
 
@@ -23,8 +23,6 @@ public abstract class AbstractGameController implements Controller {
     protected int algoPlayerNum;
     protected boolean swap;
     protected int iterations;
-    @Getter @Setter
-    protected Consumer<BoardCoordinate> moveListener;
 
     public static AbstractGameController getInstance() {
         return INSTANCE;
@@ -53,18 +51,6 @@ public abstract class AbstractGameController implements Controller {
 
     public abstract void gameIteration(BoardCoordinate co);
 
-    protected void notifyMoveListener(BoardCoordinate co) {
-        if (this.moveListener == null) {
-            return;
-        }
-        try {
-            this.moveListener.accept(co);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void placePiece(BoardCoordinate co) {
         int player = gameState.getCurrentPlayer();
@@ -90,8 +76,6 @@ public abstract class AbstractGameController implements Controller {
                 gameState.swapTurnDecrement();
         }
         notifyMoveListener(co);
-
-
 
     }
 
