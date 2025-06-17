@@ -4,16 +4,23 @@ import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.java.Log;
 
+import java.util.function.Consumer;
+
 @Log
-public abstract class AbstractGameController implements Controller {
+public abstract class AbstractGameController extends Controller {
 
     protected static AbstractGameController INSTANCE;
 
     protected Board board;
+    @Getter
     protected GameState gameState;
     protected Algorithm algorithm;
+    @Getter
+    protected int algoPlayerNum;
     protected boolean swap;
     protected int iterations;
 
@@ -29,7 +36,10 @@ public abstract class AbstractGameController implements Controller {
         this.iterations = algoIterations;
         this.swap = swap;
         if (algoStart) {
+            this.algoPlayerNum = 1;
             this.algoStart(board, gameState, algorithm);
+        } else {
+            this.algoPlayerNum = 2;
         }
     }
 
@@ -68,7 +78,7 @@ public abstract class AbstractGameController implements Controller {
                 swap = false;
                 gameState.swapTurnDecrement();
         }
-
+        notifyMoveListener(co);
 
     }
 

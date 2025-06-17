@@ -32,6 +32,7 @@ public class LocalGame extends BaseScene {
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
+
         Board board = new Board(boardSize,boardSize);
         switch (mode) {
             case NORMAL ->  GameController.createGameController(board, gameState, algorithm1, algoStart,

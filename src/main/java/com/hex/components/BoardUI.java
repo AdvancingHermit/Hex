@@ -2,14 +2,10 @@ package com.hex.components;
 
 import com.hex.GameMode;
 import com.hex.GameState;
-import com.hex.gamecontroller.AlgorithmTesterController;
+import com.hex.gamecontroller.*;
 
-import com.hex.gamecontroller.AbstractGameController;
-import com.hex.gamecontroller.DoublePieceController;
-
-import com.hex.gamecontroller.GameController;
-import com.hex.gamecontroller.OnlineController;
 import com.hex.scenes.LocalGame;
+import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -45,6 +41,29 @@ public class BoardUI extends Pane {
         this.cols = board.getCols();
         this.type = type;
         this.mode = mode;
+        switch (type){
+            case LOCAL_GAME:
+                GameController.getInstance().setMoveListener(co -> {
+                    int curr = GameController.getInstance().getGameState().getCurrentPlayer();
+                    int algoPlayerNum = GameController.getInstance().getAlgoPlayerNum();
+                    this.setDisable(curr == algoPlayerNum);
+                    Platform.runLater(() -> {
+                        this.getChildren().clear();
+                        this.drawBoard();
+                    });
+                });
+                break;
+            case ONLINE:
+                break;
+            case ALGORITHM_TESTER:
+                AlgorithmTesterController.getInstance().setMoveListener(co -> {
+                    Platform.runLater(() -> {
+                        this.getChildren().clear();
+                        this.drawBoard();
+                    });
+                });
+                break;
+        }     
 
     }
 
@@ -72,10 +91,7 @@ public class BoardUI extends Pane {
                             AlgorithmTesterController.getInstance().gameIteration(coord);
                             break;
                     }
-                    getChildren().clear();
-                    drawBoard();
                 });
-
 
                 if (getBoard().getPiece(i, j) == 0) {
                     hex.setFill(Color.TRANSPARENT);
