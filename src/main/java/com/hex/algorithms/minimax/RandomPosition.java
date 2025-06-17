@@ -74,4 +74,8 @@ public class RandomPosition implements Position{
     public void setplayerOnTurn(boolean playerOnTurn) {
 
     }
+
+    public int[][] getBoard(){
+        return board.getBoard();
+    }
 }
