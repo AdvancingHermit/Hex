@@ -36,53 +36,37 @@ public class AlgorithmTesterController extends Controller {
         this.gameState = gameState;
         this.algorithm = algorithm;
         this.otherAlgo = otherAlgo;
-        init();
-        scheduleNextMove();
-    }
-
-
-    private void init() {
-        if (algorithm != null) {
-            BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
-            placePiece(move);
-            gameState.nextPlayer();
-        }
-    }
-
-    private void scheduleNextMove() {
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (!gameState.isGameFinished()) {
-                    gameIteration(null);
-                    scheduleNextMove();
-                } else {
-                    timer.cancel();
-                }
-            }
-        }, 500);
+        gameIteration(new BoardCoordinate(0,0));
     }
 
     public void gameIteration(BoardCoordinate ignored) {
         if (gameState.isGameFinished()) {
             return;
         }
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            if (gameState.getCurrentPlayer() == 2) {
+                BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
+                placePiece(move);
 
-        BoardCoordinate otherMove = otherAlgo.makeMove(
-                gameState.getCurrentPlayer(), board, gameState, iterations, false);
-        placePiece(otherMove);
-        if (gameState.isGameFinished()) {
-            return;
-        }
-        gameState.nextPlayer();
+            } else if (gameState.getCurrentPlayer() == 1) {
+                BoardCoordinate otherMove = otherAlgo.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
+                placePiece(otherMove);
+            } else {
+                System.out.println("Wadddup");
+            }
+        }).start();
+    }
 
-        BoardCoordinate move = algorithm.makeMove(
-                gameState.getCurrentPlayer(), board, gameState, iterations, false);
-        placePiece(move);
-        if (gameState.isGameFinished()) {
-            return;
-        }
-        gameState.nextPlayer();
+    public void runGame() {
+        // Start with first algorithm
+        System.out.println("SUp");
+        BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
+        gameIteration(move); // This should trigger the listener for the next move
     }
 
     @Override
@@ -97,8 +81,11 @@ public class AlgorithmTesterController extends Controller {
             board.setPiece(x, y, player);
             updateBoard(player);
         }
-
+        if (!gameState.isGameFinished()) {
+            gameState.nextPlayer();
+        }
         notifyMoveListener(co);
+
     }
 
     private void updateBoard(int player) {

@@ -20,7 +20,7 @@ public class MainMenu extends BaseScene {
         playLocalBtn.setOnAction(e -> sceneManager.switchScene(SceneType.LOCAL_GAME_SETTINGS));
         vbox.getChildren().add(playLocalBtn);
         Button playAIsBtn = new Button("Test AI!");
-        playAIsBtn.setOnAction(e -> sceneManager.switchScene(SceneType.ALGO_V_ALGO));
+        playAIsBtn.setOnAction(e -> sceneManager.switchScene(SceneType.ALGO_V_ALGO_SETTINGS));
         vbox.getChildren().add(playAIsBtn);
         vbox.setAlignment(javafx.geometry.Pos.CENTER);
 

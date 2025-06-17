@@ -33,8 +33,6 @@ public class BoardUI extends Pane {
     ControllerType type;
 
     public BoardUI(Board board, double hexagonSize, ControllerType type, GameMode mode){
-
-        
         this.size = hexagonSize;
         this.setBoard(board);
         this.rows = board.getRows();
@@ -69,6 +67,7 @@ public class BoardUI extends Pane {
                 break;
             case ALGORITHM_TESTER:
                 AlgorithmTesterController.getInstance().setMoveListener(co -> {
+                    AlgorithmTesterController.getInstance().gameIteration(co);
                     Platform.runLater(() -> {
                         this.getChildren().clear();
                         this.drawBoard();

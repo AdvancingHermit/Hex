@@ -22,6 +22,7 @@ public class SceneManager {
         MAIN_MENU,
         LOCAL_GAME,
         ALGO_V_ALGO,
+        ALGO_V_ALGO_SETTINGS,
         ONLINE_GAME,
         LOADING_SCREEN,
         LOCAL_GAME_SETTINGS
@@ -39,7 +40,7 @@ public class SceneManager {
 
             case LOCAL_GAME_SETTINGS -> new LocalGameSettings(this).getScene();
 
-            case ALGO_V_ALGO -> new AlgovAlgo().getScene();
+            case ALGO_V_ALGO_SETTINGS -> new AlgovAlgoSettings(this).getScene();
 
             case ONLINE_GAME -> {
                 if (currentSocket != null && currentIn != null && currentOut != null) {

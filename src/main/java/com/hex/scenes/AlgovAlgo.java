@@ -20,21 +20,16 @@ import javafx.scene.layout.VBox;
 public class AlgovAlgo extends BaseScene {
     private GameState gameState = new GameState();
 
-    public AlgovAlgo() {
+    public AlgovAlgo(int boardSize, Algorithm startingAlgorithm, Algorithm secondAlgorithm, int iterations, GameMode mode) {
         BorderPane root = new BorderPane();
 
         StackPane gameWrap = new StackPane();
 
-        //Algorithm
-        Algorithm algorithm = new ConnectionPlayer();
-        Algorithm otherAlgo = new MCTS();
-
         // Hex Board and wrapper
         Group boardWrap = new Group();
-        Board board = new Board(5,5);
-        AlgorithmTesterController.createGameController(board, gameState, algorithm, otherAlgo);
+        Board board = new Board(boardSize,boardSize);
+        AlgorithmTesterController.createGameController(board, gameState, startingAlgorithm, secondAlgorithm);
         BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.ALGORITHM_TESTER, GameMode.NORMAL);
-
 
         hexBoard.drawBoard();
         boardWrap.getChildren().add(hexBoard);
@@ -50,12 +45,8 @@ public class AlgovAlgo extends BaseScene {
         rightBox.setAlignment(Pos.CENTER);
         rightBox.setPrefWidth(100);
 
-
         gameWrap.getChildren().add(boardWrap);
-
         root.setCenter(gameWrap);
-
         scene = new Scene(root, 800, 600);
-
     }
 }
