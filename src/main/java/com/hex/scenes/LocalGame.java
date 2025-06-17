@@ -24,26 +24,25 @@ import javafx.scene.layout.VBox;
 public class LocalGame extends BaseScene {
     private GameState gameState = new GameState();
 
-    public LocalGame(int boardSize, boolean algoStart, int algoIterations, GameMode mode) {
+    public LocalGame(int boardSize, Algorithm algorithm1, boolean algoStart, int algoIterations, GameMode mode) {
         BorderPane root = new BorderPane();
 
         StackPane gameWrap = new StackPane();
 
-        //Algorithm
-
-        Algorithm algorithm = new ConnectionPlayer();
-        Algorithm mcts = new MCTS();
-        Algorithm mctsDouble = new MCTSDouble();
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
-        Board board = new Board(3,3);
-            GameController.createGameController(board, gameState, mcts, false,
-                    20*100_000, false);
-            // DoublePieceController.createDoublePieceController(board, gameState, mctsDouble, true,
-            //       10*100_000, false);
+        Board board = new Board(boardSize,boardSize);
+        switch (mode) {
+            case NORMAL ->  GameController.createGameController(board, gameState, algorithm1, algoStart,
+                    algoIterations, false);
+            case SWAP ->  GameController.createGameController(board, gameState, algorithm1, algoStart,
+                    algoIterations, true);
+            case DOUBLE ->  DoublePieceController.createDoublePieceController(board, gameState, algorithm1, algoStart,
+                    algoIterations, false);
+        }
 
-            BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME, mode);
+        BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME, mode);
 
 
         hexBoard.drawBoard();

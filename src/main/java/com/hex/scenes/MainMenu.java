@@ -17,7 +17,7 @@ public class MainMenu extends BaseScene {
         playOnlineBtn.setOnAction(e -> sceneManager.switchScene(SceneType.LOADING_SCREEN));
         vbox.getChildren().add(playOnlineBtn);
         Button playLocalBtn = new Button("Play Local!");
-        playLocalBtn.setOnAction(e -> sceneManager.switchScene(SceneType.LOCAL_GAME));
+        playLocalBtn.setOnAction(e -> sceneManager.switchScene(SceneType.LOCAL_GAME_SETTINGS));
         vbox.getChildren().add(playLocalBtn);
         Button playAIsBtn = new Button("Test AI!");
         playAIsBtn.setOnAction(e -> sceneManager.switchScene(SceneType.ALGO_V_ALGO));

@@ -22,7 +22,7 @@ public class DoublePieceController extends AbstractGameController {
     private DoublePieceController(Board board, GameState gameState, Algorithm algorithm, boolean algoStart, int algoIterations, boolean swap) {
         super(board, gameState, algorithm, false, algoIterations, swap);
         this.swap = false;
-        if (algoStart){
+        if (algoStart && algorithm != null){
             BoardCoordinateMoves moves = algorithm.makeDoubleMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
             placePiece(moves.firstMove());
             gameState.doubleTurnIncrement();

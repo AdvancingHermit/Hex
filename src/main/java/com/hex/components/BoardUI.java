@@ -57,10 +57,9 @@ public class BoardUI extends Pane {
 
                 hex.setOnMouseClicked(event -> {
                     BoardCoordinate coord = new BoardCoordinate((int) hex.getGridPosition()[0], (int) hex.getGridPosition()[1]);
-
                     switch (type){
                         case LOCAL_GAME:
-                            if (mode == GameMode.NORMAL) {
+                            if (mode == GameMode.NORMAL || mode == GameMode.SWAP) {
                                 GameController.getInstance().gameIteration(coord);
                             } else if (mode == GameMode.DOUBLE){
                                 DoublePieceController.getInstance().gameIteration(coord);
