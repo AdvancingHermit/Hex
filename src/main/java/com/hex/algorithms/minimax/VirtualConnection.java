@@ -10,12 +10,22 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
     public Move y;
     public Set<Move> carrier;
     public int depth;
+    public Move criticalCell;
 
     public VirtualConnection(Move x, Move y, Set<Move> carrier, int depth){
         this.x = x;
         this.y = y;
         this.carrier = new HashSet<>(carrier);
         this.depth = depth;
+        criticalCell = null;
+    }
+
+    public VirtualConnection(Move x, Move y, Set<Move> carrier, int depth, Move criticalCell){
+        this.x = x;
+        this.y = y;
+        this.carrier = new HashSet<>(carrier);
+        this.depth = depth;
+        this.criticalCell = criticalCell;
     }
 
     public int compareTo(VirtualConnection other) {
@@ -34,6 +44,11 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
 
     public boolean equalEnds(VirtualConnection other) {
         return (x.equals(other.x) && y.equals(other.y)) || (y.equals(other.x) && x.equals(other.y));
+    }
+
+    public boolean sameCriticalCell(VirtualConnection other) {
+        if (criticalCell == null || other.criticalCell == null) return false;
+        return criticalCell.equals(other.criticalCell);
     }
 
     public Move[] getConnectingEnd(VirtualConnection other) {
