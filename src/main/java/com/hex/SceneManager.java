@@ -23,7 +23,8 @@ public class SceneManager {
         LOCAL_GAME,
         ALGO_V_ALGO,
         ONLINE_GAME,
-        LOADING_SCREEN
+        LOADING_SCREEN,
+        LOCAL_GAME_SETTINGS
     }
 
     public void storeConnection(Socket socket, ObjectInputStream in, ObjectOutputStream out) {
@@ -36,7 +37,7 @@ public class SceneManager {
         return switch (type) {
             case MAIN_MENU -> new MainMenu(this).getScene();
 
-            case LOCAL_GAME -> new LocalGame(1, false, 1, GameMode.NORMAL).getScene();
+            case LOCAL_GAME_SETTINGS -> new LocalGameSettings(this).getScene();
 
             case ALGO_V_ALGO -> new AlgovAlgo().getScene();
 
@@ -49,11 +50,16 @@ public class SceneManager {
                 }
             }
             case LOADING_SCREEN -> new LoadingScreen(this).getScene();
+            default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }
 
+
     public void switchScene(SceneType type) {
         Scene scene = createScene(type);
+        primaryStage.setScene(scene);
+    }
+    public void switchScene(Scene scene) {
         primaryStage.setScene(scene);
     }
 

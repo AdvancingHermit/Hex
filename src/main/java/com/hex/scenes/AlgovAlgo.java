@@ -1,5 +1,6 @@
 package com.hex.scenes;
 
+import com.hex.GameMode;
 import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
 import com.hex.algorithms.minimax.ConnectionPlayer;
@@ -32,7 +33,7 @@ public class AlgovAlgo extends BaseScene {
         Group boardWrap = new Group();
         Board board = new Board(5,5);
         AlgorithmTesterController.createGameController(board, gameState, algorithm, otherAlgo);
-        BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.ALGORITHM_TESTER);
+        BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.ALGORITHM_TESTER, GameMode.NORMAL);
 
 
         hexBoard.drawBoard();

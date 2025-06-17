@@ -50,7 +50,6 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
                 hasBeenChecked.add(vcToBeAdded);
             }
         }
-        checkRedundancies(hasBeenChecked);
         return hasBeenChecked;
     }
 
@@ -255,7 +254,7 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
 
 
                     VirtualConnection currVC = new VirtualConnection(connection[1], connection[2], combinedCarrier, vc1.depth + vc2.depth);
-                    if ( (bothBlueMovesOnSameEdge(currVC) && (color == Colors.BLUE.getValue())) || (bothRedMovesOnSameEdge(currVC) && (color == Colors.RED.getValue())) ) { continue; }
+                    //if ( (bothBlueMovesOnSameEdge(currVC) && (color == Colors.BLUE.getValue())) || (bothRedMovesOnSameEdge(currVC) && (color == Colors.RED.getValue())) ) { continue; }
                     if (cell == 0){
                         combinedCarrier.add(connection[0]);
                         toAddSemiList.add(currVC);
@@ -274,7 +273,7 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
 
 
                     VirtualConnection currVC = new VirtualConnection(connection[1], connection[2], combinedCarrier, vc1.depth + vc2.depth);
-                    if ( (bothBlueMovesOnSameEdge(currVC) && (color == Colors.BLUE.getValue())) || (bothRedMovesOnSameEdge(currVC) && (color == Colors.RED.getValue())) ) { continue; }
+                    //if ( (bothBlueMovesOnSameEdge(currVC) && (color == Colors.BLUE.getValue())) || (bothRedMovesOnSameEdge(currVC) && (color == Colors.RED.getValue())) ) { continue; }
                     if (cell == 0){
                         combinedCarrier.add(connection[0]);
                         toAddSemiList.add(currVC);

@@ -267,6 +267,11 @@ public class Connections extends SimpleConnectionsLogic {
             checkRedundancies(newBlueSemiVCs);
             checkRedundancies(newRedSemiVCs);
 
+            newBlueVCs.removeIf(vc -> blueVCs.contains(vc) || checkNewBlueVCs.contains(vc));
+            newBlueSemiVCs.removeIf(vc -> blueSemiVCs.contains(vc) || checkNewBlueSemiVCs.contains(vc));
+            newRedVCs.removeIf(vc -> redVCs.contains(vc) || checkNewRedVCs.contains(vc));
+            newRedSemiVCs.removeIf(vc -> redSemiVCs.contains(vc) || checkNewRedSemiVCs.contains(vc));
+
             blueVCs.addAll(checkNewBlueVCs);
             blueSemiVCs.addAll(checkNewBlueSemiVCs);
             redVCs.addAll(checkNewRedVCs);
@@ -291,17 +296,18 @@ public class Connections extends SimpleConnectionsLogic {
             changed = newSize != ogSize;
         }
 
-        findAllEndVCs();
-
         if (!blueWinConnections.isEmpty()) bestBlueVC = Collections.min(blueWinConnections);
         if (!blueSemiWinConnections.isEmpty()) bestBlueSemiVC = Collections.min(blueSemiWinConnections);
         if (!redWinConnections.isEmpty()) bestRedVC = Collections.min(redWinConnections);
         if (!redSemiWinConnections.isEmpty()) bestRedSemiVC = Collections.min(redSemiWinConnections);
 
-        blueVCs.addAll(blueEdgeConnections);
-        retArr[0] = tryAllSemis(blueSemiVCs, blueVCs, 7, 13);
-        redVCs.addAll(redEdgeConnections);
-        retArr[1] = tryAllSemis(redSemiVCs, redVCs, 1, 43);
+        //retArr[0] = tryAllSemis(blueSemiVCs, blueVCs, 7, 13);
+        //retArr[1] = tryAllSemis(redSemiVCs, redVCs, 1, 43);
+        retArr[0] = tryAllSemis(blueSemiVCs, blueVCs, elecRows, 2*elecCols-1);
+        retArr[1] = tryAllSemis(redSemiVCs, redVCs, 1, (elecRows-1)*elecCols+1);
+
+        cleanConnections();
+        findAllEndVCs();
 
         return retArr;
     }
@@ -427,8 +433,6 @@ public class Connections extends SimpleConnectionsLogic {
         }
         blueEdgeConnections = new HashSet<>();
         redEdgeConnections = new HashSet<>();
-
-        cleanConnections();
     }
 
     public Connections(Connections other){

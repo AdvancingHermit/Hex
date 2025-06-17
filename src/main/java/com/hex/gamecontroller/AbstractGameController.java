@@ -44,6 +44,9 @@ public abstract class AbstractGameController extends Controller {
     }
 
     private void algoStart(Board board, GameState gameState, Algorithm algorithm) {
+        if (algorithm == null){
+            return;
+        }
         BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, swap);
         placePiece(move);
         gameState.nextPlayer();

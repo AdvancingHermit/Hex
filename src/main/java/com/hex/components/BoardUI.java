@@ -1,5 +1,6 @@
 package com.hex.components;
 
+import com.hex.GameMode;
 import com.hex.GameState;
 import com.hex.gamecontroller.*;
 
@@ -22,6 +23,7 @@ public class BoardUI extends Pane {
     @Setter
     private Board board;
     private boolean online;
+    private GameMode mode;
 
     public enum ControllerType {
         LOCAL_GAME,
@@ -30,7 +32,7 @@ public class BoardUI extends Pane {
     }
     ControllerType type;
 
-    public BoardUI(Board board, double hexagonSize, ControllerType type){
+    public BoardUI(Board board, double hexagonSize, ControllerType type, GameMode mode){
 
         
         this.size = hexagonSize;
@@ -38,6 +40,7 @@ public class BoardUI extends Pane {
         this.rows = board.getRows();
         this.cols = board.getCols();
         this.type = type;
+        this.mode = mode;
         switch (type){
             case LOCAL_GAME:
                 GameController.getInstance().setMoveListener(co -> {
@@ -60,8 +63,7 @@ public class BoardUI extends Pane {
                     });
                 });
                 break;
-        }
-
+        }     
 
     }
 
@@ -76,7 +78,11 @@ public class BoardUI extends Pane {
                     BoardCoordinate coord = new BoardCoordinate((int) hex.getGridPosition()[0], (int) hex.getGridPosition()[1]);
                     switch (type){
                         case LOCAL_GAME:
-                            GameController.getInstance().gameIteration(coord);
+                            if (mode == GameMode.NORMAL || mode == GameMode.SWAP) {
+                                GameController.getInstance().gameIteration(coord);
+                            } else if (mode == GameMode.DOUBLE){
+                                DoublePieceController.getInstance().gameIteration(coord);
+                            }
                             break;
                         case ONLINE:
                             OnlineController.getInstance().gameIteration(coord);

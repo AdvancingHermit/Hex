@@ -34,7 +34,7 @@ public class MiniMax {
 
         position = new ConnectionPosition(forTesting);*/
 
-        if (position.getPossibleMoves().size() == position.getSize()*position.getSize()){
+        if (position.getPossibleMoves().size() == position.getSize()*position.getSize() - 1){
             bestMove = position.getMiddleMove();
             Position newPosition = position.Move(bestMove, player);
             bestValue = alphabeta(newPosition, maxDepth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player);
