@@ -74,6 +74,7 @@ public class AlgorithmTesterController implements Controller {
         if (gameState.isGameFinished()) {
             return;
         }
+
         gameState.nextPlayer();
 
         BoardCoordinate move = algorithm.makeMove(

@@ -44,21 +44,21 @@ public class BoardUI extends Pane {
         this.cols = board.getCols();
         this.type = type;
 
-        if (type == ControllerType.LOCAL_GAME) {
-            GameController.getInstance().setMoveListener(co -> {
-                int curr = GameController.getInstance().getGameState().getCurrentPlayer();
-                int algoPlayerNum = GameController.getInstance().getAlgoPlayerNum();
-                if ( curr != algoPlayerNum ) {
-                    this.setDisable(false);
-                } else {
-                    this.setDisable(true);
-                }
-                Platform.runLater(() -> {
-                    this.getChildren().clear();
-                    this.drawBoard();
-                });
+
+        GameController.getInstance().setMoveListener(co -> {
+            int curr = GameController.getInstance().getGameState().getCurrentPlayer();
+            int algoPlayerNum = GameController.getInstance().getAlgoPlayerNum();
+            if ( curr != algoPlayerNum ) {
+                this.setDisable(false);
+            } else {
+                this.setDisable(true);
+            }
+            Platform.runLater(() -> {
+                this.getChildren().clear();
+                this.drawBoard();
             });
-        }
+        });
+
 
     }
 
@@ -71,23 +71,9 @@ public class BoardUI extends Pane {
 
                 hex.setOnMouseClicked(event -> {
                     BoardCoordinate coord = new BoardCoordinate((int) hex.getGridPosition()[0], (int) hex.getGridPosition()[1]);
-
                     switch (type){
                         case LOCAL_GAME:
-
                             GameController.getInstance().gameIteration(coord);
-                            /*
-                            GameController.getInstance().handlePlayerMove(coord);
-                            this.getChildren().clear();
-                            drawBoard();
-                            new Thread(() -> {
-                                GameController.getInstance().handleAIMove();
-                                Platform.runLater(() -> {
-                                    this.getChildren().clear();
-                                    this.drawBoard();
-                                    });
-                                }).start();*/
-
                             break;
                         case ONLINE:
                             OnlineController.getInstance().gameIteration(coord);
@@ -96,8 +82,6 @@ public class BoardUI extends Pane {
                             AlgorithmTesterController.getInstance().gameIteration(coord);
                             break;
                     }
-                    //getChildren().clear();
-                    //drawBoard();
                 });
 
 
