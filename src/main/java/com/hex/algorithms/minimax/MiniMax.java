@@ -2,7 +2,7 @@ package com.hex.algorithms.minimax;
 
 public class MiniMax {
 
-    protected final int maxDepth = 8;
+    protected final int maxDepth = 4;
 
     public MiniMax(){}
 
