@@ -52,7 +52,7 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
         }
         return hasBeenChecked;
     }
-/*
+
     protected void checkRedundancies(Set<VirtualConnection> vcList) {
         List<VirtualConnection> snapshot = new ArrayList<>(vcList);
         for (VirtualConnection vc1 : snapshot) {
@@ -66,33 +66,6 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
                 }
             }
         }
-    }*/
-
-    protected void checkRedundancies(HashSet<VirtualConnection> vcList) {
-        Set<VirtualConnection> indicesToRemove = new HashSet<>();
-
-        for (VirtualConnection vc1 : vcList) {
-            if (indicesToRemove.contains(vc1)) continue;
-
-            for (VirtualConnection vc2 : vcList) {
-                if (indicesToRemove.contains(vc2) || vc1 == vc2) continue;
-
-                if (vc2.isSubset(vc1)) {
-                    indicesToRemove.add(vc1);
-                } else if (vc1.isSubset(vc2)) {
-                    indicesToRemove.add(vc2);
-                    break;
-                }
-            }
-        }
-        HashSet<VirtualConnection> filtered = new HashSet<>();
-        for (VirtualConnection vc1 : vcList) {
-            if (!indicesToRemove.contains(vc1)) {
-                filtered.add(vc1);
-            }
-        }
-        vcList.clear();
-        vcList.addAll(filtered);
     }
 
     static Move[][] deltaMoves = {

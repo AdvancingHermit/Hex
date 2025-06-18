@@ -25,20 +25,21 @@ public class AlgovAlgoSettings extends BaseScene{
     @Getter
     private int boardSize;
     @Getter
-    private String difficulty;
+    private String startingDifficulty;
+    @Getter
+    private String secondDifficulty;
     @Getter
     private String startingAlgorithm;
     @Getter
     private String secondAlgorithm;
-    @Getter
-    private String startingPlayer;
 
     private boolean isSwapEnabled;
     private boolean isDoubleEnabled;
 
     // UI elements (optional to store if needed outside)
     private final Slider boardSizeSlider;
-    private final ComboBox<String> difficultyBox;
+    private final ComboBox<String> startingDifficultyBox;
+    private final ComboBox<String> secondDifficultyBox;
     private final ComboBox<String> startingAlgorithmBox;
     private final ComboBox<String> secondAlgorithmBox;
     private final CheckBox swapCheckBox;
@@ -62,20 +63,26 @@ public class AlgovAlgoSettings extends BaseScene{
         // Algorithm selection
         Label startingAlgorithmLabel = new Label("Select Algorithm That Starts:");
         startingAlgorithmBox = new ComboBox<>();
-        startingAlgorithmBox.getItems().addAll("None", "MCTS", "Connection", "AI");
-        startingAlgorithmBox.setValue("None");
+        startingAlgorithmBox.getItems().addAll( "MCTS", "Connection", "AI");
+        startingAlgorithmBox.setValue("MCTS");
+
+        // Difficulty selection
+        Label startingDifficultyLabel = new Label("Select Difficulty For Starting Algorithm:");
+        startingDifficultyBox = new ComboBox<>();
+        startingDifficultyBox.getItems().addAll("Easy", "Medium", "Hard", "Very Hard (might take some time)");
+        startingDifficultyBox.setValue("Medium");
 
         // Second Algorithm selection
         Label secondAlgorithmLabel = new Label("Select Algorithm That Goes Second:");
         secondAlgorithmBox = new ComboBox<>();
-        secondAlgorithmBox.getItems().addAll("None", "MCTS", "Connection", "AI");
-        secondAlgorithmBox.setValue("None");
+        secondAlgorithmBox.getItems().addAll("MCTS", "Connection", "AI");
+        secondAlgorithmBox.setValue("Connection");
 
         // Difficulty selection
-        Label difficultyLabel = new Label("Select Difficulty:");
-        difficultyBox = new ComboBox<>();
-        difficultyBox.getItems().addAll("Easy", "Medium", "Hard", "Very Hard (might take some time)");
-        difficultyBox.setValue("Medium");
+        Label secondDifficultyLabel = new Label("Select Difficulty:");
+        secondDifficultyBox = new ComboBox<>();
+        secondDifficultyBox.getItems().addAll("Easy", "Medium", "Hard", "Very Hard (might take some time)");
+        secondDifficultyBox.setValue("Medium");
 
 
         // Swap rule checkbox
@@ -102,13 +109,21 @@ public class AlgovAlgoSettings extends BaseScene{
         Button playBtn = new Button("Start Game");
         playBtn.setOnAction(e -> {
             boardSize = (int) boardSizeSlider.getValue();
-            int iterations = 100;
-            difficulty = difficultyBox.getValue();
-            switch (difficulty) {
-                case "Easy" -> iterations = 50_000;
-                case "Medium" -> iterations = 250_000;
-                case "Hard" -> iterations = 1_000_000;
-                case "Very Hard (might take some time)" -> iterations = 5_000_000;
+            int startingIterations = 100;
+            startingDifficulty = startingDifficultyBox.getValue();
+            switch (startingDifficulty) {
+                case "Easy" -> startingIterations = 50_000;
+                case "Medium" -> startingIterations = 250_000;
+                case "Hard" -> startingIterations = 1_000_000;
+                case "Very Hard (might take some time)" -> startingIterations = 5_000_000;
+            }
+            int secondIterations = 100;
+            secondDifficulty = secondDifficultyBox.getValue();
+            switch (secondDifficulty) {
+                case "Easy" -> secondIterations = 50_000;
+                case "Medium" -> secondIterations = 250_000;
+                case "Hard" -> secondIterations = 1_000_000;
+                case "Very Hard (might take some time)" -> secondIterations = 5_000_000;
             }
             startingAlgorithm = startingAlgorithmBox.getValue();
             Algorithm algorithm1 = null;
@@ -138,15 +153,16 @@ public class AlgovAlgoSettings extends BaseScene{
             }
             // Start the game
 
-            Scene scene1 = new AlgovAlgo(boardSize, algorithm1, algorithm2, iterations, mode).getScene();
+            Scene scene1 = new AlgovAlgo(boardSize, algorithm1, algorithm2, startingIterations, secondIterations, mode).getScene();
             sceneManager.switchScene(scene1);
         });
 
         vbox.getChildren().addAll(
                 boardSizeLabel, boardSizeSlider,
                 startingAlgorithmLabel, startingAlgorithmBox,
+                startingDifficultyLabel, startingDifficultyBox,
                 secondAlgorithmLabel, secondAlgorithmBox,
-                difficultyLabel, difficultyBox,
+                secondDifficultyLabel, secondDifficultyBox,
                 swapCheckBox, doubleCheckBox,
                 playBtn
         );

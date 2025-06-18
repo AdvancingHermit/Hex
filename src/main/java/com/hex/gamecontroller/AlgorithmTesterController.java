@@ -18,7 +18,8 @@ public class AlgorithmTesterController extends Controller {
     private final Algorithm otherAlgo;
 
     private boolean swap = true;
-    private final int iterations = 100_000;
+    private int startingIterations;
+    private int secondIterations;
     private Timer timer = new Timer();
 
     public static AlgorithmTesterController getInstance() {
@@ -26,16 +27,18 @@ public class AlgorithmTesterController extends Controller {
     }
 
     public static void createGameController(Board board, GameState gameState,
-                                            Algorithm algorithm, Algorithm otherAlgo) {
-        INSTANCE = new AlgorithmTesterController(board, gameState, algorithm, otherAlgo);
+                                            Algorithm algorithm, Algorithm otherAlgo, int startingIterations, int secondIterations) {
+        INSTANCE = new AlgorithmTesterController(board, gameState, algorithm, otherAlgo, startingIterations, secondIterations);
     }
 
     private AlgorithmTesterController(Board board, GameState gameState,
-                                      Algorithm algorithm, Algorithm otherAlgo) {
+                                      Algorithm algorithm, Algorithm otherAlgo, int startingIterations, int secondIterations) {
         this.board = board;
         this.gameState = gameState;
         this.algorithm = algorithm;
         this.otherAlgo = otherAlgo;
+        this.startingIterations = startingIterations;
+        this.secondIterations = secondIterations;
         gameIteration(new BoardCoordinate(0,0));
     }
 
@@ -50,11 +53,11 @@ public class AlgorithmTesterController extends Controller {
                 throw new RuntimeException(e);
             }
             if (gameState.getCurrentPlayer() == 2) {
-                BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
+                BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, startingIterations, false);
                 placePiece(move);
 
             } else if (gameState.getCurrentPlayer() == 1) {
-                BoardCoordinate otherMove = otherAlgo.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
+                BoardCoordinate otherMove = otherAlgo.makeMove(gameState.getCurrentPlayer(), board, gameState, secondIterations, false);
                 placePiece(otherMove);
             } else {
                 System.out.println("Wadddup");
@@ -65,7 +68,7 @@ public class AlgorithmTesterController extends Controller {
     public void runGame() {
         // Start with first algorithm
         System.out.println("SUp");
-        BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, false);
+        BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, startingIterations, false);
         gameIteration(move); // This should trigger the listener for the next move
     }
 

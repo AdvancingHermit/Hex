@@ -11,12 +11,16 @@ public class ConnectionPlayer extends MiniMax implements Algorithm {
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
         System.out.println("Started");
         Position startPos = new ConnectionPosition(board);
-        if (maxDepth % 2 == 0){
-            startPos.setplayerOnTurn(true);
-        } else {
-            startPos.setplayerOnTurn(false);
-        }
-        Move suggestedMove = findBestMove(startPos, player);
+        int depth;
+        depth = switch (iterations) {
+            case 50_000 -> 1;
+            case 250_000 -> 3;
+            case 1_000_000 -> 4;
+            case 5_000_000 -> 5;
+            default -> 3;
+        };
+        startPos.setplayerOnTurn(depth % 2 == 0);
+        Move suggestedMove = findBestMove(startPos, player, depth);
         return new BoardCoordinate(suggestedMove.x, suggestedMove.y);
     }
 }

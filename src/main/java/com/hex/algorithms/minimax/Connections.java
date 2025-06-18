@@ -387,6 +387,16 @@ public class Connections extends SimpleConnectionsLogic {
             if (!changed) { break; }
         }
 
+        blueVCs.addAll(checkNewBlueVCs);
+        blueSemiVCs.addAll(checkNewBlueSemiVCs);
+        redVCs.addAll(checkNewRedVCs);
+        redSemiVCs.addAll(checkNewRedSemiVCs);
+
+        checkRedundancies(blueVCs);
+        checkRedundancies(blueSemiVCs);
+        checkRedundancies(redVCs);
+        checkRedundancies(redSemiVCs);
+
         endRule(blueSemiVCs, blueVCs, Colors.BLUE.getValue(), new Move(0, 1), new Move(elecCols-1, 1));
         endRule(redSemiVCs, redVCs, Colors.RED.getValue(), new Move(1, 0), new Move(1, elecRows-1));
 

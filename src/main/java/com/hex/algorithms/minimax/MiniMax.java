@@ -13,17 +13,11 @@ import java.util.concurrent.*;
 
 public class MiniMax {
 
-    protected final int maxDepth = 3;
-
-    private HashMap<BigInteger, Float> evalMap;
-
     public MiniMax(){}
 
-    public Move findBestMove(Position position, int player) {
+    public Move findBestMove(Position position, int player, int depth) {
         float bestValue = Float.NEGATIVE_INFINITY;
         Move bestMove = null;
-
-        evalMap = new HashMap<>(Integer.MAX_VALUE);
 
         int nThreads = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(nThreads);
@@ -40,7 +34,7 @@ public class MiniMax {
                 Move move = ogPossibleMoves.get(k);
                 SetHolder setHolder = new SetHolder();
                 Position newPosition = position.Move(move, player);
-                Callable<MoveValue> task = () -> evalWrapper(newPosition, maxDepth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player, setHolder, move);
+                Callable<MoveValue> task = () -> evalWrapper(newPosition, depth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player, setHolder, move);
                 futures.add(executor.submit(task));
                 k++;
             }
@@ -62,18 +56,6 @@ public class MiniMax {
                 bestValue = moveVal.value;
             }
         }
-        /*
-
-        for (Move move : position.getPossibleMoves()) {
-            Position newPosition = position.Move(move, player);
-            System.out.println(move);
-            SetHolder setHolder = new SetHolder();
-            float value = alphabeta(newPosition, maxDepth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player, setHolder);
-            if (value > bestValue) {
-                bestValue = value;
-                bestMove = move;
-            }
-        }*/
 
         System.out.println("Move: " + bestMove + " -> Value: " + bestValue);
         if (bestMove == null){
@@ -95,17 +77,6 @@ public class MiniMax {
         return new MoveValue(move, alphabeta(pos, depth, alpha, beta, maximizingPlayer, currentPlayer, originalPlayer, setHolder));
     }
 
-    private BigInteger getEvalmapKey(Position pos){
-        int[][] currBoard = pos.getBoard();
-        BigInteger id = BigInteger.ZERO;
-        for (int[] row : currBoard) {
-            for (int cell : row) {
-                id = id.multiply(BigInteger.valueOf(3)).add(BigInteger.valueOf(cell));
-            }
-        }
-        return id;
-    }
-
     private float alphabeta(Position pos, int depth, float alpha, float beta, boolean maximizingPlayer, int currentPlayer, int originalPlayer, SetHolder setHolder) {
 
         if (pos.checkWin(originalPlayer)) { return Float.POSITIVE_INFINITY; }
@@ -113,14 +84,7 @@ public class MiniMax {
 
 
         if (depth == 0 || pos.getPossibleMoves().isEmpty()) {
-
-            //BigInteger key = getEvalmapKey(pos);
-            //if (evalMap.containsKey(key)){
-            //    return evalMap.get(key);
-            //}
-            float eval = pos.evaluate(originalPlayer, setHolder);
-            //evalMap.put(key, eval);
-            return eval;
+            return pos.evaluate(originalPlayer, setHolder);
         }
 
         if (maximizingPlayer) {
