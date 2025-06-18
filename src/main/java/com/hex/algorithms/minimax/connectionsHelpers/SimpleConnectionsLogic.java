@@ -52,6 +52,21 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
         }
         return hasBeenChecked;
     }
+/*
+    protected void checkRedundancies(Set<VirtualConnection> vcList) {
+        List<VirtualConnection> snapshot = new ArrayList<>(vcList);
+        for (VirtualConnection vc1 : snapshot) {
+            for (VirtualConnection vc2 : snapshot) {
+                if (vc1 == vc2) {
+                    continue;
+                }
+                if (vc1.isSubset(vc2)) {
+                    vcList.remove(vc1);
+                    break;
+                }
+            }
+        }
+    }*/
 
     protected void checkRedundancies(HashSet<VirtualConnection> vcList) {
         Set<VirtualConnection> indicesToRemove = new HashSet<>();

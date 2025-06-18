@@ -29,35 +29,44 @@ public class Connections extends SimpleConnectionsLogic {
         return adjMatrix;
     }
 
-    private int getShortestEnd(HashSet<VirtualConnection> VCs, int source, int target){
-        int n = elecCols * elecRows;
-        return dijkstra(createGraph(VCs, n), source)[target];
+    private int getShortestEnd(int[][] graph, int source, int target){
+        return dijkstra(graph, source)[target];
     }
 
-    private int tryAllSemis(HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs, int source, int target){
-        int bestDist = 10000;
-        int currDist;
-        int n = elecCols * elecRows;
-        int[][] baseGraph = createGraph(VCs, n);
-        int oldVal;
+    private int tryAllSemis(
+            HashSet<VirtualConnection> semiVCs,
+            HashSet<VirtualConnection> VCs,
+            int[][] graph,
+            int source,
+            int target
+    ) {
+        // 1) Run Dijkstra from source
+        int[] distS = dijkstra(graph, source);
 
-        for (VirtualConnection semiVC : semiVCs){
-            int x = semiVC.x.val(elecCols);
-            int y = semiVC.y.val(elecCols);
-            oldVal = baseGraph[x][y];
-            if (oldVal > semiVC.depth) {
-                baseGraph[x][y] = semiVC.depth;
-                baseGraph[y][x] = semiVC.depth;
+        // 2) Run Dijkstra from target (since graph undirected, same adjacency)
+        int[] distT = dijkstra(graph, target);
+
+        // 3) Baseline best distance without any semi‑edge
+        int bestDist = distS[target];
+
+        // 4) Try each semi‑edge in O(1) time
+        for (VirtualConnection semi : semiVCs) {
+            int x = semi.x.val(elecCols);
+            int y = semi.y.val(elecCols);
+            int w = semi.depth;
+
+            // Path using (x→y)
+            if (distS[x] < Integer.MAX_VALUE && distT[y] < Integer.MAX_VALUE) {
+                bestDist = Math.min(bestDist, distS[x] + w + distT[y]);
             }
-            currDist = dijkstra(baseGraph, source)[target];
-            if (bestDist > currDist){
-                bestDist = currDist;
+            // Path using (y→x)
+            if (distS[y] < Integer.MAX_VALUE && distT[x] < Integer.MAX_VALUE) {
+                bestDist = Math.min(bestDist, distS[y] + w + distT[x]);
             }
-            baseGraph[x][y] = oldVal;
-            baseGraph[y][x] = oldVal;
         }
         return bestDist;
     }
+
 
     public static int[] dijkstra(int[][] graph, int source) {
         int n = graph.length;
@@ -219,11 +228,11 @@ public class Connections extends SimpleConnectionsLogic {
         return toAdd(toAddSemiList, checkNewSemiVCs, semiVCs, color, 1);
     }
 
-    private void endRuleBlue(HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs){
+    private void endRule(HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs, int color, Move leftTarget, Move rightTarget){
         HashMap<Move, HashSet<VirtualConnection>> moveLeftMap = new HashMap<>();
         HashMap<Move, HashSet<VirtualConnection>> moveRightMap = new HashMap<>();
         for (VirtualConnection vc : semiVCs){
-            if (moveOnLeftBlueEdge(vc.x)){
+            if ((color == Colors.BLUE.getValue() && moveOnLeftBlueEdge(vc.x)) || ((color == Colors.RED.getValue() && moveOnLeftRedEdge(vc.x)))){
                 if (!moveLeftMap.containsKey(vc.y)){
                     HashSet<VirtualConnection> set = new HashSet<>();
                     set.add(vc);
@@ -232,7 +241,7 @@ public class Connections extends SimpleConnectionsLogic {
                     moveLeftMap.get(vc.y).add(vc);
                 }
             }
-            else if (moveOnLeftBlueEdge(vc.y)){
+            else if ((color == Colors.BLUE.getValue() && moveOnLeftBlueEdge(vc.y)) || ((color == Colors.RED.getValue() && moveOnLeftRedEdge(vc.y)))){
                 if (!moveLeftMap.containsKey(vc.x)){
                     HashSet<VirtualConnection> set = new HashSet<>();
                     set.add(vc);
@@ -241,7 +250,7 @@ public class Connections extends SimpleConnectionsLogic {
                     moveLeftMap.get(vc.x).add(vc);
                 }
             }
-            if (moveOnRightBlueEdge(vc.x)){
+            if ((color == Colors.BLUE.getValue() && moveOnRightBlueEdge(vc.x)) || ((color == Colors.RED.getValue() && moveOnRightRedEdge(vc.x)))){
                 if (!moveRightMap.containsKey(vc.y)){
                     HashSet<VirtualConnection> set = new HashSet<>();
                     set.add(vc);
@@ -250,7 +259,7 @@ public class Connections extends SimpleConnectionsLogic {
                     moveRightMap.get(vc.y).add(vc);
                 }
             }
-            else if (moveOnRightBlueEdge(vc.y)){
+            else if ((color == Colors.BLUE.getValue() && moveOnRightBlueEdge(vc.y)) || ((color == Colors.RED.getValue() && moveOnRightRedEdge(vc.y)))){
                 if (!moveRightMap.containsKey(vc.x)){
                     HashSet<VirtualConnection> set = new HashSet<>();
                     set.add(vc);
@@ -273,7 +282,7 @@ public class Connections extends SimpleConnectionsLogic {
                     currCarrier.addAll(vc.carrier);
                     maxDepth = Math.max(maxDepth, vc.depth);
                 }
-                VCs.add(new VirtualConnection(move, new Move(elecCols-1, 1), currCarrier, maxDepth));
+                VCs.add(new VirtualConnection(move, rightTarget, currCarrier, maxDepth));
             }
         }
         for (Move move : moveLeftMap.keySet()){
@@ -286,79 +295,7 @@ public class Connections extends SimpleConnectionsLogic {
                     currCarrier.addAll(vc.carrier);
                     maxDepth = Math.max(maxDepth, vc.depth);
                 }
-                VCs.add(new VirtualConnection(move, new Move(0, 1), currCarrier, maxDepth));
-            }
-        }
-    }
-
-    private void endRuleRed(HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs){
-        HashMap<Move, HashSet<VirtualConnection>> moveLeftMap = new HashMap<>();
-        HashMap<Move, HashSet<VirtualConnection>> moveRightMap = new HashMap<>();
-        for (VirtualConnection vc : semiVCs){
-            if (moveOnLeftRedEdge(vc.x)){
-                if (!moveLeftMap.containsKey(vc.y)){
-                    HashSet<VirtualConnection> set = new HashSet<>();
-                    set.add(vc);
-                    moveLeftMap.put(vc.y, set);
-                } else {
-                    moveLeftMap.get(vc.y).add(vc);
-                }
-            }
-            else if (moveOnLeftRedEdge(vc.y)){
-                if (!moveLeftMap.containsKey(vc.x)){
-                    HashSet<VirtualConnection> set = new HashSet<>();
-                    set.add(vc);
-                    moveLeftMap.put(vc.x, set);
-                } else {
-                    moveLeftMap.get(vc.x).add(vc);
-                }
-            }
-            if (moveOnRightRedEdge(vc.x)){
-                if (!moveRightMap.containsKey(vc.y)){
-                    HashSet<VirtualConnection> set = new HashSet<>();
-                    set.add(vc);
-                    moveRightMap.put(vc.y, set);
-                } else {
-                    moveRightMap.get(vc.y).add(vc);
-                }
-            }
-            else if (moveOnRightRedEdge(vc.y)){
-                if (!moveRightMap.containsKey(vc.x)){
-                    HashSet<VirtualConnection> set = new HashSet<>();
-                    set.add(vc);
-                    moveRightMap.put(vc.x, set);
-                } else {
-                    moveRightMap.get(vc.x).add(vc);
-                }
-            }
-        }
-        HashSet<VirtualConnection> currSet;
-        HashSet<Move> currCarrier = new HashSet<>();
-        int maxDepth = 0;
-        for (Move move : moveRightMap.keySet()){
-            currSet = moveRightMap.get(move);
-            checkRedundancies(currSet);
-            if (currSet.size() > 1){
-                currCarrier.clear();
-                maxDepth = 0;
-                for (VirtualConnection vc : currSet){
-                    currCarrier.addAll(vc.carrier);
-                    maxDepth = Math.max(maxDepth, vc.depth);
-                }
-                VCs.add(new VirtualConnection(move, new Move(1, elecRows-1), currCarrier, maxDepth));
-            }
-        }
-        for (Move move : moveLeftMap.keySet()){
-            currSet = moveLeftMap.get(move);
-            checkRedundancies(currSet);
-            if (currSet.size() > 1){
-                currCarrier.clear();
-                maxDepth = 0;
-                for (VirtualConnection vc : currSet){
-                    currCarrier.addAll(vc.carrier);
-                    maxDepth = Math.max(maxDepth, vc.depth);
-                }
-                VCs.add(new VirtualConnection(move, new Move(1, 0), currCarrier, maxDepth));
+                VCs.add(new VirtualConnection(move, leftTarget, currCarrier, maxDepth));
             }
         }
     }
@@ -450,16 +387,17 @@ public class Connections extends SimpleConnectionsLogic {
             if (!changed) { break; }
         }
 
-        endRuleBlue(blueSemiVCs, blueVCs);
-        endRuleRed(redSemiVCs, redVCs);
+        endRule(blueSemiVCs, blueVCs, Colors.BLUE.getValue(), new Move(0, 1), new Move(elecCols-1, 1));
+        endRule(redSemiVCs, redVCs, Colors.RED.getValue(), new Move(1, 0), new Move(1, elecRows-1));
 
         blueVCs.addAll(blueEdgeConnections);
         redVCs.addAll(redEdgeConnections);
-        retArr[0] = getShortestEnd(blueVCs, elecRows, 2*elecCols-1);
-        retArr[1] = tryAllSemis(blueSemiVCs, blueVCs, elecRows, 2*elecCols-1);
-
-        retArr[2] = getShortestEnd(redVCs, 1, (elecRows-1)*elecCols+1);
-        retArr[3] = tryAllSemis(redSemiVCs, redVCs, 1, (elecRows-1)*elecCols+1);
+        int[][] blueGraph = createGraph(blueVCs, elecCols*elecRows);
+        retArr[0] = getShortestEnd(blueGraph, elecRows, 2*elecCols-1);
+        retArr[1] = tryAllSemis(blueSemiVCs, blueVCs, blueGraph, elecRows, 2*elecCols-1);
+        int[][] redGraph = createGraph(redVCs, elecCols*elecRows);
+        retArr[2] = getShortestEnd(redGraph, 1, (elecRows-1)*elecCols+1);
+        retArr[3] = tryAllSemis(redSemiVCs, redVCs, redGraph, 1, (elecRows-1)*elecCols+1);
 
         return retArr;
     }

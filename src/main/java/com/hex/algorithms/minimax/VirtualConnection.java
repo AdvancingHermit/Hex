@@ -15,7 +15,7 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
     public VirtualConnection(Move x, Move y, Set<Move> carrier, int depth){
         this.x = x;
         this.y = y;
-        this.carrier = new HashSet<>(carrier);
+        this.carrier = carrier;
         this.depth = depth;
         criticalCell = null;
     }
@@ -23,7 +23,7 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
     public VirtualConnection(Move x, Move y, Set<Move> carrier, int depth, Move criticalCell){
         this.x = x;
         this.y = y;
-        this.carrier = new HashSet<>(carrier);
+        this.carrier = carrier;
         this.depth = depth;
         this.criticalCell = criticalCell;
     }

@@ -2,6 +2,7 @@ package com.hex.algorithms.minimax;
 
 import com.hex.algorithms.minimax.connectionsHelpers.SetHolder;
 
+import java.math.BigInteger;
 import java.util.*;
 
 public interface Position {
@@ -38,4 +39,14 @@ public interface Position {
     Move getMiddleMove();
 
     public int[][] getBoard();
+
+    default BigInteger getHashCode() {
+        BigInteger id = BigInteger.ZERO;
+        for (int[] row : getBoard()) {
+            for (int cell : row) {
+                id = id.multiply(BigInteger.valueOf(3)).add(BigInteger.valueOf(cell));
+            }
+        }
+        return id;
+    }
 }
