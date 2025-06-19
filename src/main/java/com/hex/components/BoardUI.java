@@ -12,6 +12,8 @@ import javafx.scene.shape.Line;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.function.Consumer;
+
 import static java.lang.Math.sqrt;
 
 public class BoardUI extends Pane {
@@ -27,6 +29,8 @@ public class BoardUI extends Pane {
     private GameMode mode;
     @Getter
     private boolean singlePlayer;
+    @Getter
+    private Runnable updateLabel;
 
     public enum ControllerType {
         LOCAL_GAME,
@@ -35,7 +39,7 @@ public class BoardUI extends Pane {
     }
     ControllerType type;
 
-    public BoardUI(Board board, double hexagonSize, ControllerType type, GameMode mode, boolean singlePlayer){
+    public BoardUI(Board board, double hexagonSize, ControllerType type, GameMode mode, boolean singlePlayer, Runnable updateLabel){
         this.size = hexagonSize;
         this.setBoard(board);
         this.rows = board.getRows();
@@ -43,6 +47,7 @@ public class BoardUI extends Pane {
         this.type = type;
         this.mode = mode;
         this.singlePlayer = singlePlayer;
+        this.updateLabel = updateLabel;
         if (!singlePlayer) {
             switch (type) {
                 case LOCAL_GAME:
@@ -112,6 +117,10 @@ public class BoardUI extends Pane {
                     if (singlePlayer){
                         this.drawBoard();
                     }
+                    if (updateLabel != null) {
+                        updateLabel.run();
+                    }
+
                 });
 
                 if (getBoard().getPiece(i, j) == 0) {

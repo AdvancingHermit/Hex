@@ -23,9 +23,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import lombok.Getter;
 
 public class LocalGame extends BaseScene {
     private GameState gameState = new GameState();
+    @Getter
+    private Label playerInfo = new Label();
 
     public LocalGame(int boardSize, Algorithm algorithm1, boolean algoStart, int algoIterations, GameMode mode, SceneManager sceneManager) {
         BorderPane root = new BorderPane();
@@ -46,17 +49,21 @@ public class LocalGame extends BaseScene {
                     algoIterations, false);
         }
         boolean singlePlayer = algorithm1 == null;
-        BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME, mode, singlePlayer);
+        playerInfo = new Label("Red Player's Turn");
+        playerInfo.setStyle("-fx-text-fill: red; -fx-font-size: 20px;");
+        BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME, mode, singlePlayer, this::updateLabel);
 
 
         hexBoard.drawBoard();
         boardWrap.getChildren().add(hexBoard);
 
         // Top Info
-        Label infoTop = new Label("Hex / Score");
-        HBox topBox = new HBox(infoTop);
-        topBox.setAlignment(Pos.CENTER);
+
+        HBox topBox = new HBox(playerInfo);
+        topBox.setAlignment(Pos.TOP_CENTER);
         topBox.setPrefHeight(50);
+
+
 
         // Right Info
         VBox rightBox = new VBox(new Label("Player Info"), new Label("Other Stats"));
@@ -73,9 +80,10 @@ public class LocalGame extends BaseScene {
         backButtonBox.setPadding(new Insets(10));
         backButtonBox.setPickOnBounds(false);
         boardWrap.setPickOnBounds(false);
+        topBox.setPickOnBounds(false);
 
         // Add the things to game wrapper
-        gameWrap.getChildren().addAll(boardWrap, backButtonBox);
+        gameWrap.getChildren().addAll(boardWrap, backButtonBox, topBox);
         //topBox.setTranslateY(-boardWrap.getHeight() / 2 - 20);
         //rightBox.setTranslateX(-boardWrap.getWidth() / 2 - 50);
         //gameWrap.getChildren().addAll( topBox, rightBox);
@@ -87,6 +95,27 @@ public class LocalGame extends BaseScene {
 
         scene = new Scene(root, 800, 600);
 
+    }
+
+    private void updateLabel(){
+        Label info = getPlayerInfo();
+        if (gameState.isGameFinished()){
+            String winner = gameState.getCurrentPlayer() == 2 ? "Blue Player Won" : "Red Player Won";
+            info.setText(winner);
+            if (winner.equals("Blue Player Won")) {
+                info.setStyle("-fx-text-fill: Blue; -fx-font-size: 20px;");
+            } else {
+                info.setStyle("-fx-text-fill: Red; -fx-font-size: 20px;");
+            }
+        } else {
+            String player = gameState.getCurrentPlayer() == 1 ? "Blue Player's Turn" : "Red Player's Turn";
+            info.setText(player);
+            if (player.equals("Blue Player's Turn")) {
+                info.setStyle("-fx-text-fill: Blue; -fx-font-size: 20px;");
+            } else {
+                info.setStyle("-fx-text-fill: Red; -fx-font-size: 20px;");
+            }
+        }
     }
 
 }

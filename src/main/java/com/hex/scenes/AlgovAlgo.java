@@ -32,7 +32,7 @@ public class AlgovAlgo extends BaseScene {
         Group boardWrap = new Group();
         Board board = new Board(boardSize,boardSize);
         AlgorithmTesterController.createGameController(board, gameState, startingAlgorithm, secondAlgorithm, startingIterations, secondIterations);
-        BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.ALGORITHM_TESTER, GameMode.NORMAL, false);
+        BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.ALGORITHM_TESTER, GameMode.NORMAL, false, null);
 
         hexBoard.drawBoard();
         boardWrap.getChildren().add(hexBoard);
