@@ -43,6 +43,7 @@ public class DQNAlgorithm implements Algorithm {
             NDArray swapInput = manager.create(new float[]{swap ? 1.0f : 0.0f}, new Shape(1, 1));
             NDList input = new NDList(boardInput, swapInput);
 
+
             try (Model model = Model.newInstance(MODEL_NAME, Device.cpu())) {
                 model.setBlock(block);
                 try (Predictor<NDList, NDList> predictor = model.newPredictor(new NoopTranslator())) {
@@ -50,7 +51,7 @@ public class DQNAlgorithm implements Algorithm {
                     NDArray qValues = output.singletonOrThrow();
 
                     // Process Q-values to find the best move
-                    return selectBestMove(qValues, board);
+                    return selectBestMove(qValues, board, swap, player);
 
                 }
             }
@@ -99,7 +100,7 @@ public class DQNAlgorithm implements Algorithm {
     }
 
 
-    private BoardCoordinate selectBestMove(NDArray qValues, Board board) {
+    private BoardCoordinate selectBestMove(NDArray qValues, Board board, boolean swap, int player) {
         float[] data = qValues.toFloatArray();
         int bestX = -1;
         int bestY = -1;
@@ -108,13 +109,15 @@ public class DQNAlgorithm implements Algorithm {
         int rows = board.getRows();
         int cols = board.getCols();
 
+        boolean swapturn = board.swapAvailable() && swap && player==2;
+
         // Iterate through the flattened Q-values
         for (int i = 0; i < data.length; i++) {
             int r = i / cols; // Row from flattened index
             int c = i % cols; // Column from flattened index
 
             // Only consider empty cells
-            if (board.getPiece(r, c) == 0) {
+            if (board.getPiece(r, c) == 0 || (swapturn)) {
                 if (data[i] > maxQValue) {
                     maxQValue = data[i];
                     bestX = r;
