@@ -56,7 +56,7 @@ public abstract class AbstractGameController extends Controller {
         gameState.nextPlayer();
     }
 
-    public abstract void gameIteration(BoardCoordinate co);
+    public abstract void gameIteration(BoardCoordinate co, Runnable updateLabel);
 
     @Override
     public void placePiece(BoardCoordinate co) {

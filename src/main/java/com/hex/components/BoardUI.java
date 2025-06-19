@@ -102,9 +102,9 @@ public class BoardUI extends Pane {
                     switch (type){
                         case LOCAL_GAME:
                             if (mode == GameMode.NORMAL || mode == GameMode.SWAP) {
-                                GameController.getInstance().gameIteration(coord);
+                                GameController.getInstance().gameIteration(coord, updateLabel);
                             } else if (mode == GameMode.DOUBLE){
-                                DoublePieceController.getInstance().gameIteration(coord);
+                                DoublePieceController.getInstance().gameIteration(coord, updateLabel);
                             }
                             break;
                         case ONLINE:
@@ -116,9 +116,6 @@ public class BoardUI extends Pane {
                     }
                     if (singlePlayer){
                         this.drawBoard();
-                    }
-                    if (updateLabel != null) {
-                        updateLabel.run();
                     }
 
                 });

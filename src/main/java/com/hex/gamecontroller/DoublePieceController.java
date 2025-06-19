@@ -33,7 +33,7 @@ public class DoublePieceController extends AbstractGameController {
     }
 
 
-    public void gameIteration(BoardCoordinate co) {
+    public void gameIteration(BoardCoordinate co, Runnable updateLabel) {
         //System.out.println("works");
         if (gameState.isGameFinished() || (board.getPiece(co.x, co.y) != 0 && !swap)) {
             return;
@@ -42,6 +42,7 @@ public class DoublePieceController extends AbstractGameController {
         if (getCounter() == 0){
             setCounter(1);
             gameState.doubleTurnIncrement();
+            updateLabel.run();
             return;
         }
         setCounter(0);
@@ -58,12 +59,22 @@ public class DoublePieceController extends AbstractGameController {
             }
             if (!gameState.isGameFinished()) {
                 gameState.nextPlayer();
+
+
             }
+            updateLabel.run();
+
         }).start();
+
+
 
 
     }
 
 
+    @Override
+    void gameIteration(BoardCoordinate coord) {
+        throw new RuntimeException("Unexpected controller action");
+    }
 }
 

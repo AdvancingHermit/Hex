@@ -83,9 +83,9 @@ public class LocalGameSettings extends BaseScene {
         difficultyBox.setValue("Medium");
 
         // Starting player selection
-        Label startingPlayerLabel = new Label("Select Starting Player:");
+        Label startingPlayerLabel = new Label("Play as:");
         startingPlayerBox = new ComboBox<>();
-        startingPlayerBox.getItems().addAll("Random", "First", "Second");
+        startingPlayerBox.getItems().addAll("Random", "Red (First)", "Blue (Second)");
         startingPlayerBox.setValue("Random");
 
         // Swap rule checkbox
@@ -135,8 +135,8 @@ public class LocalGameSettings extends BaseScene {
                     int i = random.nextInt(2);
                     algostart = i == 0;
                 }
-                case "First" -> algostart = false;
-                case "Second" -> algostart = true;
+                case "Red (First)" -> algostart = false;
+                case "Blue (Second)" -> algostart = true;
 
             }
             isSwapEnabled = swapCheckBox.isSelected();
