@@ -21,7 +21,7 @@ public class GameController extends AbstractGameController {
         super(board, gameState, algorithm, algoStart, algoIterations, swap);
     }
     
-    public void gameIteration(BoardCoordinate co) {
+    public void gameIteration(BoardCoordinate co, Runnable updateLabel) {
 
         //System.out.println("works");
         if (gameState.isGameFinished() || (board.getPiece(co.x, co.y) != 0 && !swap)) {
@@ -29,6 +29,7 @@ public class GameController extends AbstractGameController {
         }
         placePiece(co);
        gameState.nextPlayer();
+       updateLabel.run();
 
         new Thread(() ->{
             if (algorithm != null && !gameState.isGameFinished()) {
@@ -36,11 +37,17 @@ public class GameController extends AbstractGameController {
                 placePiece(move);
                 gameState.nextPlayer();
             }
-
+            updateLabel.run();
         }).start();
+
+
     }
 
 
+    @Override
+    void gameIteration(BoardCoordinate coord) {
+        throw new RuntimeException("Unexpected controller action");
 
+    }
 }
 

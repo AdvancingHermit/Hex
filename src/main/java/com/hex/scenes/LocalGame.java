@@ -13,6 +13,7 @@ import com.hex.components.Board;
 import com.hex.components.BoardUI;
 import com.hex.gamecontroller.DoublePieceController;
 import com.hex.gamecontroller.GameController;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -28,10 +29,13 @@ import lombok.Getter;
 public class LocalGame extends BaseScene {
     private GameState gameState = new GameState();
     @Getter
-    private Label playerInfo = new Label();
+    private Label playerInfo;
+    @Getter
+    private GameMode mode;
 
     public LocalGame(int boardSize, Algorithm algorithm1, boolean algoStart, int algoIterations, GameMode mode, SceneManager sceneManager) {
         BorderPane root = new BorderPane();
+        this.mode = mode;
 
         StackPane gameWrap = new StackPane();
 
@@ -49,8 +53,13 @@ public class LocalGame extends BaseScene {
                     algoIterations, false);
         }
         boolean singlePlayer = algorithm1 == null;
-        playerInfo = new Label("Red Player's Turn");
-        playerInfo.setStyle("-fx-text-fill: red; -fx-font-size: 20px;");
+        if (algoStart && !singlePlayer) {
+            playerInfo = new Label("Blue Player's Turn");
+            playerInfo.setStyle("-fx-text-fill: Blue; -fx-font-size: 20px;");
+        } else {
+            playerInfo = new Label("Red Player's Turn");
+            playerInfo.setStyle("-fx-text-fill: Red; -fx-font-size: 20px;");
+        }
         BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME, mode, singlePlayer, this::updateLabel);
 
 
@@ -98,9 +107,14 @@ public class LocalGame extends BaseScene {
     }
 
     private void updateLabel(){
+        Platform.runLater(() -> {
         Label info = getPlayerInfo();
         if (gameState.isGameFinished()){
-            String winner = gameState.getCurrentPlayer() == 2 ? "Blue Player Won" : "Red Player Won";
+            int loser = gameState.getBoardPieces() % 2 == 0 ? 2 : 1;
+            if (!(getMode() == GameMode.DOUBLE)){
+                loser = 2;
+            }
+            String winner = gameState.getCurrentPlayer() == loser ? "Blue Player Won" : "Red Player Won";
             info.setText(winner);
             if (winner.equals("Blue Player Won")) {
                 info.setStyle("-fx-text-fill: Blue; -fx-font-size: 20px;");
@@ -116,6 +130,8 @@ public class LocalGame extends BaseScene {
                 info.setStyle("-fx-text-fill: Red; -fx-font-size: 20px;");
             }
         }
+        });
     }
+
 
 }
