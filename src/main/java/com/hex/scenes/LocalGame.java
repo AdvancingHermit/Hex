@@ -42,8 +42,8 @@ public class LocalGame extends BaseScene {
             case DOUBLE ->  DoublePieceController.createDoublePieceController(board, gameState, algorithm1, algoStart,
                     algoIterations, false);
         }
-
-        BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME, mode);
+        boolean singlePlayer = algorithm1 == null;
+        BoardUI hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.LOCAL_GAME, mode, singlePlayer);
 
 
         hexBoard.drawBoard();

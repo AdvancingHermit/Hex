@@ -15,6 +15,7 @@ import lombok.Setter;
 import static java.lang.Math.sqrt;
 
 public class BoardUI extends Pane {
+
     private int rows;
     private int cols;
     private double size;
@@ -24,6 +25,8 @@ public class BoardUI extends Pane {
     private Board board;
     private boolean online;
     private GameMode mode;
+    @Getter
+    private boolean singlePlayer;
 
     public enum ControllerType {
         LOCAL_GAME,
@@ -32,49 +35,53 @@ public class BoardUI extends Pane {
     }
     ControllerType type;
 
-    public BoardUI(Board board, double hexagonSize, ControllerType type, GameMode mode){
+    public BoardUI(Board board, double hexagonSize, ControllerType type, GameMode mode, boolean singlePlayer){
         this.size = hexagonSize;
         this.setBoard(board);
         this.rows = board.getRows();
         this.cols = board.getCols();
         this.type = type;
         this.mode = mode;
-        switch (type){
-            case LOCAL_GAME: ;
-                if (mode == GameMode.NORMAL || mode == GameMode.SWAP) {
-                    GameController.getInstance().setMoveListener(co -> {
-                        int curr =  GameController.getInstance().getGameState().getCurrentPlayer();
-                        int algoPlayerNum =  GameController.getInstance().getAlgoPlayerNum();
-                        this.setDisable(curr == algoPlayerNum);
+        this.singlePlayer = singlePlayer;
+        if (!singlePlayer) {
+            switch (type) {
+                case LOCAL_GAME:
+                    ;
+                    if (mode == GameMode.NORMAL || mode == GameMode.SWAP) {
+                        GameController.getInstance().setMoveListener(co -> {
+                            int curr = GameController.getInstance().getGameState().getCurrentPlayer();
+                            int algoPlayerNum = GameController.getInstance().getAlgoPlayerNum();
+                            this.setDisable(curr == algoPlayerNum);
+                            Platform.runLater(() -> {
+                                this.getChildren().clear();
+                                this.drawBoard();
+                            });
+                        });
+                    } else if (mode == GameMode.DOUBLE) {
+                        DoublePieceController.getInstance().setMoveListener(co -> {
+                            int curr = DoublePieceController.getInstance().getGameState().getCurrentPlayer();
+                            int algoPlayerNum = DoublePieceController.getInstance().getAlgoPlayerNum();
+                            this.setDisable(DoublePieceController.getInstance().getCounter() == 1);
+                            Platform.runLater(() -> {
+                                this.getChildren().clear();
+                                this.drawBoard();
+                            });
+                        });
+                    }
+                    break;
+                case ONLINE:
+                    break;
+                case ALGORITHM_TESTER:
+                    AlgorithmTesterController.getInstance().setMoveListener(co -> {
+                        AlgorithmTesterController.getInstance().gameIteration(co);
                         Platform.runLater(() -> {
                             this.getChildren().clear();
                             this.drawBoard();
                         });
                     });
-                } else if (mode == GameMode.DOUBLE){
-                    DoublePieceController.getInstance().setMoveListener(co -> {
-                        int curr = DoublePieceController.getInstance().getGameState().getCurrentPlayer();
-                        int algoPlayerNum = DoublePieceController.getInstance().getAlgoPlayerNum();
-                        this.setDisable(DoublePieceController.getInstance().getCounter() == 1);
-                        Platform.runLater(() -> {
-                            this.getChildren().clear();
-                            this.drawBoard();
-                        });
-                    });
-                }
-                break;
-            case ONLINE:
-                break;
-            case ALGORITHM_TESTER:
-                AlgorithmTesterController.getInstance().setMoveListener(co -> {
-                    AlgorithmTesterController.getInstance().gameIteration(co);
-                    Platform.runLater(() -> {
-                        this.getChildren().clear();
-                        this.drawBoard();
-                    });
-                });
-                break;
-        }     
+                    break;
+            }
+        }
 
     }
 
@@ -101,6 +108,9 @@ public class BoardUI extends Pane {
                         case ALGORITHM_TESTER:
                             AlgorithmTesterController.getInstance().gameIteration(coord);
                             break;
+                    }
+                    if (singlePlayer){
+                        this.drawBoard();
                     }
                 });
 
