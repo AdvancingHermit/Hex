@@ -62,16 +62,7 @@ public class DQNAlgorithm implements Algorithm {
         }
     }
 
-    /**
-     * Converts the game board into a 2-channel NDArray with the shape (1, 2, rows, cols).
-     * - Channel 0: Current player's pieces.
-     * - Channel 1: Opponent's pieces.
-     *
-     * @param manager       The NDManager to create the array.
-     * @param board         The game board.
-     * @param currentPlayer The current player (1 or 2).
-     * @return The board state as an NDArray.
-     */
+     //Converts the game board into a 2-channel NDArray with the shape (1, 2, rows, cols).
     private NDArray convertBoardToNDArray(NDManager manager, Board board, int currentPlayer) {
         int rows = board.getRows();
         int cols = board.getCols();
@@ -147,7 +138,6 @@ public class DQNAlgorithm implements Algorithm {
     }
 
     private Path loadWeightsFromResource(String resourcePath) throws Exception {
-        // resourcePath is e.g. "/weights/djl_weights.txt"
         try (InputStream is = getClass().getResourceAsStream(resourcePath)) {
             if (is == null) {
                 throw new IllegalArgumentException("Resource not found: " + resourcePath);
