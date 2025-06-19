@@ -4,15 +4,23 @@ package com.hex;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import com.hex.SceneManager.SceneType;
+import com.hex.algorithms.dqn.Driver;
+
+import java.net.URISyntaxException;
 
 public class HexApp extends Application {
     private SceneManager sceneManager;
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws URISyntaxException {
         stage.setTitle("Hex Game Board");
         sceneManager = new SceneManager(stage);
         sceneManager.switchScene(SceneType.MAIN_MENU);
+        Driver driver = new Driver();
+        //driver.printer();
         stage.show();
+
+
+
     }
 
     public static void main(String[] args) {

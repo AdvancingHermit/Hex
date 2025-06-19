@@ -3,6 +3,7 @@ package com.hex.scenes;
 import com.hex.GameMode;
 import com.hex.SceneManager;
 import com.hex.algorithms.Algorithm;
+import com.hex.algorithms.dqn.DQNAlgorithm;
 import com.hex.algorithms.minimax.ConnectionPlayer;
 import com.hex.algorithms.minimax.MiniMax;
 import com.hex.algorithms.montecarlo.MCTS;
@@ -73,7 +74,7 @@ public class LocalGameSettings extends BaseScene {
         // Algorithm selection
         Label algorithmLabel = new Label("Select Algorithm:");
         algorithmBox = new ComboBox<>();
-        algorithmBox.getItems().addAll("None", "MCTS", "Connection", "AI");
+        algorithmBox.getItems().addAll("None", "MCTS", "Connection", "AI", "DQN");
         algorithmBox.setValue("None");
 
         // Difficulty selection
@@ -126,6 +127,7 @@ public class LocalGameSettings extends BaseScene {
                 case "MCTS" -> algorithm1 = new MCTS();
                 case "Connection" -> algorithm1 = new ConnectionPlayer();
                 case "AI" -> throw new RuntimeException("No AI implemented yet");
+                case "DQN" ->  algorithm1 = new DQNAlgorithm();
             }
             startingPlayer = startingPlayerBox.getValue();
             boolean algostart = false;
