@@ -71,11 +71,15 @@ public class LocalGameSettings extends BaseScene {
         boardSizeSlider.setBlockIncrement(1);
         boardSizeSlider.setSnapToTicks(true);
 
+
+
         // Algorithm selection
         Label algorithmLabel = new Label("Select Algorithm:");
         algorithmBox = new ComboBox<>();
         algorithmBox.getItems().addAll("None", "MCTS", "Connection", "AI", "DQN");
         algorithmBox.setValue("None");
+        algorithmBox.valueProperty().addListener((obs, oldVal, newVal) -> updateFieldsByAlgo());
+
 
         // Difficulty selection
         Label difficultyLabel = new Label("Select Difficulty:");
@@ -124,10 +128,10 @@ public class LocalGameSettings extends BaseScene {
             algorithm = algorithmBox.getValue();
             Algorithm algorithm1 = null;
             switch (algorithm) {
-                case "MCTS" -> algorithm1 = new MCTS();
-                case "Connection" -> algorithm1 = new ConnectionPlayer();
-                case "AI" -> throw new RuntimeException("No AI implemented yet");
-                case "DQN" ->  algorithm1 = new DQNAlgorithm();
+                case "MCTS"          -> algorithm1 = new MCTS();
+                case "Connection"    -> algorithm1 = new ConnectionPlayer();
+                case "AI"            -> throw new RuntimeException("No AI implemented yet");
+                case "DQN"           -> algorithm1 = new DQNAlgorithm();
             }
             startingPlayer = startingPlayerBox.getValue();
             boolean algostart = false;
@@ -170,6 +174,26 @@ public class LocalGameSettings extends BaseScene {
         backButtonBox.setPickOnBounds(false);
         root.getChildren().addAll(vbox, backButtonBox);
         scene = new Scene(root, 800, 600);
+    }
+
+    private void updateFieldsByAlgo() {
+        switch (algorithmBox.getValue()) {
+            case "DQN" -> {
+                boardSizeSlider.setDisable(true);
+                boardSizeSlider.setValue(5);
+                difficultyBox.setDisable(true);
+                difficultyBox.setValue("Easy");
+                doubleCheckBox.setDisable(true);
+                doubleCheckBox.setSelected(false);
+            }
+            default -> {
+                boardSizeSlider.setDisable(false);
+                difficultyBox.setDisable(false);
+                doubleCheckBox.setDisable(false);
+                doubleCheckBox.setSelected(false);
+            }
+        }
+
     }
 
 }
