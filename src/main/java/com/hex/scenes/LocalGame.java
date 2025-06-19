@@ -1,6 +1,7 @@
 package com.hex.scenes;
 import com.hex.GameMode;
 import com.hex.GameState;
+import com.hex.SceneManager;
 import com.hex.algorithms.Algorithm;
 
 import com.hex.algorithms.minimax.ConnectionPlayer;
@@ -12,9 +13,11 @@ import com.hex.components.Board;
 import com.hex.components.BoardUI;
 import com.hex.gamecontroller.DoublePieceController;
 import com.hex.gamecontroller.GameController;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -24,7 +27,7 @@ import javafx.scene.layout.VBox;
 public class LocalGame extends BaseScene {
     private GameState gameState = new GameState();
 
-    public LocalGame(int boardSize, Algorithm algorithm1, boolean algoStart, int algoIterations, GameMode mode) {
+    public LocalGame(int boardSize, Algorithm algorithm1, boolean algoStart, int algoIterations, GameMode mode, SceneManager sceneManager) {
         BorderPane root = new BorderPane();
 
         StackPane gameWrap = new StackPane();
@@ -60,8 +63,19 @@ public class LocalGame extends BaseScene {
         rightBox.setAlignment(Pos.CENTER);
         rightBox.setPrefWidth(100);
 
+        //backbutton
+        Button backButton = new Button("← Back");
+        backButton.setOnAction(e -> sceneManager.switchScene(SceneManager.SceneType.MAIN_MENU));
+        backButton.setStyle("-fx-font-size: 14px;");
+
+        HBox backButtonBox = new HBox(backButton);
+        backButtonBox.setAlignment(Pos.TOP_LEFT);
+        backButtonBox.setPadding(new Insets(10));
+        backButtonBox.setPickOnBounds(false);
+        boardWrap.setPickOnBounds(false);
+
         // Add the things to game wrapper
-        gameWrap.getChildren().add(boardWrap);
+        gameWrap.getChildren().addAll(boardWrap, backButtonBox);
         //topBox.setTranslateY(-boardWrap.getHeight() / 2 - 20);
         //rightBox.setTranslateX(-boardWrap.getWidth() / 2 - 50);
         //gameWrap.getChildren().addAll( topBox, rightBox);

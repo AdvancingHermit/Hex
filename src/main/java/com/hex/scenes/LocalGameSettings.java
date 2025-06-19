@@ -152,7 +152,7 @@ public class LocalGameSettings extends BaseScene {
                 }
             }
             // Start the game
-            Scene scene1 = new LocalGame(boardSize, algorithm1, algostart, iterations, mode).getScene();
+            Scene scene1 = new LocalGame(boardSize, algorithm1, algostart, iterations, mode, sceneManager).getScene();
             sceneManager.switchScene(scene1);
         });
 

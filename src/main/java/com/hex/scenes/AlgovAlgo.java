@@ -2,15 +2,18 @@ package com.hex.scenes;
 
 import com.hex.GameMode;
 import com.hex.GameState;
+import com.hex.SceneManager;
 import com.hex.algorithms.Algorithm;
 import com.hex.algorithms.minimax.ConnectionPlayer;
 import com.hex.algorithms.montecarlo.MCTS;
 import com.hex.components.Board;
 import com.hex.components.BoardUI;
 import com.hex.gamecontroller.AlgorithmTesterController;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -20,7 +23,7 @@ import javafx.scene.layout.VBox;
 public class AlgovAlgo extends BaseScene {
     private GameState gameState = new GameState();
 
-    public AlgovAlgo(int boardSize, Algorithm startingAlgorithm, Algorithm secondAlgorithm, int startingIterations, int secondIterations, GameMode mode) {
+    public AlgovAlgo(int boardSize, Algorithm startingAlgorithm, Algorithm secondAlgorithm, int startingIterations, int secondIterations, GameMode mode, SceneManager sceneManager) {
         BorderPane root = new BorderPane();
 
         StackPane gameWrap = new StackPane();
@@ -45,7 +48,18 @@ public class AlgovAlgo extends BaseScene {
         rightBox.setAlignment(Pos.CENTER);
         rightBox.setPrefWidth(100);
 
-        gameWrap.getChildren().add(boardWrap);
+        //backbutton
+        Button backButton = new Button("← Back");
+        backButton.setOnAction(e -> sceneManager.switchScene(SceneManager.SceneType.MAIN_MENU));
+        backButton.setStyle("-fx-font-size: 14px;");
+
+        HBox backButtonBox = new HBox(backButton);
+        backButtonBox.setAlignment(Pos.TOP_LEFT);
+        backButtonBox.setPadding(new Insets(10));
+        backButtonBox.setPickOnBounds(false);
+        boardWrap.setPickOnBounds(false);
+
+        gameWrap.getChildren().addAll(boardWrap, backButtonBox);
         root.setCenter(gameWrap);
         scene = new Scene(root, 800, 600);
     }
