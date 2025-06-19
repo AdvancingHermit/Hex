@@ -28,17 +28,15 @@ public class GameController extends AbstractGameController {
             return;
         }
         placePiece(co);
-        gameState.nextPlayer();
+       gameState.nextPlayer();
 
         new Thread(() ->{
             if (algorithm != null && !gameState.isGameFinished()) {
                 BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, iterations, swap);
                 placePiece(move);
-            }
-
-            if (!gameState.isGameFinished()) {
                 gameState.nextPlayer();
             }
+
         }).start();
     }
 
