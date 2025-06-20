@@ -113,6 +113,7 @@ public class LocalGameSettings extends BaseScene {
 
         doubleCheckBox.selectedProperty().addListener((obs, oldVal, isNowSelected) -> {
             if (!algorithmBox.getValue().equals("MCTS")){
+                updateSlider();
                 return;
             }
             if (isNowSelected) {
@@ -239,6 +240,15 @@ public class LocalGameSettings extends BaseScene {
             }
         }
 
+
+
+    }
+    private void updateSlider() {
+        if (boardSizeSlider.getMax() == 7){
+            boardSizeSlider.setMax(11);
+            boardSizeSlider.setValue(5);
+
+        }
     }
 
 }
