@@ -46,6 +46,7 @@ public class OnlineController extends Controller {
             if (gameState.getSwap() && !emptySpot) {
                 board.setPiece(x, y, 0);
                 board.setPiece(y, x, gameState.getCurrentPlayer());
+
             } else {
                 board.setPiece(x, y, gameState.getCurrentPlayer());
             }
@@ -53,8 +54,9 @@ public class OnlineController extends Controller {
             onMoveHandler.accept(new int[]{x, y});
             gameState.nextPlayer();
             gameState.setSwap(false);
-            notifyMoveListener(coord);
+
         }
+        notifyMoveListener(coord);
 
     }
 
