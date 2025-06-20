@@ -15,6 +15,7 @@ import lombok.Setter;
 import java.util.function.Consumer;
 
 import static java.lang.Math.sqrt;
+//Made by Oliver
 
 public class BoardUI extends Pane {
 
@@ -38,7 +39,6 @@ public class BoardUI extends Pane {
         ALGORITHM_TESTER
     }
     ControllerType type;
-    //Made by Oliver
 
     //This class is responsible for drawing the board we can see, and make sure the board can be interacted with
 
