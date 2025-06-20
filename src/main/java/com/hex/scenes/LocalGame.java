@@ -33,6 +33,7 @@ public class LocalGame extends BaseScene {
     @Getter
     private GameMode mode;
 
+    //Scene for the base local game, where the board can be seen
     public LocalGame(int boardSize, Algorithm algorithm1, boolean algoStart, int algoIterations, GameMode mode, SceneManager sceneManager) {
         BorderPane root = new BorderPane();
         this.mode = mode;

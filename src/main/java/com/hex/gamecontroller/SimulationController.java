@@ -16,7 +16,7 @@ public class SimulationController {
     private GameState gameState;
     private Algorithm algorithm;
 
-
+    //used to simulate games with random move for the MCTS algorithm
     public SimulationController(Board board, GameState gameState){
         this.board = board;
         this.setGameState(gameState);

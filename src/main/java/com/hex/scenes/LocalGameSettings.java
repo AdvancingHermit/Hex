@@ -46,6 +46,7 @@ public class LocalGameSettings extends BaseScene {
     private final CheckBox doubleCheckBox;
     private final Label difficultyLabel;
 
+    //scene for changing settings for local game
     public LocalGameSettings(SceneManager sceneManager) {
         //backbutton
         Button backButton = new Button("← Back");
@@ -114,10 +115,13 @@ public class LocalGameSettings extends BaseScene {
         doubleCheckBox.selectedProperty().addListener((obs, oldVal, isNowSelected) -> {
             if (!algorithmBox.getValue().equals("MCTS")){
                 updateSlider();
+                if (isNowSelected){
+                    swapCheckBox.setSelected(false);
+                }
                 return;
             }
             if (isNowSelected) {
-                difficultyBox.setDisable(true);
+                swapCheckBox.setSelected(false);
                 difficultyBox.setValue("Hard");
                 boardSizeSlider.setMax(7);
                 boardSizeSlider.setValue(5);

@@ -27,6 +27,7 @@ public class SceneManager {
         this.sceneHeight = 600;
         this.sceneWidth = 800;
     }
+    //scene manager used to switch between different scenes in the game, used every time you navigate in a menu
 
     public enum SceneType {
         MAIN_MENU,

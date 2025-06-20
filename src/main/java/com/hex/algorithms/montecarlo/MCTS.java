@@ -26,6 +26,7 @@ public class MCTS implements Algorithm {
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
         Node root = new Node(null, new ArrayList<>(), 0, null, false);
         this.swap = swap;
+        //multithreading
         int nThreads = Runtime.getRuntime().availableProcessors();
        //int nThreads = 1;
         ExecutorService executor = Executors.newFixedThreadPool(nThreads);
@@ -63,7 +64,9 @@ public class MCTS implements Algorithm {
     }
 
     private Node makeTree(Board board, GameState gameState, int iterations, Node root, int n) {
+        //makes the monte carlo tree given i iterations.
         int i = 0;
+       // log.info("start " + n);
         while (i < iterations){
             gameOver = false;
             Board simBoard = new Board(board.getRows(), board.getCols());
@@ -78,10 +81,12 @@ public class MCTS implements Algorithm {
             backpropagation(win, selectedNode);
             i++;
         }
+       // log.info("done " + n);
         return root;
     }
 
     private Node selection(Node root, Board simBoard, SimulationController simulationController){
+        //traverses tree and finds a leaf node
         Node cur = root;
         while (!cur.children.isEmpty() && cur.children.size() == possibleMoves(simBoard).size()){
              cur = maxNode(cur);
@@ -98,6 +103,7 @@ public class MCTS implements Algorithm {
     }
 
     private Node expansion(Node leaf, Board simBoard, SimulationController simulationController){
+        //expands the leaf with a possible move
         if (!simulationController.getGameState().isGameFinished()) {
             if (swap && simBoard.swapAvailable()) {
                 BoardCoordinate swapMove = null;
@@ -132,6 +138,7 @@ public class MCTS implements Algorithm {
     }
 
     private int simulation(SimulationController simulationController){
+        //plays random games, and decides the winner based on the player who sent the game into this position
         if (!gameOver) {
             int upPlayer = simulationController.getGameState().getCurrentPlayer();
 
@@ -150,6 +157,7 @@ public class MCTS implements Algorithm {
     }
 
     private void backpropagation(int win, Node leaf){
+        //back propagetes results to the root
         Node cur = leaf;
         while (true){
             cur.wins += win;
@@ -166,11 +174,13 @@ public class MCTS implements Algorithm {
         }
     }
 
+
     private double UCT(int wins, int nSims, int parSims, double c){
         return ((double) wins / (double) nSims) + c * Math.sqrt(Math.log(parSims)/nSims);
     }
 
     private Node maxNode(Node cur){
+        //finds the max value child of a node
         double maxVal = -10000;
         Node bestNode = new Node(null,null,0, null, false);
         for (Node child : cur.children){

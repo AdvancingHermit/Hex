@@ -15,6 +15,7 @@ public class Board {
             {1, -1}, {-1, 1}
     };
 
+    //Main board class, used to store the hex pieces, and check for connections/wins
 
     public Board(int rows, int cols) {
         this.rows = rows;
@@ -68,6 +69,8 @@ public class Board {
 
     }
     private boolean depthFirstSearch(int x, int y, int player) {
+        //uses the stack as the data structure to perform DFS to find connections from one side of the board
+        //to the other. Checks all neighbouring tiles of the same player in the chain, or until it finds a connection
         board[x][y] = -1;
 
         if (player == 2 && x == cols - 1 || player == 1 && y == rows - 1) {
