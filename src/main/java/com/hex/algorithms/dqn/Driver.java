@@ -15,8 +15,11 @@ import com.hex.GameState;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
 
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class Driver {
     private static final String MODEL_NAME = "hex-dqn";
@@ -31,7 +34,7 @@ public class Driver {
         // Instantiate your block
         HexDqnBlock block = new HexDqnBlock();
 
-        Path weightsPath = Paths.get(WEIGHTS_PATH);
+        Path weightsPath = loadWeightsFromResource("/com/hex/models/djl_weights.txt");
 
         // Use a single NDManager for initialization, loading weights, and inference
         try (NDManager manager = NDManager.newBaseManager()) {
@@ -97,6 +100,17 @@ public class Driver {
             System.out.println("\nDQNAlgorithm recommends move: (" + chosenMove.x + ", " + chosenMove.y + ")");
         } else {
             System.out.println("\nDQNAlgorithm failed to recommend a move.");
+        }
+    }
+    private static Path loadWeightsFromResource(String resourcePath) throws Exception {
+        try (InputStream is = Driver.class.getResourceAsStream(resourcePath)) {
+            if (is == null) {
+                throw new IllegalArgumentException("Resource not found: " + resourcePath);
+            }
+            Path tempFile = Files.createTempFile("djl_weights", ".txt");
+            tempFile.toFile().deleteOnExit();
+            Files.copy(is, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            return tempFile;
         }
     }
 }
