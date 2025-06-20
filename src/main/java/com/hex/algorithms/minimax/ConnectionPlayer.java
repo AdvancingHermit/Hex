@@ -10,7 +10,7 @@ public class ConnectionPlayer extends MiniMax implements Algorithm {
     public ConnectionPlayer(){ hasFoundWin = false; };
     @Override
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
-        System.out.println("Started");
+        //System.out.println("Started");
         Position startPos = new ConnectionPosition(board);
         boolean doSwap = false;
         if (gameState.getBoardPieces() == 1 && swap && player == 2) {
@@ -29,7 +29,7 @@ public class ConnectionPlayer extends MiniMax implements Algorithm {
             case 5_000_000 -> 5;
             default -> 3;
         };
-        if (hasFoundWin) depth = 1;
+        //if (hasFoundWin) depth = 1;
         startPos.setplayerOnTurn(depth % 2 == 0);
         MoveValue suggestedMove = findBestMove(startPos, player, depth);
         if (suggestedMove.value > 1) hasFoundWin = true;

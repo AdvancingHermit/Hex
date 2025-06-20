@@ -64,7 +64,6 @@ public class MCTS implements Algorithm {
 
     private Node makeTree(Board board, GameState gameState, int iterations, Node root, int n) {
         int i = 0;
-        log.info("start " + n);
         while (i < iterations){
             gameOver = false;
             Board simBoard = new Board(board.getRows(), board.getCols());
@@ -79,7 +78,6 @@ public class MCTS implements Algorithm {
             backpropagation(win, selectedNode);
             i++;
         }
-        log.info("done " + n);
         return root;
     }
 

@@ -35,6 +35,12 @@ public class GameState {
         boardPieces++;
     }
 
+    public void reset(){
+        currentPlayer = 1;
+        gameFinished = false;
+        boardPieces = 0;
+    }
+
     public boolean getSwap() {
         return swap;
     }

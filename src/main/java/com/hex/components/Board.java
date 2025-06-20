@@ -103,4 +103,20 @@ public class Board {
         }
         return counter == 1;
     }
+
+    public String printBoard(){
+        String s = "";
+        for (int x = 0; x < cols; x++){
+            for (int y = 0; y < rows; y++){
+                s += board[x][y] + " ";
+            }
+            s += "\n";
+        }
+        return s;
+    }
+
+    public void reset(){
+        board = new int[rows][cols];
+        //gameState.reset();
+    }
 }
