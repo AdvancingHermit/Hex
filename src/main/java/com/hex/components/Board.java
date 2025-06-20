@@ -3,6 +3,7 @@ package com.hex.components;
 import com.hex.GameState;
 import lombok.Data;
 
+//Made by Oliver
 
 @Data
 public class Board {
@@ -14,7 +15,6 @@ public class Board {
             {1, 0}, {-1, 0}, {0, 1}, {0, -1},
             {1, -1}, {-1, 1}
     };
-    //Made by Oliver
 
     //Main board class, used to store the hex pieces, and check for connections/wins
 
