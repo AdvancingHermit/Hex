@@ -7,10 +7,13 @@ import javafx.stage.Stage;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+// Made by Oscar
  /**
   * Manages the different Scenes, and makes sure to properly switch between them
   */
-public class SceneManager {
+ //Made by Oliver
+
+ public class SceneManager {
 
     private final Stage primaryStage;
     // For Online play
@@ -47,7 +50,7 @@ public class SceneManager {
     public double getSceneWidth() {
          return this.sceneWidth;
      }
-
+    // Stores the server connection for online play
     public void storeConnection(Socket socket, ObjectInputStream in, ObjectOutputStream out) {
         this.currentSocket = socket;
         this.currentIn = in;

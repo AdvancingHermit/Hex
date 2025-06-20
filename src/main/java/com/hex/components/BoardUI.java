@@ -15,7 +15,13 @@ import lombok.Setter;
 import java.util.function.Consumer;
 
 import static java.lang.Math.sqrt;
+//Made by Oliver
 
+// Made by Oscar
+
+/**
+ * Draws the board and assigns move listeners.
+ */
 public class BoardUI extends Pane {
 
     private int rows;
@@ -39,7 +45,15 @@ public class BoardUI extends Pane {
     }
     ControllerType type;
 
-    //This class is responsible for drawing the board we can see, and make sure the board can be interacted with
+    /**
+     * This class is responsible for drawing the board we can see, and make sure the board can be interacted with
+     * @param board The hex board.
+     * @param hexagonSize The size of hexagon cells.
+     * @param type Which type of controller is in use.
+     * @param mode The current Game Mode.
+     * @param singlePlayer Whether you are playing single player (against local human opponent) or not.
+     * @param updateLabel A method that manages the updating of a label e.g. a player turn label .
+     */
 
     public BoardUI(Board board, double hexagonSize, ControllerType type, GameMode mode, boolean singlePlayer, Runnable updateLabel){
         this.size = hexagonSize;
@@ -50,10 +64,12 @@ public class BoardUI extends Pane {
         this.mode = mode;
         this.singlePlayer = singlePlayer;
         this.updateLabel = updateLabel;
+        /* This assigns a move listener to the different controllers, which listens to board changes and
+         * updates the UI accordingly. It also makes sure the player cannot click when it's not their turn.
+         */
         if (!singlePlayer) {
             switch (type) {
                 case LOCAL_GAME:
-                    ;
                     if (mode == GameMode.NORMAL || mode == GameMode.SWAP) {
                         GameController.getInstance().setMoveListener(co -> {
                             int curr = GameController.getInstance().getGameState().getCurrentPlayer();
@@ -102,10 +118,8 @@ public class BoardUI extends Pane {
 
         for (int i = 0; i < cols; i++ ) {
             for (int j = 0; j < rows; j++ ) {
-
                 Piece hex = new Piece( new double[] {i, j},  size);
-
-                //adds a mouse click function to each hex so they can be clicked
+                // Initiates the next iteration of the game (see method for details) when clicking on a hexagon.
                 hex.setOnMouseClicked(event -> {
                     BoardCoordinate coord = new BoardCoordinate((int) hex.getGridPosition()[0], (int) hex.getGridPosition()[1]);
                     switch (type){

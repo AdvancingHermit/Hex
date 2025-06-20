@@ -2,7 +2,7 @@ package com.hex;
 
 import lombok.Getter;
 import lombok.Setter;
-
+// Made by Oscar
 public class GameState {
 
     @Getter
@@ -18,6 +18,7 @@ public class GameState {
     @Getter
     private int boardPieces = 0;
 
+    //Made by Oliver
 
     public GameState() {
     }

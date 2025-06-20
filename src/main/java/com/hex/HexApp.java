@@ -7,7 +7,7 @@ import com.hex.SceneManager.SceneType;
 import com.hex.algorithms.dqn.Driver;
 
 import java.net.URISyntaxException;
-
+// Made by Oscar
 public class HexApp extends Application {
     //main application run from here
     private SceneManager sceneManager;
@@ -17,9 +17,6 @@ public class HexApp extends Application {
         sceneManager = new SceneManager(stage);
         sceneManager.switchScene(SceneType.MAIN_MENU);
         stage.show();
-
-
-
     }
 
     public static void main(String[] args) {

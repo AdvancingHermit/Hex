@@ -1,4 +1,3 @@
-// File: DQNAlgorithm.java
 package com.hex.algorithms.dqn;
 
 import ai.djl.Device;
@@ -21,20 +20,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-
+// Made by Oscar
 public class DQNAlgorithm implements Algorithm {
 
     private static final String MODEL_NAME = "hex-dqn";
-    private static final String WEIGHTS_PATH = "F:\\Documents\\GitHub\\Hex-Deep\\Hex-Deep\\Hex\\DQNDir\\djl_weights.txt";
 
     @Override
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
 
         try (NDManager manager = NDManager.newBaseManager()) {
+            // Loads in the DQN model
             HexDqnBlock block = new HexDqnBlock();
             Path weightsPath = loadWeightsFromResource("/com/hex/models/djl_weights.txt");
-
-
             block.initialize(manager, DataType.FLOAT32, new Shape[]{new Shape(1, 2, board.getRows(), board.getCols()), new Shape(1, 1)});
             block.loadWeights(manager, weightsPath);
 
@@ -43,7 +40,7 @@ public class DQNAlgorithm implements Algorithm {
             NDArray swapInput = manager.create(new float[]{swap ? 1.0f : 0.0f}, new Shape(1, 1));
             NDList input = new NDList(boardInput, swapInput);
 
-
+            // Get the next move
             try (Model model = Model.newInstance(MODEL_NAME, Device.cpu())) {
                 model.setBlock(block);
                 try (Predictor<NDList, NDList> predictor = model.newPredictor(new NoopTranslator())) {
@@ -58,7 +55,6 @@ public class DQNAlgorithm implements Algorithm {
         } catch (Exception e) {
             System.err.println("Error during DQN move generation: " + e.getMessage());
             e.printStackTrace();
-            // Fallback: if DQN fails, perhaps a random move or an error
             return null;
         }
     }
@@ -99,7 +95,14 @@ public class DQNAlgorithm implements Algorithm {
         return boardArray;
     }
 
-
+    /**
+     * Gets the coordinates for the predicted best move
+     * @param qValues The Q values from the DQN
+     * @param board The current hex board
+     * @param swap Whether swap is enabled or not
+     * @param player The player for which to select the best move for
+     * @return the coordinates for the predicted best move
+     */
     private BoardCoordinate selectBestMove(NDArray qValues, Board board, boolean swap, int player) {
         float[] data = qValues.toFloatArray();
         int bestX = -1;
@@ -139,7 +142,7 @@ public class DQNAlgorithm implements Algorithm {
         }
         return new BoardCoordinate(bestX, bestY);
     }
-
+    // Loads weight from .txt file ressource.
     private Path loadWeightsFromResource(String resourcePath) throws Exception {
         try (InputStream is = getClass().getResourceAsStream(resourcePath)) {
             if (is == null) {

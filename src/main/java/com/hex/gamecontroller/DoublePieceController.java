@@ -8,6 +8,7 @@ import com.hex.components.BoardCoordinate;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.java.Log;
+//Made by Oliver
 
 @Log
 public class DoublePieceController extends AbstractGameController {
@@ -39,10 +40,10 @@ public class DoublePieceController extends AbstractGameController {
             return;
         }
         placePiece(co);
+        updateLabel.run();
         if (getCounter() == 0){
             setCounter(1);
             gameState.doubleTurnIncrement();
-            updateLabel.run();
             return;
         }
         setCounter(0);

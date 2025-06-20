@@ -6,6 +6,7 @@ import com.hex.components.BoardCoordinate;
 
 import java.util.function.Consumer;
 
+// The controller for online play
 public class OnlineController extends Controller {
 
     private static OnlineController INSTANCE;

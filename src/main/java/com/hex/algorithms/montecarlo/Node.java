@@ -3,6 +3,7 @@ package com.hex.algorithms.montecarlo;
 import com.hex.components.BoardCoordinate;
 
 import java.util.List;
+//Made by Oliver
 
 public class Node {
     public Node parent;

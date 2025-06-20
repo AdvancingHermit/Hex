@@ -20,6 +20,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+// Made by Oscar
 public class LoadingScreen extends BaseScene {
     private static final int SERVER_PORT = 5917;
 
@@ -61,7 +62,7 @@ public class LoadingScreen extends BaseScene {
 
         scene = new Scene(root, sceneManager.getSceneWidth(), sceneManager.getSceneHeight());
     }
-
+    // Updates the status accordingly.
     public void updateStatus(String status) {
         Platform.runLater(() -> {
             statusTextAnim.stop();
@@ -89,7 +90,7 @@ public class LoadingScreen extends BaseScene {
             }
         }).start();
     }
-
+    // Updates UI for a failed game search.
     private void failedGameSearch() {
         content.getChildren().remove(progressIndicator);
         updateStatus("Connection failed. Please try again.");
@@ -100,7 +101,7 @@ public class LoadingScreen extends BaseScene {
         retyButton.setOnAction(event -> retry());
         content.getChildren().add(retyButton);
     }
-
+    // Retry to search for a game
     private void retry() {
         content.getChildren().clear();
         progressIndicator = new ProgressIndicator();

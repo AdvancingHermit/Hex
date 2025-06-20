@@ -19,6 +19,8 @@ import javafx.scene.layout.VBox;
 import java.io.*;
 import java.net.*;
 
+
+// Made by Oscar
 public class OnlineGame extends BaseScene {
     private GameState gameState = new GameState();
     private BoardUI hexBoard;
@@ -28,7 +30,13 @@ public class OnlineGame extends BaseScene {
     private Board board = new Board(11, 11);
     private Label turnLabel;
 
-    //scene for the online game
+    /**
+     * The scene for playing against human opponents online.
+     * @param sceneManager The current Scene Manager.
+     * @param socket The current server socket.
+     * @param in The current input stream from the server to the client.
+     * @param out The current output stream from the client to the server.
+     */
     public OnlineGame(SceneManager sceneManager, Socket socket,
                       ObjectInputStream in, ObjectOutputStream out) {
         this.socket = socket;

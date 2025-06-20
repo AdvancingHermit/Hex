@@ -1,14 +1,12 @@
 package com.server;
 
-import com.server.GameState;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-
 import java.util.ArrayList;
 
 import static java.lang.Math.sqrt;
 
+// Made by Oscar
+// Server version on the one found on com/hex/components/Board.java
+// Refer to the above file for more information
 public class Board {
     private int[][] board;
 
@@ -71,6 +69,7 @@ public class Board {
 
         return false;
     }
+
     private ArrayList<int[]> getNeighbours(int x, int y, int player)  {
         ArrayList<int[]> neighbours = new ArrayList<>();
         int[][] directions = {

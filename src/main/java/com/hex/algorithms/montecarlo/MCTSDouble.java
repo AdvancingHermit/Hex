@@ -22,7 +22,8 @@ public class MCTSDouble implements Algorithm {
     private final static double exploreConstant = Math.sqrt(2);
     private boolean gameOver;
 
-    //see MCTS for a few comments
+    //Made by Oliver
+    //see MCTS for comments as there are only a few changes
     @Override
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
         throw new RuntimeException("Not implemented");

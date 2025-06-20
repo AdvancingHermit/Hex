@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.util.function.UnaryOperator;
-
+// Made by Oscar
 public class OnlineGameSettings extends BaseScene {
     public OnlineGameSettings(SceneManager sceneManager, String currentServerIP) {
         // Create Visual Components
@@ -22,6 +22,7 @@ public class OnlineGameSettings extends BaseScene {
         // Label above TextField
         Label ipLabel = new Label("Server IP:");
 
+        //IP input field
         TextField inputField = getInputField(currentServerIP);
         Tooltip tooltip = new Tooltip("ex. 192.168.1.1 or localhost");
         Tooltip.install(inputField, tooltip);
