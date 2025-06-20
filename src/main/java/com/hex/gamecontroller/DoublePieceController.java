@@ -40,10 +40,10 @@ public class DoublePieceController extends AbstractGameController {
             return;
         }
         placePiece(co);
+        updateLabel.run();
         if (getCounter() == 0){
             setCounter(1);
             gameState.doubleTurnIncrement();
-            updateLabel.run();
             return;
         }
         setCounter(0);
