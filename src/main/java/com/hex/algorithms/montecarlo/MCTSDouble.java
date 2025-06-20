@@ -23,7 +23,7 @@ public class MCTSDouble implements Algorithm {
     private boolean gameOver;
 
     //Made by Oliver
-    //see MCTS for a few comments
+    //see MCTS for comments as there are only a few changes
     @Override
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
         throw new RuntimeException("Not implemented");
