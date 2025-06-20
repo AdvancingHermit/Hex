@@ -46,7 +46,7 @@ public class AlgovAlgoSettings extends BaseScene{
     private final ComboBox<String> startingAlgorithmBox;
     private final ComboBox<String> secondAlgorithmBox;
     private final CheckBox swapCheckBox;
-    private final CheckBox doubleCheckBox;
+
 
     public AlgovAlgoSettings(SceneManager sceneManager) {
         //backbutton
@@ -104,20 +104,10 @@ public class AlgovAlgoSettings extends BaseScene{
         swapCheckBox.setSelected(false);
 
         // Double rule checkbox
-        doubleCheckBox = new CheckBox("Double moves");
-        doubleCheckBox.setSelected(false);
 
-        swapCheckBox.selectedProperty().addListener((obs, oldVal, isNowSelected) -> {
-            if (isNowSelected) {
-                doubleCheckBox.setSelected(false);
-            }
-        });
 
-        doubleCheckBox.selectedProperty().addListener((obs, oldVal, isNowSelected) -> {
-            if (isNowSelected) {
-                swapCheckBox.setSelected(false);
-            }
-        });
+
+
 
         // Start button
         Button playBtn = new Button("Start Game");
@@ -154,7 +144,6 @@ public class AlgovAlgoSettings extends BaseScene{
                 case "AI" -> throw new RuntimeException("No AI implemented yet");
             }
             isSwapEnabled = swapCheckBox.isSelected();
-            isDoubleEnabled = doubleCheckBox.isSelected();
             GameMode mode = GameMode.NORMAL;
             if (isSwapEnabled){
                 mode = GameMode.SWAP;
@@ -177,7 +166,7 @@ public class AlgovAlgoSettings extends BaseScene{
                 startingDifficultyLabel, startingDifficultyBox,
                 secondAlgorithmLabel, secondAlgorithmBox,
                 secondDifficultyLabel, secondDifficultyBox,
-                swapCheckBox, doubleCheckBox,
+                swapCheckBox,
                 playBtn
         );
         vbox.setPickOnBounds(false);
