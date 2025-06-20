@@ -6,7 +6,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.Group;
 
 import static java.lang.Math.*;
-
+// Made by Oscar
 public class Piece extends Group {
     private Polygon hexagon;
     private double[] gridPosition;

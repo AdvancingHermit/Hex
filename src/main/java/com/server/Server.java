@@ -1,12 +1,13 @@
 package com.server;
 
-// GameServer.java
+
 import java.io.IOException;
 import java.net.*;
 import java.util.concurrent.*;
-
+// Made by Oscar
 public class Server {
     private static final int PORT = 5917;
+    //The queue of players waiting for a game
     private static final BlockingQueue<Socket> waitingClients = new LinkedBlockingQueue<>();
 
     public static void main(String[] args) throws IOException {

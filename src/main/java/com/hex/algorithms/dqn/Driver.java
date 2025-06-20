@@ -20,18 +20,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-
+// Made by Oscar
+// Code for testing of DQN algorithm, not used in normal use.
 public class Driver {
     private static final String MODEL_NAME = "hex-dqn";
     private static final String WEIGHTS_PATH = "F:\\Documents\\GitHub\\Hex-Deep\\Hex-Deep\\Hex\\DQNDir\\djl_weights.txt";
 
     public static void main(String[] args) throws Exception {
-        // Force DJL to use MXNet (must happen before Model.newInstance)
+        // Force DJL to use MXNet
         System.setProperty("ai.djl.default_engine", "MXNet");
         System.out.println("Using engine: " + Engine.getInstance().getEngineName());
 
-        // --- Original Driver logic (can be kept for testing model loading) ---
-        // Instantiate your block
+        // Instantiate block
         HexDqnBlock block = new HexDqnBlock();
 
         Path weightsPath = loadWeightsFromResource("/com/hex/models/djl_weights.txt");
@@ -72,7 +72,6 @@ public class Driver {
                 }
             }
         }
-        // --- End of original Driver logic ---
 
 
         System.out.println("\n--- Testing DQNAlgorithm ---");

@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.Random;
 
+// Made by Oscar
 public class GameSession implements Runnable {
     private final Socket client1, client2;
     private ObjectInputStream in1, in2;
@@ -18,7 +19,8 @@ public class GameSession implements Runnable {
         this.client1 = client1;
         this.client2 = client2;
     }
-
+    // The function that runs when this is started as thread.
+    // It contains the main game loop.
     @Override
     public void run() {
         try {
@@ -108,7 +110,7 @@ public class GameSession implements Runnable {
         out.writeObject(fullMove);
         out.flush();
     }
-
+    // Safely close the connection on disconnection.
     private void closeResources() {
         try {
             if (in1 != null) in1.close();

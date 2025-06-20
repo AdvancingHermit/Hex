@@ -2,7 +2,7 @@ package com.hex;
 
 import lombok.Getter;
 import lombok.Setter;
-
+// Made by Oscar
 public class GameState {
 
     @Getter

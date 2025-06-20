@@ -1,7 +1,6 @@
 package com.hex.scenes;
 
-import javafx.scene.Scene;
-
+// Made by Oscar
 public abstract class BaseScene {
     protected javafx.scene.Scene scene;
 

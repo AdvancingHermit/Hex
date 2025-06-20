@@ -3,7 +3,7 @@ package com.hex.components;
 import com.hex.GameState;
 import lombok.Data;
 
-
+// Made by Oscar
 @Data
 public class Board {
     protected int[][] board;

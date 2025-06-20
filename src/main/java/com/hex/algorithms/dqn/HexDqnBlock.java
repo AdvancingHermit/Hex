@@ -1,5 +1,3 @@
-
-// File: HexDqnBlock.java
 package com.hex.algorithms.dqn;
 
 import ai.djl.ndarray.NDArray;
@@ -22,7 +20,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
+// Made by Oscar
+// The DQN model remade in Java. Further details on this model can be found in the python .
 public class HexDqnBlock extends AbstractBlock {
 
     private final Conv2d localPatterns;
@@ -66,7 +65,7 @@ public class HexDqnBlock extends AbstractBlock {
                 patternCombinations.forward(parameterStore, new NDList(x), training, params)
                         .singletonOrThrow());
 
-        // Flatten manually since MxNDArray.flatten may not be implemented
+        // Flatten manually
         long batch = x.getShape().get(0);
         long rest = x.getShape().size() / batch;
         NDArray xFlat = x.reshape(batch, rest);
@@ -112,7 +111,7 @@ public class HexDqnBlock extends AbstractBlock {
 
         qValuesLayer.initialize(manager, dataType, decisionLayer2OutputShape);
     }
-
+    // Loads the weights from the text file
     public void loadWeights(NDManager manager, Path weightsFile) throws IOException {
         System.out.println("Loading weights from text file: " + weightsFile);
         Map<String, NDArray> weightsMap = new HashMap<>();

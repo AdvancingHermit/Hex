@@ -1,14 +1,14 @@
 package com.server;
 
+// Made by Oscar
+// Server version of GameState from the com/hex/GameState.java
+// Manages swap, the current player and client, and whether the game is finished or not.
 public class GameState {
     private int currentPlayer;
     private int currentClient;
     private boolean gameFinished = false;
     private boolean swap = true;
 
-    GameState() {
-        currentPlayer = 1;
-    }
     GameState(int currentClient) {
         this.currentClient = currentClient;
         currentPlayer = 1;
