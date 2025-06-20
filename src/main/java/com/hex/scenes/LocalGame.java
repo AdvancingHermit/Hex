@@ -102,7 +102,7 @@ public class LocalGame extends BaseScene {
 
 
 
-        scene = new Scene(root, 800, 600);
+        scene = new Scene(root, sceneManager.getSceneWidth(), sceneManager.getSceneHeight());
 
     }
 

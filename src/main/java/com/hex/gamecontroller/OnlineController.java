@@ -40,6 +40,7 @@ public class OnlineController extends Controller {
         int y = coord.y;
         System.out.println("Hex clicked! " + x + " " + y);
         boolean myTurn = gameState.getCurrentPlayer() == gameState.getPlayerNum();
+        System.out.println("cp: " + gameState.getCurrentPlayer() + " pn: " + gameState.getPlayerNum());
         boolean emptySpot = board.getPiece(x, y) == 0;
         if ((gameState.getSwap()|| emptySpot) && onMoveHandler != null && myTurn) {
             if (gameState.getSwap() && !emptySpot) {
@@ -52,6 +53,7 @@ public class OnlineController extends Controller {
             onMoveHandler.accept(new int[]{x, y});
             gameState.nextPlayer();
             gameState.setSwap(false);
+            notifyMoveListener(coord);
         }
 
     }

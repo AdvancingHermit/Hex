@@ -27,11 +27,11 @@ public class Board {
     }
 
     public boolean checkWin(int player) {
-        int limit = (player == 1) ? rows : cols;
+        int limit = (player == 2) ? rows : cols;
 
         for (int i = 0; i < limit; i++) {
-            int row = (player == 1) ? 0 : i;
-            int col = (player == 2) ? 0 : i;
+            int row = (player == 2) ? 0 : i;
+            int col = (player == 1) ? 0 : i;
 
             if (board[row][col] == player && depthFirstSearch(row, col, player)) {
                 replacePieces(player);
@@ -58,10 +58,10 @@ public class Board {
         while (!neighbours.isEmpty()) {
             x = neighbours.get(0)[0];
             y = neighbours.get(0)[1];
-            if (player == 1 && x == cols-1){
+            if (player == 2 && x == cols-1){
                 return true;
             }
-            if (player == 2 && y == rows-1) {
+            if (player == 1 && y == rows-1) {
                 return true;
             }
             neighbours.remove(0);

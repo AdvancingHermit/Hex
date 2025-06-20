@@ -7,15 +7,25 @@ import javafx.stage.Stage;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-
+ /**
+  * Manages the different Scenes, and makes sure to properly switch between them
+  */
 public class SceneManager {
+
     private final Stage primaryStage;
+    // For Online play
     private Socket currentSocket;
     private ObjectInputStream currentIn;
     private ObjectOutputStream currentOut;
+    public  String serverIP;
+    private double sceneHeight;
+    private double sceneWidth;
 
     public SceneManager(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        this.serverIP = "localhost";
+        this.sceneHeight = 600;
+        this.sceneWidth = 800;
     }
 
     public enum SceneType {
@@ -25,8 +35,15 @@ public class SceneManager {
         ALGO_V_ALGO_SETTINGS,
         ONLINE_GAME,
         LOADING_SCREEN,
-        LOCAL_GAME_SETTINGS
+        LOCAL_GAME_SETTINGS,
+        ONLINE_GAME_SETTINGS
     }
+    public double getSceneHeight() {
+        return this.sceneHeight;
+    }
+    public double getSceneWidth() {
+         return this.sceneWidth;
+     }
 
     public void storeConnection(Socket socket, ObjectInputStream in, ObjectOutputStream out) {
         this.currentSocket = socket;
@@ -50,7 +67,8 @@ public class SceneManager {
                     yield new MainMenu(this).getScene();
                 }
             }
-            case LOADING_SCREEN -> new LoadingScreen(this).getScene();
+            case ONLINE_GAME_SETTINGS -> new OnlineGameSettings(this, serverIP).getScene();
+            case LOADING_SCREEN -> new LoadingScreen(this, serverIP).getScene();
             default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }

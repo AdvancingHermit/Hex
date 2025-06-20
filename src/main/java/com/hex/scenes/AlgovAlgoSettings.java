@@ -183,6 +183,6 @@ public class AlgovAlgoSettings extends BaseScene{
         vbox.setPickOnBounds(false);
         backButtonBox.setPickOnBounds(false);
         root.getChildren().addAll(vbox, backButtonBox);
-        scene = new Scene(root, 800, 600);
+        scene = new Scene(root, sceneManager.getSceneWidth(), sceneManager.getSceneHeight());
     }
 }

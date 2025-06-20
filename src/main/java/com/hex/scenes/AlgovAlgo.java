@@ -61,6 +61,6 @@ public class AlgovAlgo extends BaseScene {
 
         gameWrap.getChildren().addAll(boardWrap, backButtonBox);
         root.setCenter(gameWrap);
-        scene = new Scene(root, 800, 600);
+        scene = new Scene(root, sceneManager.getSceneWidth(), sceneManager.getSceneHeight());
     }
 }

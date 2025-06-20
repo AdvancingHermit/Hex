@@ -56,7 +56,7 @@ public class BoardUI extends Pane {
                         GameController.getInstance().setMoveListener(co -> {
                             int curr = GameController.getInstance().getGameState().getCurrentPlayer();
                             int algoPlayerNum = GameController.getInstance().getAlgoPlayerNum();
-                            this.setDisable(curr == algoPlayerNum);
+                            this.setDisable(curr != algoPlayerNum);
                             Platform.runLater(() -> {
                                 this.getChildren().clear();
                                 this.drawBoard();
@@ -123,9 +123,9 @@ public class BoardUI extends Pane {
                 if (getBoard().getPiece(i, j) == 0) {
                     hex.setFill(Color.TRANSPARENT);
                 } else if (getBoard().getPiece(i, j) == 1) {
-                    hex.setFill(Color.BLUE);
-                } else if (getBoard().getPiece(i, j) == 2) {
                     hex.setFill(Color.RED);
+                } else if (getBoard().getPiece(i, j) == 2) {
+                    hex.setFill(Color.BLUE);
                 }
                 // Set the default stroke for the hexagon
                 hex.setStroke(Color.grayRgb(45));

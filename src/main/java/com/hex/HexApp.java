@@ -12,11 +12,9 @@ public class HexApp extends Application {
     private SceneManager sceneManager;
     @Override
     public void start(Stage stage) throws URISyntaxException {
-        stage.setTitle("Hex Game Board");
+        stage.setTitle("Hex Arena");
         sceneManager = new SceneManager(stage);
         sceneManager.switchScene(SceneType.MAIN_MENU);
-        Driver driver = new Driver();
-        //driver.printer();
         stage.show();
 
 

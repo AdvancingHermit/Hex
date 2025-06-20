@@ -21,17 +21,19 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class LoadingScreen extends BaseScene {
-    private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 5917;
 
+    private String serverIP;
     private Label statusLabel;
     private ProgressIndicator progressIndicator;
     private SceneManager sceneManager;
     private Timeline statusTextAnim;
     private VBox content;
 
-    public LoadingScreen(SceneManager sceneManager) {
+    public LoadingScreen(SceneManager sceneManager, String serverIP) {
         this.sceneManager = sceneManager;
+        this.serverIP = serverIP;
+        System.out.println(serverIP);
         drawUI();
         startGameSearch();
     }
@@ -57,7 +59,7 @@ public class LoadingScreen extends BaseScene {
         content.getChildren().addAll(progressIndicator, statusLabel);
         root.getChildren().add(content);
 
-        scene = new Scene(root, 800, 600);
+        scene = new Scene(root, sceneManager.getSceneWidth(), sceneManager.getSceneHeight());
     }
 
     public void updateStatus(String status) {
@@ -70,7 +72,7 @@ public class LoadingScreen extends BaseScene {
     public void startGameSearch() {
         new Thread(() -> {
             try {
-                Socket socket = new Socket(SERVER_IP, SERVER_PORT);
+                Socket socket = new Socket(serverIP, SERVER_PORT);
                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
@@ -92,7 +94,7 @@ public class LoadingScreen extends BaseScene {
         content.getChildren().remove(progressIndicator);
         updateStatus("Connection failed. Please try again.");
         Button backButton = new Button("Back");
-        backButton.setOnAction(event -> sceneManager.switchScene(SceneType.MAIN_MENU));
+        backButton.setOnAction(event -> sceneManager.switchScene(SceneType.ONLINE_GAME_SETTINGS));
         content.getChildren().add(backButton);
         Button retyButton = new Button("Retry");
         retyButton.setOnAction(event -> retry());
