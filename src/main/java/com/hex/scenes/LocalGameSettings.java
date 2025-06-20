@@ -38,12 +38,13 @@ public class LocalGameSettings extends BaseScene {
     private boolean isDoubleEnabled;
 
     // UI elements (optional to store if needed outside)
-    private final Slider boardSizeSlider;
+    private Slider boardSizeSlider;
     private final ComboBox<String> difficultyBox;
     private final ComboBox<String> algorithmBox;
     private final ComboBox<String> startingPlayerBox;
     private final CheckBox swapCheckBox;
     private final CheckBox doubleCheckBox;
+    private final Label difficultyLabel;
 
     public LocalGameSettings(SceneManager sceneManager) {
         //backbutton
@@ -76,13 +77,14 @@ public class LocalGameSettings extends BaseScene {
         // Algorithm selection
         Label algorithmLabel = new Label("Select Algorithm:");
         algorithmBox = new ComboBox<>();
-        algorithmBox.getItems().addAll("None", "MCTS", "Connection", "AI", "DQN");
+        algorithmBox.getItems().addAll("None", "MCTS", "Connection", "DQN");
         algorithmBox.setValue("None");
         algorithmBox.valueProperty().addListener((obs, oldVal, newVal) -> updateFieldsByAlgo());
+        algorithmBox.valueProperty().addListener((obs, oldVal, newVal) -> updateFieldsByMCTSAlgo());
 
 
         // Difficulty selection
-        Label difficultyLabel = new Label("Select Difficulty:");
+        difficultyLabel = new Label("Select Difficulty:");
         difficultyBox = new ComboBox<>();
         difficultyBox.getItems().addAll("Easy", "Medium", "Hard", "Very Hard (might take some time)");
         difficultyBox.setValue("Medium");
@@ -100,6 +102,8 @@ public class LocalGameSettings extends BaseScene {
         // Double rule checkbox
         doubleCheckBox = new CheckBox("Double moves");
         doubleCheckBox.setSelected(false);
+        difficultyBox.setVisible(false);
+        difficultyLabel.setVisible(false);
 
         swapCheckBox.selectedProperty().addListener((obs, oldVal, isNowSelected) -> {
             if (isNowSelected) {
@@ -108,10 +112,21 @@ public class LocalGameSettings extends BaseScene {
         });
 
         doubleCheckBox.selectedProperty().addListener((obs, oldVal, isNowSelected) -> {
+            if (!algorithmBox.getValue().equals("MCTS")){
+                return;
+            }
             if (isNowSelected) {
-                swapCheckBox.setSelected(false);
+                difficultyBox.setDisable(true);
+                boardSizeSlider.setMax(7);
+                if (boardSizeSlider.getValue() > 7) {
+                    boardSizeSlider.setValue(7);
+                }
+            } else {
+                difficultyBox.setDisable(false);
+                boardSizeSlider.setMax(11);
             }
         });
+
 
         // Start button
         Button playBtn = new Button("Start Game");
@@ -130,7 +145,6 @@ public class LocalGameSettings extends BaseScene {
             switch (algorithm) {
                 case "MCTS"          -> algorithm1 = new MCTS();
                 case "Connection"    -> algorithm1 = new ConnectionPlayer();
-                case "AI"            -> throw new RuntimeException("No AI implemented yet");
                 case "DQN"           -> algorithm1 = new DQNAlgorithm();
             }
             startingPlayer = startingPlayerBox.getValue();
@@ -176,21 +190,52 @@ public class LocalGameSettings extends BaseScene {
         scene = new Scene(root, sceneManager.getSceneWidth(), sceneManager.getSceneHeight());
     }
 
+    private void updateFieldsByMCTSAlgo() {
+        switch (algorithmBox.getValue()) {
+            case "MCTS" -> {
+                difficultyLabel.setVisible(true);
+                difficultyBox.setVisible(true);
+
+            }
+            case "Connection" ->{
+                difficultyLabel.setVisible(false);
+                difficultyBox.setVisible(false);
+                swapCheckBox.setDisable(true);
+                difficultyBox.setDisable(true);
+                doubleCheckBox.setDisable(true);
+                doubleCheckBox.setSelected(false);
+            }
+            default -> {
+                difficultyBox.setVisible(false);
+                difficultyLabel.setVisible(false);
+                swapCheckBox.setDisable(false);
+                difficultyBox.setDisable(false);
+                doubleCheckBox.setDisable(false);
+            }
+        }
+    }
+
     private void updateFieldsByAlgo() {
         switch (algorithmBox.getValue()) {
             case "DQN" -> {
                 boardSizeSlider.setDisable(true);
                 boardSizeSlider.setValue(5);
                 difficultyBox.setDisable(true);
-                difficultyBox.setValue("Easy");
                 doubleCheckBox.setDisable(true);
                 doubleCheckBox.setSelected(false);
+                swapCheckBox.setDisable(true);
+                doubleCheckBox.setDisable(true);
+
             }
+
             default -> {
+                swapCheckBox.setDisable(false);
                 boardSizeSlider.setDisable(false);
                 difficultyBox.setDisable(false);
                 doubleCheckBox.setDisable(false);
                 doubleCheckBox.setSelected(false);
+                swapCheckBox.setDisable(false);
+                doubleCheckBox.setDisable(false);
             }
         }
 
