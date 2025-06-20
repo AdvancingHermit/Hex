@@ -114,15 +114,15 @@ public class LocalGame extends BaseScene {
             if (!(getMode() == GameMode.DOUBLE)){
                 loser = 2;
             }
-            String winner = gameState.getCurrentPlayer() == loser ? "Blue Player Won" : "Red Player Won";
+            String winner = gameState.getCurrentPlayer() == loser ? "Red Player Won" : "Blue Player Won";
             info.setText(winner);
-            if (winner.equals("Blue Player Won")) {
-                info.setStyle("-fx-text-fill: Blue; -fx-font-size: 20px;");
-            } else {
+            if (winner.equals("Red Player Won")) {
                 info.setStyle("-fx-text-fill: Red; -fx-font-size: 20px;");
+            } else {
+                info.setStyle("-fx-text-fill: Blue; -fx-font-size: 20px;");
             }
         } else {
-            String player = gameState.getCurrentPlayer() == 1 ? "Blue Player's Turn" : "Red Player's Turn";
+            String player = gameState.getCurrentPlayer() == 2 ? "Blue Player's Turn" : "Red Player's Turn";
             info.setText(player);
             if (player.equals("Blue Player's Turn")) {
                 info.setStyle("-fx-text-fill: Blue; -fx-font-size: 20px;");
