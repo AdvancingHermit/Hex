@@ -40,6 +40,8 @@ public interface Position {
 
     public int[][] getBoard();
 
+    public void addPossibleMove(Move move);
+
     default BigInteger getHashCode() {
         BigInteger id = BigInteger.ZERO;
         for (int[] row : getBoard()) {
