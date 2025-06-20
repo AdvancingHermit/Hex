@@ -121,6 +121,7 @@ public class BoardUI extends Pane {
                             break;
                     }
                     if (singlePlayer){
+                        this.getChildren().clear();
                         this.drawBoard();
                     }
 
