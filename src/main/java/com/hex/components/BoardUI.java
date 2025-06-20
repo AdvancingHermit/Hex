@@ -75,6 +75,12 @@ public class BoardUI extends Pane {
                     }
                     break;
                 case ONLINE:
+                    OnlineController.getInstance().setMoveListener(co -> {
+                        Platform.runLater(() -> {
+                            this.getChildren().clear();
+                            this.drawBoard();
+                        });
+                    });
                     break;
                 case ALGORITHM_TESTER:
                     AlgorithmTesterController.getInstance().setMoveListener(co -> {
