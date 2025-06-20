@@ -114,10 +114,13 @@ public class LocalGameSettings extends BaseScene {
         doubleCheckBox.selectedProperty().addListener((obs, oldVal, isNowSelected) -> {
             if (!algorithmBox.getValue().equals("MCTS")){
                 updateSlider();
+                if (isNowSelected){
+                    swapCheckBox.setSelected(false);
+                }
                 return;
             }
             if (isNowSelected) {
-                difficultyBox.setDisable(true);
+                swapCheckBox.setSelected(false);
                 difficultyBox.setValue("Hard");
                 boardSizeSlider.setMax(7);
                 boardSizeSlider.setValue(5);
