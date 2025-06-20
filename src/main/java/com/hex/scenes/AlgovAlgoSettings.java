@@ -3,6 +3,7 @@ package com.hex.scenes;
 import com.hex.GameMode;
 import com.hex.SceneManager;
 import com.hex.algorithms.Algorithm;
+import com.hex.algorithms.dqn.DQNAlgorithm;
 import com.hex.algorithms.minimax.ConnectionPlayer;
 import com.hex.algorithms.minimax.MiniMax;
 import com.hex.algorithms.montecarlo.MCTS;
@@ -138,14 +139,14 @@ public class AlgovAlgoSettings extends BaseScene{
             switch (startingAlgorithm) {
                 case "MCTS" -> algorithm1 = new MCTS();
                 case "Connection" -> algorithm1 = new ConnectionPlayer();
-                case "AI" -> throw new RuntimeException("No AI implemented yet");
+                case "DQN" -> algorithm1 = new DQNAlgorithm();
             }
             secondAlgorithm = secondAlgorithmBox.getValue();
             Algorithm algorithm2 = null;
             switch (secondAlgorithm) {
                 case "MCTS" -> algorithm2 = new MCTS();
                 case "Connection" -> algorithm2 = new ConnectionPlayer();
-                case "AI" -> throw new RuntimeException("No AI implemented yet");
+                case "DQN" -> algorithm2 = new DQNAlgorithm();
             }
             isSwapEnabled = swapCheckBox.isSelected();
             GameMode mode = GameMode.NORMAL;
