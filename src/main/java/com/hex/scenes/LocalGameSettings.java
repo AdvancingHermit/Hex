@@ -80,7 +80,7 @@ public class LocalGameSettings extends BaseScene {
         algorithmBox.getItems().addAll("None", "MCTS", "Connection", "DQN");
         algorithmBox.setValue("None");
         algorithmBox.valueProperty().addListener((obs, oldVal, newVal) -> updateFieldsByAlgo());
-        algorithmBox.valueProperty().addListener((obs, oldVal, newVal) -> updateFieldsByMCTSAlgo());
+        //algorithmBox.valueProperty().addListener((obs, oldVal, newVal) -> updateFieldsByMCTSAlgo());
 
 
         // Difficulty selection
@@ -191,32 +191,8 @@ public class LocalGameSettings extends BaseScene {
         scene = new Scene(root, sceneManager.getSceneWidth(), sceneManager.getSceneHeight());
     }
 
-    private void updateFieldsByMCTSAlgo() {
-        switch (algorithmBox.getValue()) {
-            case "MCTS" -> {
-                difficultyLabel.setVisible(true);
-                difficultyBox.setVisible(true);
-
-            }
-            case "Connection" ->{
-                difficultyLabel.setVisible(false);
-                difficultyBox.setVisible(false);
-                swapCheckBox.setDisable(true);
-                difficultyBox.setDisable(true);
-                doubleCheckBox.setDisable(true);
-                doubleCheckBox.setSelected(false);
-            }
-            default -> {
-                difficultyBox.setVisible(false);
-                difficultyLabel.setVisible(false);
-                swapCheckBox.setDisable(false);
-                difficultyBox.setDisable(false);
-                doubleCheckBox.setDisable(false);
-            }
-        }
-    }
-
     private void updateFieldsByAlgo() {
+        resetDefaultSettings();
         switch (algorithmBox.getValue()) {
             case "DQN" -> {
                 boardSizeSlider.setDisable(true);
@@ -226,23 +202,38 @@ public class LocalGameSettings extends BaseScene {
                 doubleCheckBox.setSelected(false);
                 swapCheckBox.setDisable(true);
                 doubleCheckBox.setDisable(true);
+                difficultyBox.setVisible(false);
+                difficultyLabel.setVisible(false);
 
+            }
+            case "MCTS" -> {
+                difficultyLabel.setVisible(true);
+                difficultyBox.setVisible(true);
+
+            }
+            case "Connection" ->{
+                swapCheckBox.setDisable(true);
+                doubleCheckBox.setDisable(true);
+                doubleCheckBox.setSelected(false);
             }
 
             default -> {
-                swapCheckBox.setDisable(false);
-                boardSizeSlider.setDisable(false);
-                difficultyBox.setDisable(false);
-                doubleCheckBox.setDisable(false);
-                doubleCheckBox.setSelected(false);
-                swapCheckBox.setDisable(false);
-                doubleCheckBox.setDisable(false);
+                difficultyBox.setVisible(false);
+                difficultyLabel.setVisible(false);
             }
         }
 
-
-
     }
+    private void resetDefaultSettings() {
+        difficultyBox.setVisible(true);
+        difficultyLabel.setVisible(true);
+        swapCheckBox.setDisable(false);
+        boardSizeSlider.setDisable(false);
+        difficultyBox.setDisable(false);
+        doubleCheckBox.setDisable(false);
+        doubleCheckBox.setSelected(false);
+    }
+
     private void updateSlider() {
         if (boardSizeSlider.getMax() == 7){
             boardSizeSlider.setMax(11);
