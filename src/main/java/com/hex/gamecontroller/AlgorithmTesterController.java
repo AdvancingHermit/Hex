@@ -4,6 +4,7 @@ import com.hex.GameState;
 import com.hex.algorithms.Algorithm;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
+import javafx.scene.control.Label;
 import lombok.extern.java.Log;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,24 +22,26 @@ public class AlgorithmTesterController extends Controller {
     private int startingIterations;
     private int secondIterations;
     private Timer timer = new Timer();
+    private Runnable updateLabel;
 
     public static AlgorithmTesterController getInstance() {
         return INSTANCE;
     }
 
     public static void createGameController(Board board, GameState gameState,
-                                            Algorithm algorithm, Algorithm otherAlgo, int startingIterations, int secondIterations) {
-        INSTANCE = new AlgorithmTesterController(board, gameState, algorithm, otherAlgo, startingIterations, secondIterations);
+                                            Algorithm algorithm, Algorithm otherAlgo, int startingIterations, int secondIterations, Runnable updateLabel) {
+        INSTANCE = new AlgorithmTesterController(board, gameState, algorithm, otherAlgo, startingIterations, secondIterations, updateLabel);
     }
 
     private AlgorithmTesterController(Board board, GameState gameState,
-                                      Algorithm algorithm, Algorithm otherAlgo, int startingIterations, int secondIterations) {
+                                      Algorithm algorithm, Algorithm otherAlgo, int startingIterations, int secondIterations, Runnable updateLabel) {
         this.board = board;
         this.gameState = gameState;
         this.algorithm = algorithm;
         this.otherAlgo = otherAlgo;
         this.startingIterations = startingIterations;
         this.secondIterations = secondIterations;
+        this.updateLabel = updateLabel;
         gameIteration(new BoardCoordinate(0,0));
     }
 
@@ -55,6 +58,7 @@ public class AlgorithmTesterController extends Controller {
             if (gameState.getCurrentPlayer() == 1) {
                 BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, startingIterations, false);
                 placePiece(move);
+
 
             } else if (gameState.getCurrentPlayer() == 2) {
                 BoardCoordinate otherMove = otherAlgo.makeMove(gameState.getCurrentPlayer(), board, gameState, secondIterations, false);
@@ -86,7 +90,9 @@ public class AlgorithmTesterController extends Controller {
         }
         if (!gameState.isGameFinished()) {
             gameState.nextPlayer();
+
         }
+        updateLabel.run();
         notifyMoveListener(co);
 
     }

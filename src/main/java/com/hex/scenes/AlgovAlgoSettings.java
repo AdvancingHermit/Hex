@@ -167,7 +167,7 @@ public class AlgovAlgoSettings extends BaseScene{
             }
             // Start the game
 
-            Scene scene1 = new AlgovAlgo(boardSize, algorithm1, algorithm2, startingIterations, secondIterations, mode, sceneManager).getScene();
+            Scene scene1 = new AlgovAlgo(boardSize, algorithm1, algorithm2, startingIterations, secondIterations, mode, sceneManager, startingAlgorithm, secondAlgorithm).getScene();
             sceneManager.switchScene(scene1);
         });
 
