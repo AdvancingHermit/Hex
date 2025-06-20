@@ -15,9 +15,22 @@ public class MiniMax {
 
     public MiniMax(){}
 
-    public Move findBestMove(Position position, int player, int depth) {
+    public MoveValue findBestMove(Position position, int player, int depth) {
         float bestValue = Float.NEGATIVE_INFINITY;
         Move bestMove = null;
+
+
+        /*
+        Board board = new Board(7, 7);
+        board.setPiece(4, 1, 1);
+        board.setPiece(3, 3, 1);
+        board.setPiece(2, 5, 1);
+
+        board.setPiece(1, 1, 2);
+        board.setPiece(1, 2, 2);
+
+        position = new ConnectionPosition(board); */
+
 
         int nThreads = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(nThreads);
@@ -55,12 +68,12 @@ public class MiniMax {
         System.out.println("Move: " + bestMove + " -> Value: " + bestValue);
         if (bestMove == null){
             System.out.println("Something Wrong Happened");
-            return position.getPossibleMoves().get(0);
+            return new MoveValue(position.getPossibleMoves().get(0), 0);
         }
-        return bestMove;
+        return new MoveValue(bestMove, bestValue);
     }
 
-    private static class MoveValue {
+    static class MoveValue {
         Move move;
         float value;
         MoveValue(Move move, float value) {

@@ -365,7 +365,7 @@ public class Connections extends SimpleConnectionsLogic {
             newRedVCs.clear();
             newRedSemiVCs.clear();
 
-            if (checkNewBlueVCs.size() + checkNewBlueSemiVCs.size() + checkNewRedVCs.size() + checkNewRedSemiVCs.size() != 0) { break; }
+            //if (checkNewBlueVCs.size() + checkNewBlueSemiVCs.size() + checkNewRedVCs.size() + checkNewRedSemiVCs.size() == 0) { break; }
         }
 
         blueVCs.addAll(checkNewBlueVCs);

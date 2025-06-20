@@ -43,7 +43,7 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
 
 
     public boolean equalEnds(VirtualConnection other) {
-        return x.hashCode() + y.hashCode() == other.x.hashCode() + other.y.hashCode();
+        return getMovesCode() == other.getMovesCode();
     }
 
     public boolean sameCriticalCell(VirtualConnection other) {
@@ -60,7 +60,6 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
         if (equalEnds(other)) {
             return null;
         }
-
         if (x.equals(other.y)) return new Move[]{x, y, other.x};
         if (y.equals(other.x)) return new Move[]{y, x, other.y};
         if (x.equals(other.x)) return new Move[]{x, y, other.y};
@@ -72,8 +71,8 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
 
     // Tjekker om denne er sub af anden.
     public boolean isSubset(VirtualConnection other) {
-        if (equalEnds(other) && other.carrier.size() > carrier.size()) {
-            return other.carrier.containsAll(carrier);
+        if (equalEnds(other) && other.depth > depth) {
+            return true;
         }
         return false;
     }
@@ -114,8 +113,10 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
     }
 
     public int getMovesCode() {
-        // Ensure symmetric ends (x,y) and (y,x) have same hash
-        return x.hashCode() + y.hashCode();
+        int ha = x.hashCode();
+        int hb = y.hashCode();
+        int H = Math.max(ha,hb), L = Math.min(ha,hb);
+        return H * 170 + L;   // 196 = 14*14 = maxSingleHash+1
     }
 
     @Override

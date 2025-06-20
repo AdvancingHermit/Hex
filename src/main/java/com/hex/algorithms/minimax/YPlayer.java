@@ -20,7 +20,7 @@ public class YPlayer extends MiniMax implements Algorithm {
             default -> 3;
         };
 
-        Move suggestedMove = findBestMove(startPos, player, depth);
-        return new BoardCoordinate(suggestedMove.x, suggestedMove.y);
+        MoveValue suggestedMove = findBestMove(startPos, player, depth);
+        return new BoardCoordinate(suggestedMove.move.x, suggestedMove.move.y);
     }
 }

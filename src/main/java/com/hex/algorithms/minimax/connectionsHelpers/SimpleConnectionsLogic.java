@@ -37,11 +37,11 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
             for (VirtualConnection vcToBeAdded : toAddGroup) {
                 boolean add = true;
                 for (VirtualConnection vcParent : parentGroup) {
-                    if (vcParent.isSubsetAssumed(vcToBeAdded)) {
+                    if (vcParent.isSubset(vcToBeAdded)) {
                         add = false;
                         toRemoveFromToAdd.add(vcToBeAdded);
                         break;
-                    } else if (vcToBeAdded.isSubsetAssumed(vcParent)) {
+                    } else if (vcToBeAdded.isSubset(vcParent)) {
                         toRemoveFromParents.add(vcParent);
                     }
                 }
@@ -76,7 +76,7 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
                 for (int j = i + 1; j < group.size(); j++) {
                     VirtualConnection vc2 = group.get(j);
                     if (toRemove.contains(vc2)) continue;
-                    if (vc1.isSubsetAssumed(vc2)) {
+                    if (vc1.isSubset(vc2)) {
                         toRemove.add(vc2);
                     }
                 }

@@ -6,7 +6,8 @@ import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
 
 public class ConnectionPlayer extends MiniMax implements Algorithm {
-    public ConnectionPlayer(){};
+    boolean hasFoundWin;
+    public ConnectionPlayer(){ hasFoundWin = false; };
     @Override
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
         System.out.println("Started");
@@ -28,8 +29,10 @@ public class ConnectionPlayer extends MiniMax implements Algorithm {
             case 5_000_000 -> 5;
             default -> 3;
         };
+        if (hasFoundWin) depth = 1;
         startPos.setplayerOnTurn(depth % 2 == 0);
-        Move suggestedMove = findBestMove(startPos, player, depth);
-        return new BoardCoordinate(suggestedMove.x, suggestedMove.y);
+        MoveValue suggestedMove = findBestMove(startPos, player, depth);
+        if (suggestedMove.value > 1) hasFoundWin = true;
+        return new BoardCoordinate(suggestedMove.move.x, suggestedMove.move.y);
     }
 }
