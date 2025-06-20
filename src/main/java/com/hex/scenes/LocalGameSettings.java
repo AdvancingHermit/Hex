@@ -123,6 +123,7 @@ public class LocalGameSettings extends BaseScene {
             } else {
                 difficultyBox.setDisable(false);
                 boardSizeSlider.setMax(11);
+                boardSizeSlider.setValue(7);
             }
         });
 
