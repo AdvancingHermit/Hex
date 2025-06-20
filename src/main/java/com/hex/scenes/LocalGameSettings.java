@@ -213,7 +213,7 @@ public class LocalGameSettings extends BaseScene {
 
             }
             case "Connection" ->{
-                swapCheckBox.setDisable(true);
+                swapCheckBox.setDisable(false);
                 doubleCheckBox.setDisable(true);
                 doubleCheckBox.setSelected(false);
             }
