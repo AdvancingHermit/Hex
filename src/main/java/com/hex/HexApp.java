@@ -9,6 +9,7 @@ import com.hex.algorithms.dqn.Driver;
 import java.net.URISyntaxException;
 // Made by Oscar
 public class HexApp extends Application {
+    //main application run from here
     private SceneManager sceneManager;
     @Override
     public void start(Stage stage) throws URISyntaxException {

@@ -69,6 +69,7 @@ public class Board {
 
         return false;
     }
+
     private ArrayList<int[]> getNeighbours(int x, int y, int player)  {
         ArrayList<int[]> neighbours = new ArrayList<>();
         int[][] directions = {

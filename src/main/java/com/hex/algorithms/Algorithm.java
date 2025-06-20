@@ -4,6 +4,7 @@ import com.hex.GameState;
 import com.hex.algorithms.montecarlo.BoardCoordinateMoves;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
+//Made by Oliver
 
 public interface Algorithm {
     BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap);

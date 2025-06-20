@@ -11,7 +11,9 @@ import java.net.Socket;
  /**
   * Manages the different Scenes, and makes sure to properly switch between them
   */
-public class SceneManager {
+ //Made by Oliver
+
+ public class SceneManager {
 
     private final Stage primaryStage;
     // For Online play
@@ -28,12 +30,15 @@ public class SceneManager {
         this.sceneHeight = 600;
         this.sceneWidth = 800;
     }
+    //scene manager used to switch between different scenes in the game, used every time you navigate in a menu
 
     public enum SceneType {
         MAIN_MENU,
         LOCAL_GAME,
         ALGO_V_ALGO,
         ALGO_V_ALGO_SETTINGS,
+        ALGO_V_ALGO_NO_UI,
+        ALGO_V_ALGO_SETTINGS_NO_UI,
         ONLINE_GAME,
         LOADING_SCREEN,
         LOCAL_GAME_SETTINGS,
@@ -59,6 +64,8 @@ public class SceneManager {
             case LOCAL_GAME_SETTINGS -> new LocalGameSettings(this).getScene();
 
             case ALGO_V_ALGO_SETTINGS -> new AlgovAlgoSettings(this).getScene();
+
+            case ALGO_V_ALGO_SETTINGS_NO_UI -> new AlgovAlgoNoUISettings(this).getScene();
 
             case ONLINE_GAME -> {
                 if (currentSocket != null && currentIn != null && currentOut != null) {

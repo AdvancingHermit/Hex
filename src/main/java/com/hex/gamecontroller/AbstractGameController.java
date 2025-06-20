@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.extern.java.Log;
 
 import java.util.function.Consumer;
+//Made by Oliver
 
 @Log
 public abstract class AbstractGameController extends Controller {
@@ -32,7 +33,7 @@ public abstract class AbstractGameController extends Controller {
         return INSTANCE;
     }
 
-
+    //Abstract contoller to capture some of the basic behaivour, which are present in more controllers
     protected AbstractGameController(Board board, GameState gameState, Algorithm algorithm, boolean algoStart, int algoIterations, boolean swap) {
         this.board = board;
         this.gameState = gameState;

@@ -3,7 +3,8 @@ package com.hex.components;
 import com.hex.GameState;
 import lombok.Data;
 
-// Made by Oscar
+// Made by Oscar and Oliver
+
 @Data
 public class Board {
     protected int[][] board;
@@ -15,6 +16,7 @@ public class Board {
             {1, -1}, {-1, 1}
     };
 
+    //Main board class, used to store the hex pieces, and check for connections/wins
 
     public Board(int rows, int cols) {
         this.rows = rows;
@@ -68,6 +70,9 @@ public class Board {
 
     }
     private boolean depthFirstSearch(int x, int y, int player) {
+        //uses the stack as the data structure to perform DFS to find connections from one side of the board
+        //to the other. Checks all neighbouring tiles of the same player in the chain, or until it finds a connection
+        //visited nodes get marked with -1
         board[x][y] = -1;
 
         if (player == 2 && x == cols - 1 || player == 1 && y == rows - 1) {
@@ -77,6 +82,7 @@ public class Board {
         return visitNeighbours(x, y, player);
     }
 
+    //Visits all neighbours of a hex piece
     private boolean visitNeighbours(int x, int y, int player)  {
         boolean finished = false;
         for (int[] dir : directions) {
@@ -102,5 +108,21 @@ public class Board {
             }
         }
         return counter == 1;
+    }
+
+    public String printBoard(){
+        String s = "";
+        for (int x = 0; x < cols; x++){
+            for (int y = 0; y < rows; y++){
+                s += board[x][y] + " ";
+            }
+            s += "\n";
+        }
+        return s;
+    }
+
+    public void reset(){
+        board = new int[rows][cols];
+        //gameState.reset();
     }
 }

@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 @Log
+//Made By Oliver
 public class MCTS implements Algorithm {
 
     private final static double exploreConstant = Math.sqrt(2);
@@ -26,14 +27,14 @@ public class MCTS implements Algorithm {
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
         Node root = new Node(null, new ArrayList<>(), 0, null, false);
         this.swap = swap;
+        //multithreading
         int nThreads = Runtime.getRuntime().availableProcessors();
        //int nThreads = 1;
         ExecutorService executor = Executors.newFixedThreadPool(nThreads);
         List<Future<Node>> futures = new ArrayList<>();
 
         for (int i = 0; i < nThreads; i++) {
-            int n = i;
-            Callable<Node> task = () -> makeTree(board, gameState, iterations/nThreads, new Node(null, new ArrayList<>(), 0, null, false), n);
+            Callable<Node> task = () -> makeTree(board, gameState, iterations/nThreads, new Node(null, new ArrayList<>(), 0, null, false));
             futures.add(executor.submit(task));
         }
 
@@ -62,9 +63,18 @@ public class MCTS implements Algorithm {
         return bestMove;
     }
 
-    private Node makeTree(Board board, GameState gameState, int iterations, Node root, int n) {
+    /**
+     *
+     * @param board current hexboard
+     * @param gameState current gamestate
+     * @param iterations how many iterations the algorithm runs
+     * @param root root is the current board position modeled as the root of the tree
+     * @return root which is the final tree
+     */
+    private Node makeTree(Board board, GameState gameState, int iterations, Node root) {
+        //makes the monte carlo tree given i iterations.
         int i = 0;
-        log.info("start " + n);
+       // log.info("start " + n);
         while (i < iterations){
             gameOver = false;
             Board simBoard = new Board(board.getRows(), board.getCols());
@@ -79,11 +89,19 @@ public class MCTS implements Algorithm {
             backpropagation(win, selectedNode);
             i++;
         }
-        log.info("done " + n);
+       // log.info("done " + n);
         return root;
     }
 
+    /**
+     *
+     * @param root root is the current board position modeled as the root of the tree
+     * @param simBoard a copy of the current game board
+     * @param simulationController used to place pieces on the simboard
+     * @return a leaf, after placing all the pieces to reach that position
+     */
     private Node selection(Node root, Board simBoard, SimulationController simulationController){
+        //traverses tree and finds a leaf node
         Node cur = root;
         while (!cur.children.isEmpty() && cur.children.size() == possibleMoves(simBoard).size()){
              cur = maxNode(cur);
@@ -99,7 +117,15 @@ public class MCTS implements Algorithm {
 
     }
 
+    /**
+     *
+     * @param leaf the leaf from the selection method
+     * @param simBoard a copy of the current game board
+     * @param simulationController used to place pieces on the simboard
+     * @return expands the leaf by a move, and returns that new node
+     */
     private Node expansion(Node leaf, Board simBoard, SimulationController simulationController){
+        //expands the leaf with a possible move
         if (!simulationController.getGameState().isGameFinished()) {
             if (swap && simBoard.swapAvailable()) {
                 BoardCoordinate swapMove = null;
@@ -133,7 +159,14 @@ public class MCTS implements Algorithm {
 
     }
 
+    /**
+     *
+     * @param simulationController used to place pieces on the simboard
+     * @return 1 or -1, depending on if the player putting the game into this position before running the
+     * random simulation wins or loses
+     */
     private int simulation(SimulationController simulationController){
+        //plays random games, and decides the winner based on the player who sent the game into this position
         if (!gameOver) {
             int upPlayer = simulationController.getGameState().getCurrentPlayer();
 
@@ -151,7 +184,13 @@ public class MCTS implements Algorithm {
 
     }
 
+    /**
+     *
+     * @param win from simulation method
+     * @param leaf from expansion method
+     */
     private void backpropagation(int win, Node leaf){
+        //back propagetes results to the root
         Node cur = leaf;
         while (true){
             cur.wins += win;
@@ -168,11 +207,26 @@ public class MCTS implements Algorithm {
         }
     }
 
+
+    /**
+     *
+     * @param wins number of wins for this node
+     * @param nSims number of sims for this node
+     * @param parSims  number of sim of the parent
+     * @param c explore constant
+     * @return a score using the UCT formula
+     */
     private double UCT(int wins, int nSims, int parSims, double c){
         return ((double) wins / (double) nSims) + c * Math.sqrt(Math.log(parSims)/nSims);
     }
 
+    /**
+     *
+     * @param cur the current node in the tree
+     * @return returns the child of cur with the highest uct score
+     */
     private Node maxNode(Node cur){
+        //finds the max value child of a node based on the uct score
         double maxVal = -10000;
         Node bestNode = new Node(null,null,0, null, false);
         for (Node child : cur.children){
@@ -187,6 +241,11 @@ public class MCTS implements Algorithm {
         return bestNode;
     }
 
+    /**
+     *
+     * @param simBoard a copy of the current game board
+     * @return an arraylist of all possible moves in the current position
+     */
     private ArrayList<BoardCoordinate> possibleMoves(Board simBoard){
         ArrayList<BoardCoordinate> moves = new ArrayList<>(simBoard.getCols() * simBoard.getCols());
         for (int i = 0; i < simBoard.getCols(); i++ ) {

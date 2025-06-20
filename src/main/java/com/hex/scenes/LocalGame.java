@@ -25,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
+//Made by Oliver
 
 public class LocalGame extends BaseScene {
     private GameState gameState = new GameState();
@@ -33,6 +34,7 @@ public class LocalGame extends BaseScene {
     @Getter
     private GameMode mode;
 
+    //Scene for the base local game, where the board can be seen
     public LocalGame(int boardSize, Algorithm algorithm1, boolean algoStart, int algoIterations, GameMode mode, SceneManager sceneManager) {
         BorderPane root = new BorderPane();
         this.mode = mode;

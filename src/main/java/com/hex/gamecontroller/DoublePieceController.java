@@ -8,6 +8,7 @@ import com.hex.components.BoardCoordinate;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.java.Log;
+//Made by Oliver
 
 @Log
 public class DoublePieceController extends AbstractGameController {

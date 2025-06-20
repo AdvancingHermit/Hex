@@ -33,6 +33,7 @@ public class AlgovAlgo extends BaseScene {
     @Getter
     String algo2;
 
+    //Scene for playing vs AI
     public AlgovAlgo(int boardSize, Algorithm startingAlgorithm, Algorithm secondAlgorithm, int startingIterations, int secondIterations, GameMode mode, SceneManager sceneManager, String algo1, String algo2) {
         BorderPane root = new BorderPane();
         this.mode = mode;

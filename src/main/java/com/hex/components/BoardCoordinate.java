@@ -1,4 +1,5 @@
 package com.hex.components;
+//Made by Oliver
 
 public class BoardCoordinate {
     public int x;

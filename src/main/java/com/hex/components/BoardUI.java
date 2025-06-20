@@ -15,6 +15,7 @@ import lombok.Setter;
 import java.util.function.Consumer;
 
 import static java.lang.Math.sqrt;
+//Made by Oliver
 
 // Made by Oscar
 
@@ -45,6 +46,7 @@ public class BoardUI extends Pane {
     ControllerType type;
 
     /**
+     * This class is responsible for drawing the board we can see, and make sure the board can be interacted with
      * @param board The hex board.
      * @param hexagonSize The size of hexagon cells.
      * @param type Which type of controller is in use.
