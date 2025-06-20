@@ -15,6 +15,8 @@ public class SetHolder {
     public HashSet<VirtualConnection> checkNewRedVCs;
     public HashSet<VirtualConnection> checkNewRedSemiVCs;
 
+
+
     public SetHolder(){
         newBlueVCs = new HashSet<>();
         newBlueSemiVCs = new HashSet<>();

@@ -97,6 +97,21 @@ public class SimpleFuncs extends Board {
     protected boolean moveOnRightBlueEdge(Move move) {
         return move.x == elecCols-1;
     }
+    protected boolean moveWithinBoard(Move move) {
+        return move.x >= 0 && move.x < elecCols && move.y >= 0 && move.y < elecRows;
+    }
+    protected int getCellVal(Move move) {
+        return elecBoard[move.x][move.y];
+    }
+    protected boolean bothVCsHaveEndsAsCriticalMove(VirtualConnection vc1, VirtualConnection vc2) {
+        return vc1.endIsCriticalEdge() && vc2.endIsCriticalEdge();
+    }
+    protected boolean moveIsANeighborMove(Move move){
+        for (Move neighbor : neighborMove){
+            if (move.equals(neighbor)) return true;
+        }
+        return false;
+    }
 
     public SimpleFuncs(int rows, int cols) {
         super(rows, cols);

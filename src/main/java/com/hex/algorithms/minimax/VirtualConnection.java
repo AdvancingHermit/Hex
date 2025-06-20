@@ -38,17 +38,22 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
         if (o == null || getClass() != o.getClass()) return false;
 
         VirtualConnection other = (VirtualConnection) o;
-        return equalEnds(other) && Objects.equals(carrier, other.carrier);
+        return carrier.size() == other.carrier.size() && equalEnds(other) && Objects.equals(carrier, other.carrier);
     }
 
 
     public boolean equalEnds(VirtualConnection other) {
-        return (x.equals(other.x) && y.equals(other.y)) || (y.equals(other.x) && x.equals(other.y));
+        return x.hashCode() + y.hashCode() == other.x.hashCode() + other.y.hashCode();
     }
 
     public boolean sameCriticalCell(VirtualConnection other) {
         if (criticalCell == null || other.criticalCell == null) return false;
         return criticalCell.equals(other.criticalCell);
+    }
+
+    public boolean endIsCriticalEdge() {
+        if (criticalCell == null) return false;
+        return criticalCell.equals(x) || criticalCell.equals(y);
     }
 
     public Move[] getConnectingEnd(VirtualConnection other) {
@@ -66,25 +71,51 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
 
 
     // Tjekker om denne er sub af anden.
-    public boolean isSubset(VirtualConnection other){
-        if (other.carrier.size() > carrier.size() && equalEnds(other)){
-            for (Move elem : carrier){
-                if (!other.carrier.contains(elem)){
-                    return false;
-                }
-            }
-            return true;
+    public boolean isSubset(VirtualConnection other) {
+        if (equalEnds(other) && other.carrier.size() > carrier.size()) {
+            return other.carrier.containsAll(carrier);
         }
         return false;
+    }
+
+    // Tjekker om denne er sub af anden.
+    public boolean isSubsetAssumed(VirtualConnection other) {
+        if (other.carrier.size() > carrier.size()) {
+            return other.carrier.containsAll(carrier);
+        }
+        return false;
+    }
+
+    public boolean isDistinct(VirtualConnection other){
+        return !equalEnds(other) && !endIsCarrier(other) && !other.endIsCarrier(this);
+    }
+
+    public boolean distinctCarrier(VirtualConnection other){
+        for (Move move : carrier){
+            if (other.carrier.contains(move)) return false;
+        }
+        return true;
     }
 
     public boolean endIsCarrier(VirtualConnection other){
         return other.carrier.contains(x) || other.carrier.contains(y);
     }
+    public boolean crititcalCellIsImportant(VirtualConnection other){
+        if (other.carrier.size() < 3) return criticalCellIsCarrier(other);
+        else return false;
+    }
+    public boolean criticalCellIsCarrier(VirtualConnection other){
+        return other.carrier.contains(criticalCell);
+    }
 
     @Override
     public String toString(){
         return "Pos X: " + x + ", Pos Y: " + y + " With Depth: " + depth;
+    }
+
+    public int getMovesCode() {
+        // Ensure symmetric ends (x,y) and (y,x) have same hash
+        return x.hashCode() + y.hashCode();
     }
 
     @Override

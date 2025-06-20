@@ -21,44 +21,40 @@ public class MiniMax {
 
         int nThreads = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(nThreads);
-        List<Future<MoveValue>> futures = new ArrayList<>();
         System.out.println(nThreads);
 
         ArrayList<Move> ogPossibleMoves = position.getPossibleMoves();
-
-        int k = 0;
-
-        while (k < ogPossibleMoves.size()) {
-            for (int i = 0; i < nThreads; i++) {
-                if (ogPossibleMoves.size() == k) { break; }
-                Move move = ogPossibleMoves.get(k);
-                SetHolder setHolder = new SetHolder();
-                Position newPosition = position.Move(move, player);
-                Callable<MoveValue> task = () -> evalWrapper(newPosition, depth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player, setHolder, move);
-                futures.add(executor.submit(task));
-                k++;
-            }
-        }
-
         List<MoveValue> evals = new ArrayList<>();
-        for (Future<MoveValue> future : futures) {
-            try {
-                evals.add(future.get());
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+
+        List<Callable<MoveValue>> tasks = new ArrayList<>(ogPossibleMoves.size());
+        for (Move move : ogPossibleMoves){
+            SetHolder setHolder = new SetHolder();
+            Position newPosition = position.Move(move, player);
+            tasks.add(() -> evalWrapper(newPosition, depth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player, setHolder, move));
+        }
+        try {
+            List<Future<MoveValue>> futures = executor.invokeAll(tasks);
+            for (Future<MoveValue> future : futures) {
+                try {
+                    evals.add(future.get());
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            executor.shutdown();
+            for (MoveValue moveVal : evals){
+                if (moveVal.value > bestValue){
+                    bestMove = moveVal.move;
+                    bestValue = moveVal.value;
+                }
             }
         }
-        executor.shutdown();
-
-        for (MoveValue moveVal : evals){
-            if (moveVal.value > bestValue){
-                bestMove = moveVal.move;
-                bestValue = moveVal.value;
-            }
-        }
-
         System.out.println("Move: " + bestMove + " -> Value: " + bestValue);
         if (bestMove == null){
+            System.out.println("Something Wrong Happened");
             return position.getPossibleMoves().get(0);
         }
         return bestMove;

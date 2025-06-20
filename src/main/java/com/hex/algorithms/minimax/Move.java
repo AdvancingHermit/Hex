@@ -21,11 +21,21 @@ public class Move {
 
     @Override
     public int hashCode() {
-        return x * 12 + y; // Antager at x og y har vals [0; 11]
+        return x * 14 + y; // Antager at x og y har vals [0; 11]
     }
 
     public int val(int mult){
         return x + y * mult;
+    }
+
+    public Move addGet(int x, int y){
+        return new Move(this.x + x, this.y + y);
+    }
+    public Move subGet(int x, int y){
+        return new Move(this.x - x, this.y - y);
+    }
+    public Move subGet(Move other){
+        return new Move(this.x - other.x, this.y - other.y);
     }
 
     @Override
