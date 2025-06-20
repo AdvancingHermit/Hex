@@ -7,6 +7,8 @@ import com.hex.components.BoardCoordinate;
 import lombok.extern.java.Log;
 import java.util.Timer;
 
+
+// Christian
 @Log
 public class AlgorithmNoUIController extends Controller {
 
@@ -44,9 +46,10 @@ public class AlgorithmNoUIController extends Controller {
         gameIteration(new BoardCoordinate(0,0));
     }
 
+    // Loops through 50 games and then outputs the finished boardstates and how many of which algo won.
     public void gameIteration(BoardCoordinate ignored) {
         String output = "";
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1; i++) {
             board.reset();
             gameState.reset();
             while (!gameState.isGameFinished()) {
@@ -89,7 +92,7 @@ public class AlgorithmNoUIController extends Controller {
             gameState.setGameFinished(true);
             if (player == 1) algo1Won += 1;
             if (player == 2) algo2Won += 1;
-            System.out.println("Player " + player + " won");
+            //System.out.println("Player " + player + " won");
             return ("Player " + player + " won\n" );
         }
         return "";

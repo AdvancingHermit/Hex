@@ -8,6 +8,8 @@ import javafx.scene.control.Label;
 import lombok.extern.java.Log;
 import java.util.Timer;
 import java.util.TimerTask;
+
+//Christian
 @Log
 public class AlgorithmTesterController extends Controller {
 

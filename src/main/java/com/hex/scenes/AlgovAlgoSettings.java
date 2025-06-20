@@ -22,7 +22,7 @@ import javafx.scene.layout.VBox;
 import lombok.Getter;
 
 import java.util.Random;
-
+// Christian
 public class AlgovAlgoSettings extends BaseScene{
 
     // Getters

@@ -2,6 +2,8 @@ package com.hex.algorithms.minimax;
 
 import java.util.Objects;
 
+// Christian
+// necessary for many computations in connections.java
 public class Move {
     public int x;
     public int y;

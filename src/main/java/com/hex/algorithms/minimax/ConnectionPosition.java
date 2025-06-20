@@ -5,6 +5,7 @@ import com.hex.components.Board;
 
 import java.util.ArrayList;
 
+// Christian
 public class ConnectionPosition implements Position{
     private Connections board;
     ArrayList<Move> possibleMoves;

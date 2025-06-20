@@ -6,6 +6,7 @@ import com.hex.components.Board;
 import java.util.ArrayList;
 import java.util.Random;
 
+// Christian for testing
 public class RandomPosition implements Position{
     private Board board;
     ArrayList<Move> possibleMoves;

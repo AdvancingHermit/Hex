@@ -5,6 +5,7 @@ import com.hex.algorithms.Algorithm;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
 
+// Christian, for testing
 public class RandomPlayer extends MiniMax implements Algorithm {
     public RandomPlayer(){};
     @Override
