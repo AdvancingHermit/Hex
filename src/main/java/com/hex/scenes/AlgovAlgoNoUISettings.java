@@ -3,6 +3,8 @@ package com.hex.scenes;
 import com.hex.GameMode;
 import com.hex.SceneManager;
 import com.hex.algorithms.Algorithm;
+import com.hex.algorithms.RandomAlgorithm;
+import com.hex.algorithms.dqn.DQNAlgorithm;
 import com.hex.algorithms.minimax.ConnectionPlayer;
 import com.hex.algorithms.montecarlo.MCTS;
 import com.hex.algorithms.montecarlo.MCTSDouble;
@@ -70,7 +72,7 @@ public class AlgovAlgoNoUISettings extends BaseScene{
         // Algorithm selection
         Label startingAlgorithmLabel = new Label("Select Algorithm That Starts:");
         startingAlgorithmBox = new ComboBox<>();
-        startingAlgorithmBox.getItems().addAll( "MCTS", "Connection", "AI");
+        startingAlgorithmBox.getItems().addAll( "MCTS", "Connection","DQN", "Random");
         startingAlgorithmBox.setValue("MCTS");
 
         // Difficulty selection
@@ -82,7 +84,7 @@ public class AlgovAlgoNoUISettings extends BaseScene{
         // Second Algorithm selection
         Label secondAlgorithmLabel = new Label("Select Algorithm That Goes Second:");
         secondAlgorithmBox = new ComboBox<>();
-        secondAlgorithmBox.getItems().addAll("MCTS", "Connection", "AI");
+        secondAlgorithmBox.getItems().addAll("MCTS", "Connection", "DQN", "Random");
         secondAlgorithmBox.setValue("Connection");
 
         // Difficulty selection
@@ -112,7 +114,6 @@ public class AlgovAlgoNoUISettings extends BaseScene{
             }
         });
 
-        // Start button
         Button playBtn = new Button("Start Game");
         playBtn.setOnAction(e -> {
             boardSize = (int) boardSizeSlider.getValue();
@@ -137,26 +138,21 @@ public class AlgovAlgoNoUISettings extends BaseScene{
             switch (startingAlgorithm) {
                 case "MCTS" -> algorithm1 = new MCTS();
                 case "Connection" -> algorithm1 = new ConnectionPlayer();
-                case "AI" -> throw new RuntimeException("No AI implemented yet");
+                case "DQN" -> algorithm1 = new DQNAlgorithm();
+                case "Random" -> algorithm1 = new RandomAlgorithm();
             }
             secondAlgorithm = secondAlgorithmBox.getValue();
             Algorithm algorithm2 = null;
             switch (secondAlgorithm) {
                 case "MCTS" -> algorithm2 = new MCTS();
                 case "Connection" -> algorithm2 = new ConnectionPlayer();
-                case "AI" -> throw new RuntimeException("No AI implemented yet");
+                case "DQN" -> algorithm2 = new DQNAlgorithm();
+                case "Random" -> algorithm2 = new RandomAlgorithm();
             }
             isSwapEnabled = swapCheckBox.isSelected();
-            isDoubleEnabled = doubleCheckBox.isSelected();
             GameMode mode = GameMode.NORMAL;
             if (isSwapEnabled){
                 mode = GameMode.SWAP;
-            }
-            if (isDoubleEnabled){
-                mode = GameMode.DOUBLE;
-                if (algorithm1 != null) {
-                    algorithm1 = new MCTSDouble();
-                }
             }
             // Start the game
 
