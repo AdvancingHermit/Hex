@@ -437,11 +437,13 @@ public class Connections extends SimpleConnectionsLogic {
             findBaseVCs(setMove, blueSemiVCs, blueVCs, Colors.BLUE.getValue());
             removeAllWithMove(redSemiVCs, redVCs, setMove);
             removeAllNextToMove(blueSemiVCs, setMove);
+            redCells.remove(setMove);
         } else {
             redCells.add(setMove);
             findBaseVCs(setMove, redSemiVCs, redVCs, Colors.RED.getValue());
             removeAllWithMove(blueSemiVCs, blueVCs, setMove);
             removeAllNextToMove(redSemiVCs, setMove);
+            blueCells.remove(setMove);
         }
     }
 

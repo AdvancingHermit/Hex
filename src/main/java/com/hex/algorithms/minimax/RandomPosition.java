@@ -76,6 +76,10 @@ public class RandomPosition implements Position{
 
     }
 
+    public void addPossibleMove(Move move){
+        possibleMoves.add(move);
+    }
+
     public int[][] getBoard(){
         return board.getBoard();
     }

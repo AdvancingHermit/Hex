@@ -145,5 +145,8 @@ public class YPosition implements Position  {
     public int[][] getBoard(){
         return board.getBoard();
     }
+    public void addPossibleMove(Move move){
+        possibleMoves.add(move);
+    }
 
 }
