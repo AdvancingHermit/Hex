@@ -5,6 +5,7 @@ import com.hex.algorithms.minimax.connectionsHelpers.SetHolder;
 import java.math.BigInteger;
 import java.util.*;
 
+// Christian
 public interface Position {
 
     static enum Colors {

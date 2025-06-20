@@ -4,6 +4,7 @@ import com.hex.algorithms.minimax.VirtualConnection;
 
 import java.util.HashSet;
 
+// Christian, Class to hold sets so it is not needed to make new sets for each different move combination
 public class SetHolder {
 
     public HashSet<VirtualConnection> newBlueVCs;

@@ -7,7 +7,7 @@ import com.hex.components.Board;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-
+// Christian function usefull for the algorithm.
 public class SimpleFuncs extends Board {
 
     protected ArrayList<Move> emptyCells;

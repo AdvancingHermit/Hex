@@ -5,6 +5,7 @@ import com.hex.components.Board;
 
 import java.util.ArrayList;
 
+// Christian, old
 public class YPosition implements Position  {
     private int[][] yBoard;
     private int yRows;

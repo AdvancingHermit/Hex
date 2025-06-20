@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+// Christian, necessary for connections.
 public class VirtualConnection implements Comparable<VirtualConnection> {
 
     public Move x;

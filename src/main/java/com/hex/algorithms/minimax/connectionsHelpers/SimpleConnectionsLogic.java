@@ -7,8 +7,17 @@ import com.hex.components.Board;
 
 import java.util.*;
 
+// Christian
 public class SimpleConnectionsLogic extends SimpleFuncs {
 
+    /**
+     * Checks if the new VCs should be added, by checking if they are/aren't a subset of previous VCs
+     * @param toAddList hashlist that is being checked if should be added
+     * @param newCheckParentList the list that created toAddList by applying rules
+     * @param parentList the old list of VCs
+     * @param color of the VCs being added
+     * @param type 0 for VC, 1 for virtual semi connections
+     */
     protected HashSet<VirtualConnection> toAdd(HashSet<VirtualConnection> toAddList, HashSet<VirtualConnection> newCheckParentList, HashSet<VirtualConnection> parentList, int color, int type) {
         HashSet<VirtualConnection> hasBeenChecked = new HashSet<>();
         HashSet<VirtualConnection> toRemoveFromToAdd = new HashSet<>();
@@ -50,7 +59,6 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
                 }
             }
         }
-
         // Batch updates
         toAddList.removeAll(toRemoveFromToAdd);
         parentList.removeAll(toRemoveFromParents);
@@ -59,8 +67,12 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
         return hasBeenChecked;
     }
 
-    protected void checkRedundancies(Set<VirtualConnection> vcList) {
 
+    /**
+     * Checks if the lists has VCs that are subsets of other VCs within the same list and removes the non minimal ones
+     * @param vcList the list of VCs
+     */
+    protected void checkRedundancies(Set<VirtualConnection> vcList) {
         Map<Integer, List<VirtualConnection>> groupsByEnds = new HashMap<>();
         for (VirtualConnection vc : vcList) {
             int endsKey = vc.getMovesCode();
@@ -87,6 +99,7 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
         vcList.removeAll(toRemove);
     }
 
+    // Delta bridge cell location, and two array index for cellVals to check for the corresponding bridge
     static Move[][] deltaMoves = {
             { new Move(1, -2),  new Move(3, 4) },
             { new Move(2, -1),  new Move(4, 0) },
@@ -95,6 +108,7 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
             { new Move(-2, 1),  new Move(5, 1) },
             { new Move(-1, -1), new Move(1, 3) }
     };
+    // Cells in carrier set
     static Move[][] brHelper = {
             { new Move(0, -1), new Move(1, -1) },
             { new Move(1, -1), new Move(1, 0) },
@@ -104,7 +118,14 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
             { new Move(-1, 0), new Move(0, -1) }
     };
 
-
+    /**
+     * Finds all bridges of move, based on values of cells around it
+     * @param VCs Set of VC that bridges are added to
+     * @param semiVCs Set of Semi-VC that bridges are added to
+     * @param move that is being checked for bridges
+     * @param cellVals values of cells around the move
+     * @param color of cell that was placed aka. move
+     */
     private void findBridges(HashSet<VirtualConnection> VCs, HashSet<VirtualConnection> semiVCs, Move move, int[] cellVals, int color) {// Word
         for (int i = 0; i < deltaMoves.length; i++){
             if (cellVals[deltaMoves[i][1].x] == 0 && cellVals[deltaMoves[i][1].y] == 0) {
@@ -129,6 +150,13 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
         }
     }
 
+    /**
+     * Finds values of cells around placed move, and checks for bridges.
+     * @param move coordinates of placed piece
+     * @param semiVCs set of semiVCs to add into
+     * @param VCs set of VCs to add into
+     * @param color of cell that was placed aka. move
+     */
     public void findBaseVCs(Move move, HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs, int color) {
         int[] cellVals = new int[6];
         for (int i = 0; i < directions.length; i++) {
@@ -158,6 +186,12 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
         findBridges(VCs, semiVCs, move, cellVals, color);
     }
 
+    /**
+     * Finds Semi-VCs with same ends and returns it
+     * @param newCheckSemiVCs the semi-vcs being checked
+     * @param semiVCs checks if semivcs with same ends are found in old vcs.
+     * @return list of (sets of vcs with same ends)
+     */
     private ArrayList<HashSet<VirtualConnection>> equalEndsOrRules(HashSet<VirtualConnection> newCheckSemiVCs, HashSet<VirtualConnection> semiVCs) {
         ArrayList<HashSet<VirtualConnection>> orRulePrelim = new ArrayList<>();
 
@@ -179,6 +213,11 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
 
     public record CarrierDepthPair(HashSet<Move> carrier, Integer depth, Move x, Move y) {}
 
+    /**
+     * Finds second highest depth among cells with semi unique carrier sets
+     * @param vcList list of cells with same end
+     * @return second highest depth with the end values
+     */
     private CarrierDepthPair orRuleHelper(HashSet<VirtualConnection> vcList){
         List<Integer> sortingList = new ArrayList<>();
         HashSet<Move> currCarrier = new HashSet<>();
@@ -194,6 +233,12 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
         return new CarrierDepthPair(currCarrier, sortingList.get(0), x, y);
     }
 
+    /**
+     * Applies Or Rule
+     * @param newCheckSemiVCs new semi VCs to be checked if rule applies among themselves and parent
+     * @param semiVCs old semi vcs that newer checks with to applu Or Rule
+     * @return set of new VCs produced by Or Rule.
+     */
     public HashSet<VirtualConnection> applyOrRule(HashSet<VirtualConnection> newCheckSemiVCs, HashSet<VirtualConnection> semiVCs) {
         VirtualConnection vc = new VirtualConnection(null, null, new HashSet<>(0), -1); // Så den builder. List kan ikke være tom
         ArrayList<HashSet<VirtualConnection>> orRulePrelim = equalEndsOrRules(newCheckSemiVCs, semiVCs);
@@ -209,6 +254,13 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
         return toAdd;
     }
 
+    /**
+     * Applies and rule on new VCs
+     * @param checkNewVCs the new vcs that applies and rule on eachother and old vcs
+     * @param VCs old vcs
+     * @param color of vcs
+     * @return set of vcs created by and rule
+     */
     public HashSet<VirtualConnection> applyAndRule(HashSet<VirtualConnection> checkNewVCs, HashSet<VirtualConnection> VCs, int color) {
         HashSet<VirtualConnection> toAddList = new HashSet<>();
         for (VirtualConnection vc1 : checkNewVCs) {

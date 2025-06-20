@@ -5,6 +5,7 @@ import com.hex.algorithms.Algorithm;
 import com.hex.components.Board;
 import com.hex.components.BoardCoordinate;
 
+// Christian, old
 public class YPlayer extends MiniMax implements Algorithm {
     public YPlayer(){};
     @Override

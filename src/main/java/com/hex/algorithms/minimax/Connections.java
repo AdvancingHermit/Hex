@@ -4,11 +4,19 @@ import com.hex.algorithms.minimax.connectionsHelpers.SimpleConnectionsLogic;
 import com.hex.components.Board;
 import java.util.*;
 
+// Christian
 public class Connections extends SimpleConnectionsLogic {
 
     HashSet<VirtualConnection> blueEdgeConnections;
     HashSet<VirtualConnection> redEdgeConnections;
 
+    /**
+     * Creates adjecency matrix based on VCs
+     * @param VCs Set of vcs
+     * @param n size of graph
+     * @param color of vcs
+     * @return adjecency matrix where distances aare equal to vcs.depth
+     */
     private int[][] createGraph(HashSet<VirtualConnection> VCs, int n, int color) {
         int[][] adjMatrix = new int[n][n];
         for (int i = 0; i < n; i++) {
@@ -28,37 +36,32 @@ public class Connections extends SimpleConnectionsLogic {
         }
         return adjMatrix;
     }
-
     private int getShortestEnd(int[][] graph, int source, int target){
         return dijkstra(graph, source)[target];
     }
 
-    private int tryAllSemis(
-            HashSet<VirtualConnection> semiVCs,
-            int[][] graph,
-            int source,
-            int target
-    ) {
-        // 1) Run Dijkstra from source
+    /**
+     * Tries one each semi vc on the adjecency matrix.
+     * @param semiVCs list of semivcs
+     * @param graph adjecency matrix
+     * @param source edge
+     * @param target other edge
+     * @return distance from on edge to the other
+     */
+    private int tryAllSemis(HashSet<VirtualConnection> semiVCs, int[][] graph, int source, int target) {
         int[] distS = dijkstra(graph, source);
 
-        // 2) Run Dijkstra from target (since graph undirected, same adjacency)
         int[] distT = dijkstra(graph, target);
-
-        // 3) Baseline best distance without any semi‑edge
         int bestDist = distS[target];
 
-        // 4) Try each semi‑edge in O(1) time
         for (VirtualConnection semi : semiVCs) {
             int x = semi.x.val(elecCols);
             int y = semi.y.val(elecCols);
             int w = semi.depth;
 
-            // Path using (x→y)
             if (distS[x] < Integer.MAX_VALUE && distT[y] < Integer.MAX_VALUE) {
                 bestDist = Math.min(bestDist, distS[x] + w + distT[y]);
             }
-            // Path using (y→x)
             if (distS[y] < Integer.MAX_VALUE && distT[x] < Integer.MAX_VALUE) {
                 bestDist = Math.min(bestDist, distS[y] + w + distT[x]);
             }
@@ -74,7 +77,6 @@ public class Connections extends SimpleConnectionsLogic {
         Arrays.fill(dist, Integer.MAX_VALUE);
         dist[source] = 0;
 
-        // min‑heap of (distance, vertex)
         PriorityQueue<Vertex> pq = new PriorityQueue<>();
         pq.add(new Vertex(source, 0));
 
@@ -83,7 +85,6 @@ public class Connections extends SimpleConnectionsLogic {
             if (visited[u.id]) continue;
             visited[u.id] = true;
 
-            // relax neighbors
             for (int v = 0; v < n; v++) {
                 int weight = graph[u.id][v];
                 if (!visited[v] && u.dist + weight < dist[v]) {
@@ -108,7 +109,9 @@ public class Connections extends SimpleConnectionsLogic {
         }
     }
 
-
+    /**
+     * Removes connection on the edges as they will not contribute and just bloat computations
+     */
     private void cleanConnections(){
         Iterator<VirtualConnection> iterator = blueVCs.iterator();
         VirtualConnection vc;
@@ -129,6 +132,12 @@ public class Connections extends SimpleConnectionsLogic {
         }
     }
 
+    /**
+     * Checks if elements is subset of parent list to avoid problems later on.
+     * @param newVCs new vcs
+     * @param checkNewVCs the vcs that rules are applied on
+     * @param VCs old vcs
+     */
     private void checkForAllRedundancies(HashSet<VirtualConnection> newVCs, HashSet<VirtualConnection> checkNewVCs, HashSet<VirtualConnection> VCs){
         HashSet<VirtualConnection> newVCsSnap = new HashSet<>(newVCs);
         HashSet<VirtualConnection> checkNewVCsSnap = new HashSet<>(checkNewVCs);
@@ -146,6 +155,12 @@ public class Connections extends SimpleConnectionsLogic {
         }
     }
 
+    /**
+     * Helper for the AFAIK rule. Simply checks for subsets
+     * @param toAdd
+     * @param checkNewVCs
+     * @param VCs
+     */
     private void AFAIKRuleHelper(HashSet<VirtualConnection> toAdd, HashSet<VirtualConnection> checkNewVCs, HashSet<VirtualConnection> VCs){
         HashSet<VirtualConnection> toAddSnap = new HashSet<>(toAdd);
         boolean removed;
@@ -168,6 +183,15 @@ public class Connections extends SimpleConnectionsLogic {
         }
     }
 
+    /**
+     * Written as Our rule in repport. Similar to And rule, but for semi vcs.
+     * @param checkNewSemiVCs
+     * @param semiVCs
+     * @param checkNewVCs
+     * @param VCs
+     * @param color
+     * @return
+     */
     public HashSet<VirtualConnection> applyAFAIKRule(HashSet<VirtualConnection> checkNewSemiVCs, HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> checkNewVCs, HashSet<VirtualConnection> VCs, int color) {
         HashSet<VirtualConnection> toAddSemiList = new HashSet<>();
 
@@ -202,6 +226,11 @@ public class Connections extends SimpleConnectionsLogic {
         return toAdd(toAddSemiList, checkNewSemiVCs, semiVCs, color, 1);
     }
 
+    /**
+     * Finds second largest depth for vc that is being created
+     * @param vcList list of vcs where one end is the same and the other touches the same edge
+     * @return
+     */
     private int endRuleHelper(HashSet<VirtualConnection> vcList){
         List<Integer> sortingList = new ArrayList<>();
         for (VirtualConnection vc1 : vcList){
@@ -214,6 +243,14 @@ public class Connections extends SimpleConnectionsLogic {
         return sortingList.get(0);
     }
 
+    /**
+     * Collects semiVCs that are on the same coordinate and that toucheds the same edge.
+     * @param semiVCs
+     * @param VCs
+     * @param color
+     * @param leftTarget target edge
+     * @param rightTarget other target edge
+     */
     private void endRule(HashSet<VirtualConnection> semiVCs, HashSet<VirtualConnection> VCs, int color, Move leftTarget, Move rightTarget){
         HashMap<Move, HashSet<VirtualConnection>> moveLeftMap = new HashMap<>();
         HashMap<Move, HashSet<VirtualConnection>> moveRightMap = new HashMap<>();
@@ -274,6 +311,11 @@ public class Connections extends SimpleConnectionsLogic {
         }
     }
 
+    /**
+     * The function that applies all rules and adds to seperate list to minimize the amount of computations.
+     * @param setHolder holder of various objects that need not be created anew for each move combination
+     * @return 4 values, where [0] = blue Virtual Connection depth of min path, [1] same for blue semi-vc, same for [2] red vc, [3] same for red semi-vcs
+     */
     public int[] HProcess(SetHolder setHolder) {
         int[] retArr = new int[4];
         boolean changed = true;
@@ -425,6 +467,7 @@ public class Connections extends SimpleConnectionsLogic {
         }
     }
 
+    // Places piece with enhanced logic to minimize computations later on.
     @Override
     public void setPiece(int x, int y, int player)  {
         board[x][y] = player;
