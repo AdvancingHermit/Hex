@@ -46,6 +46,7 @@ public class LocalGameSettings extends BaseScene {
     private final CheckBox doubleCheckBox;
     private final Label difficultyLabel;
 
+    //scene for changing settings for local game
     public LocalGameSettings(SceneManager sceneManager) {
         //backbutton
         Button backButton = new Button("← Back");

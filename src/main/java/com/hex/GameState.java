@@ -21,6 +21,7 @@ public class GameState {
 
     public GameState() {
     }
+    //gamestate used to represent all the needed attributes for the algorithms to produce a valid move
 
     public GameState(GameState other) {
         this.currentPlayer = other.currentPlayer;
@@ -39,9 +40,11 @@ public class GameState {
         return swap;
     }
 
+    //used to offset the fact that swap deletes a piece from the board
     public void swapTurnDecrement(){
         boardPieces--;
     }
+    //used to offset th fact that double play play 2 pieces per move instead of 1
     public void doubleTurnIncrement(){
         boardPieces++;
     }

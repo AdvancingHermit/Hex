@@ -13,6 +13,8 @@ public class Piece extends Group {
     private double[][] vertices;
     private Line[] edges;
 
+    //These pieces are used to draw the board, and they can be colored to represent a player move
+
     public Piece(double[] gridPosition, double size) {
         this.gridPosition = gridPosition;
         this.hexagon = new Polygon();

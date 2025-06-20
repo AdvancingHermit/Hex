@@ -13,6 +13,8 @@ import java.util.stream.IntStream;
 
 public class RandomAlgorithm implements Algorithm{
     Random random = new Random();
+    // takes a random number from 0 to the number of pieces on the board - 1,
+    //iterate through the empty spots until the indexes are equal then place a piece and return
     @Override
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
         int rows = board.getRows();

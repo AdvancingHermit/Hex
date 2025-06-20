@@ -28,6 +28,7 @@ public class OnlineGame extends BaseScene {
     private Board board = new Board(11, 11);
     private Label turnLabel;
 
+    //scene for the online game
     public OnlineGame(SceneManager sceneManager, Socket socket,
                       ObjectInputStream in, ObjectOutputStream out) {
         this.socket = socket;

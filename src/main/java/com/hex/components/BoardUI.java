@@ -39,6 +39,8 @@ public class BoardUI extends Pane {
     }
     ControllerType type;
 
+    //This class is responsible for drawing the board we can see, and make sure the board can be interacted with
+
     public BoardUI(Board board, double hexagonSize, ControllerType type, GameMode mode, boolean singlePlayer, Runnable updateLabel){
         this.size = hexagonSize;
         this.setBoard(board);
@@ -103,6 +105,7 @@ public class BoardUI extends Pane {
 
                 Piece hex = new Piece( new double[] {i, j},  size);
 
+                //adds a mouse click function to each hex so they can be clicked
                 hex.setOnMouseClicked(event -> {
                     BoardCoordinate coord = new BoardCoordinate((int) hex.getGridPosition()[0], (int) hex.getGridPosition()[1]);
                     switch (type){
