@@ -18,6 +18,7 @@ public class GameState {
     @Getter
     private int boardPieces = 0;
 
+    //Made by Oliver
 
     public GameState() {
     }

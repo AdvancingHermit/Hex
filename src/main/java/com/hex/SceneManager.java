@@ -10,7 +10,9 @@ import java.net.Socket;
  /**
   * Manages the different Scenes, and makes sure to properly switch between them
   */
-public class SceneManager {
+ //Made by Oliver
+
+ public class SceneManager {
 
     private final Stage primaryStage;
     // For Online play

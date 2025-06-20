@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+//Made by Oliver
 
 public class RandomAlgorithm implements Algorithm{
     Random random = new Random();

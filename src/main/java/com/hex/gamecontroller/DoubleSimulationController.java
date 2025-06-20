@@ -8,6 +8,7 @@ import com.hex.components.BoardCoordinate;
 import lombok.Getter;
 import lombok.Setter;
 
+//Made by Oliver
 
 public class DoubleSimulationController {
     private Board board;

@@ -38,6 +38,7 @@ public class BoardUI extends Pane {
         ALGORITHM_TESTER
     }
     ControllerType type;
+    //Made by Oliver
 
     //This class is responsible for drawing the board we can see, and make sure the board can be interacted with
 

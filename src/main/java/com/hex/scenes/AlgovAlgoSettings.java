@@ -22,6 +22,7 @@ import javafx.scene.layout.VBox;
 import lombok.Getter;
 
 import java.util.Random;
+//Made by Oliver
 
 public class AlgovAlgoSettings extends BaseScene{
 

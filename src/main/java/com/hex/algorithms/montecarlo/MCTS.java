@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 @Log
+//Made By Oliver
 public class MCTS implements Algorithm {
 
     private final static double exploreConstant = Math.sqrt(2);
@@ -180,7 +181,7 @@ public class MCTS implements Algorithm {
     }
 
     private Node maxNode(Node cur){
-        //finds the max value child of a node
+        //finds the max value child of a node based on the uct score
         double maxVal = -10000;
         Node bestNode = new Node(null,null,0, null, false);
         for (Node child : cur.children){
