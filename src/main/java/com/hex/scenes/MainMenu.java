@@ -14,7 +14,7 @@ public class MainMenu extends BaseScene {
         VBox vbox = new VBox(10);
 
         Button playOnlineBtn = new Button("Play Online!");
-        playOnlineBtn.setOnAction(e -> sceneManager.switchScene(SceneType.LOADING_SCREEN));
+        playOnlineBtn.setOnAction(e -> sceneManager.switchScene(SceneType.ONLINE_GAME_SETTINGS));
         vbox.getChildren().add(playOnlineBtn);
         Button playLocalBtn = new Button("Play Local!");
         playLocalBtn.setOnAction(e -> sceneManager.switchScene(SceneType.LOCAL_GAME_SETTINGS));
@@ -25,7 +25,7 @@ public class MainMenu extends BaseScene {
         vbox.setAlignment(javafx.geometry.Pos.CENTER);
 
         root.getChildren().add(vbox);
-        scene = new Scene(root, 800, 600);
+        scene = new Scene(root, sceneManager.getSceneWidth(), sceneManager.getSceneHeight());
 
     }
 }

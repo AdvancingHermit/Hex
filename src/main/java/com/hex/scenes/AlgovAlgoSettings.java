@@ -7,12 +7,15 @@ import com.hex.algorithms.minimax.ConnectionPlayer;
 import com.hex.algorithms.minimax.MiniMax;
 import com.hex.algorithms.montecarlo.MCTS;
 import com.hex.algorithms.montecarlo.MCTSDouble;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
@@ -46,6 +49,17 @@ public class AlgovAlgoSettings extends BaseScene{
     private final CheckBox doubleCheckBox;
 
     public AlgovAlgoSettings(SceneManager sceneManager) {
+        //backbutton
+        Button backButton = new Button("← Back");
+        backButton.setOnAction(e -> sceneManager.switchScene(SceneManager.SceneType.MAIN_MENU));
+        backButton.setStyle("-fx-font-size: 14px;");
+
+        HBox backButtonBox = new HBox(backButton);
+        backButtonBox.setAlignment(Pos.TOP_LEFT);
+        backButtonBox.setPadding(new Insets(10));
+
+
+
         StackPane root = new StackPane();
         VBox vbox = new VBox(10);
         vbox.setAlignment(javafx.geometry.Pos.CENTER);
@@ -153,7 +167,7 @@ public class AlgovAlgoSettings extends BaseScene{
             }
             // Start the game
 
-            Scene scene1 = new AlgovAlgo(boardSize, algorithm1, algorithm2, startingIterations, secondIterations, mode).getScene();
+            Scene scene1 = new AlgovAlgo(boardSize, algorithm1, algorithm2, startingIterations, secondIterations, mode, sceneManager).getScene();
             sceneManager.switchScene(scene1);
         });
 
@@ -166,8 +180,9 @@ public class AlgovAlgoSettings extends BaseScene{
                 swapCheckBox, doubleCheckBox,
                 playBtn
         );
-
-        root.getChildren().add(vbox);
-        scene = new Scene(root, 800, 600);
+        vbox.setPickOnBounds(false);
+        backButtonBox.setPickOnBounds(false);
+        root.getChildren().addAll(vbox, backButtonBox);
+        scene = new Scene(root, sceneManager.getSceneWidth(), sceneManager.getSceneHeight());
     }
 }

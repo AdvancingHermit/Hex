@@ -95,6 +95,7 @@ public class OnlineGame extends BaseScene {
             gameState.nextPlayer();
             hexBoard.getChildren().clear();
             hexBoard.drawBoard();
+
             updateTurnLabel("Your turn ");
         });
     }
@@ -104,9 +105,9 @@ public class OnlineGame extends BaseScene {
         String msg = "Player " + winner + " won!";
 
         if (gameState.getPlayerNum() == winner) {
-            msg += " (Thats you)";
+            msg += " (That's you)";
         } else {
-            msg += " (You lost bozo)";
+            msg += " (You lost)";
         }
 
         final String finalMsg = msg;
@@ -130,7 +131,7 @@ public class OnlineGame extends BaseScene {
 
         // Hex Board and wrapper
         Group boardWrap = new Group();
-        hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.ONLINE, null);
+        hexBoard = new BoardUI(board, 30, BoardUI.ControllerType.ONLINE, null, true, null);
         hexBoard.drawBoard();
         boardWrap.getChildren().add(hexBoard);
 
@@ -161,7 +162,7 @@ public class OnlineGame extends BaseScene {
         root.setRight(rightBox);
         root.setCenter(boardWrap);
 
-        scene = new Scene(root, 800, 600);
+        scene = new Scene(root, sceneManager.getSceneWidth() + 200, sceneManager.getSceneHeight());
     }
 
     public void closeConnection() {

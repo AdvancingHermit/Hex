@@ -11,5 +11,7 @@ module com.example.hex {
     opens com.hex.scenes to javafx.fxml;
     exports com.hex.components;
     opens com.hex.components to javafx.fxml;
+    requires tensorflow;
     requires java.logging;
+    requires ai.djl.api;
 }

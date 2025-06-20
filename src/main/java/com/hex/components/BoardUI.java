@@ -12,9 +12,12 @@ import javafx.scene.shape.Line;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.function.Consumer;
+
 import static java.lang.Math.sqrt;
 
 public class BoardUI extends Pane {
+
     private int rows;
     private int cols;
     private double size;
@@ -24,6 +27,10 @@ public class BoardUI extends Pane {
     private Board board;
     private boolean online;
     private GameMode mode;
+    @Getter
+    private boolean singlePlayer;
+    @Getter
+    private Runnable updateLabel;
 
     public enum ControllerType {
         LOCAL_GAME,
@@ -32,49 +39,54 @@ public class BoardUI extends Pane {
     }
     ControllerType type;
 
-    public BoardUI(Board board, double hexagonSize, ControllerType type, GameMode mode){
+    public BoardUI(Board board, double hexagonSize, ControllerType type, GameMode mode, boolean singlePlayer, Runnable updateLabel){
         this.size = hexagonSize;
         this.setBoard(board);
         this.rows = board.getRows();
         this.cols = board.getCols();
         this.type = type;
         this.mode = mode;
-        switch (type){
-            case LOCAL_GAME: ;
-                if (mode == GameMode.NORMAL || mode == GameMode.SWAP) {
-                    GameController.getInstance().setMoveListener(co -> {
-                        int curr =  GameController.getInstance().getGameState().getCurrentPlayer();
-                        int algoPlayerNum =  GameController.getInstance().getAlgoPlayerNum();
-                        this.setDisable(curr == algoPlayerNum);
+        this.singlePlayer = singlePlayer;
+        this.updateLabel = updateLabel;
+        if (!singlePlayer) {
+            switch (type) {
+                case LOCAL_GAME:
+                    ;
+                    if (mode == GameMode.NORMAL || mode == GameMode.SWAP) {
+                        GameController.getInstance().setMoveListener(co -> {
+                            int curr = GameController.getInstance().getGameState().getCurrentPlayer();
+                            int algoPlayerNum = GameController.getInstance().getAlgoPlayerNum();
+                            this.setDisable(curr != algoPlayerNum);
+                            Platform.runLater(() -> {
+                                this.getChildren().clear();
+                                this.drawBoard();
+                            });
+                        });
+                    } else if (mode == GameMode.DOUBLE) {
+                        DoublePieceController.getInstance().setMoveListener(co -> {
+                            int curr = DoublePieceController.getInstance().getGameState().getCurrentPlayer();
+                            int algoPlayerNum = DoublePieceController.getInstance().getAlgoPlayerNum();
+                            this.setDisable(DoublePieceController.getInstance().getCounter() == 1);
+                            Platform.runLater(() -> {
+                                this.getChildren().clear();
+                                this.drawBoard();
+                            });
+                        });
+                    }
+                    break;
+                case ONLINE:
+                    break;
+                case ALGORITHM_TESTER:
+                    AlgorithmTesterController.getInstance().setMoveListener(co -> {
+                        AlgorithmTesterController.getInstance().gameIteration(co);
                         Platform.runLater(() -> {
                             this.getChildren().clear();
                             this.drawBoard();
                         });
                     });
-                } else if (mode == GameMode.DOUBLE){
-                    DoublePieceController.getInstance().setMoveListener(co -> {
-                        int curr = DoublePieceController.getInstance().getGameState().getCurrentPlayer();
-                        int algoPlayerNum = DoublePieceController.getInstance().getAlgoPlayerNum();
-                        this.setDisable(DoublePieceController.getInstance().getCounter() == 1);
-                        Platform.runLater(() -> {
-                            this.getChildren().clear();
-                            this.drawBoard();
-                        });
-                    });
-                }
-                break;
-            case ONLINE:
-                break;
-            case ALGORITHM_TESTER:
-                AlgorithmTesterController.getInstance().setMoveListener(co -> {
-                    AlgorithmTesterController.getInstance().gameIteration(co);
-                    Platform.runLater(() -> {
-                        this.getChildren().clear();
-                        this.drawBoard();
-                    });
-                });
-                break;
-        }     
+                    break;
+            }
+        }
 
     }
 
@@ -90,9 +102,9 @@ public class BoardUI extends Pane {
                     switch (type){
                         case LOCAL_GAME:
                             if (mode == GameMode.NORMAL || mode == GameMode.SWAP) {
-                                GameController.getInstance().gameIteration(coord);
+                                GameController.getInstance().gameIteration(coord, updateLabel);
                             } else if (mode == GameMode.DOUBLE){
-                                DoublePieceController.getInstance().gameIteration(coord);
+                                DoublePieceController.getInstance().gameIteration(coord, updateLabel);
                             }
                             break;
                         case ONLINE:
@@ -102,14 +114,18 @@ public class BoardUI extends Pane {
                             AlgorithmTesterController.getInstance().gameIteration(coord);
                             break;
                     }
+                    if (singlePlayer){
+                        this.drawBoard();
+                    }
+
                 });
 
                 if (getBoard().getPiece(i, j) == 0) {
                     hex.setFill(Color.TRANSPARENT);
                 } else if (getBoard().getPiece(i, j) == 1) {
-                    hex.setFill(Color.BLUE);
-                } else if (getBoard().getPiece(i, j) == 2) {
                     hex.setFill(Color.RED);
+                } else if (getBoard().getPiece(i, j) == 2) {
+                    hex.setFill(Color.BLUE);
                 }
                 // Set the default stroke for the hexagon
                 hex.setStroke(Color.grayRgb(45));

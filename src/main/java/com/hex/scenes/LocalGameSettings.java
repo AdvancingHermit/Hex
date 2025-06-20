@@ -3,16 +3,20 @@ package com.hex.scenes;
 import com.hex.GameMode;
 import com.hex.SceneManager;
 import com.hex.algorithms.Algorithm;
+import com.hex.algorithms.dqn.DQNAlgorithm;
 import com.hex.algorithms.minimax.ConnectionPlayer;
 import com.hex.algorithms.minimax.MiniMax;
 import com.hex.algorithms.montecarlo.MCTS;
 import com.hex.algorithms.montecarlo.MCTSDouble;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
@@ -42,6 +46,17 @@ public class LocalGameSettings extends BaseScene {
     private final CheckBox doubleCheckBox;
 
     public LocalGameSettings(SceneManager sceneManager) {
+        //backbutton
+        Button backButton = new Button("← Back");
+        backButton.setOnAction(e -> sceneManager.switchScene(SceneManager.SceneType.MAIN_MENU));
+        backButton.setStyle("-fx-font-size: 14px;");
+
+        HBox backButtonBox = new HBox(backButton);
+        backButtonBox.setAlignment(Pos.TOP_LEFT);
+        backButtonBox.setPadding(new Insets(10));
+
+
+
         StackPane root = new StackPane();
         VBox vbox = new VBox(10);
         vbox.setAlignment(javafx.geometry.Pos.CENTER);
@@ -56,11 +71,15 @@ public class LocalGameSettings extends BaseScene {
         boardSizeSlider.setBlockIncrement(1);
         boardSizeSlider.setSnapToTicks(true);
 
+
+
         // Algorithm selection
         Label algorithmLabel = new Label("Select Algorithm:");
         algorithmBox = new ComboBox<>();
-        algorithmBox.getItems().addAll("None", "MCTS", "Connection", "AI");
+        algorithmBox.getItems().addAll("None", "MCTS", "Connection", "AI", "DQN");
         algorithmBox.setValue("None");
+        algorithmBox.valueProperty().addListener((obs, oldVal, newVal) -> updateFieldsByAlgo());
+
 
         // Difficulty selection
         Label difficultyLabel = new Label("Select Difficulty:");
@@ -69,9 +88,9 @@ public class LocalGameSettings extends BaseScene {
         difficultyBox.setValue("Medium");
 
         // Starting player selection
-        Label startingPlayerLabel = new Label("Select Starting Player:");
+        Label startingPlayerLabel = new Label("Play as:");
         startingPlayerBox = new ComboBox<>();
-        startingPlayerBox.getItems().addAll("Random", "First", "Second");
+        startingPlayerBox.getItems().addAll("Random", "Red (First)", "Blue (Second)");
         startingPlayerBox.setValue("Random");
 
         // Swap rule checkbox
@@ -109,9 +128,10 @@ public class LocalGameSettings extends BaseScene {
             algorithm = algorithmBox.getValue();
             Algorithm algorithm1 = null;
             switch (algorithm) {
-                case "MCTS" -> algorithm1 = new MCTS();
-                case "Connection" -> algorithm1 = new ConnectionPlayer();
-                case "AI" -> throw new RuntimeException("No AI implemented yet");
+                case "MCTS"          -> algorithm1 = new MCTS();
+                case "Connection"    -> algorithm1 = new ConnectionPlayer();
+                case "AI"            -> throw new RuntimeException("No AI implemented yet");
+                case "DQN"           -> algorithm1 = new DQNAlgorithm();
             }
             startingPlayer = startingPlayerBox.getValue();
             boolean algostart = false;
@@ -121,8 +141,8 @@ public class LocalGameSettings extends BaseScene {
                     int i = random.nextInt(2);
                     algostart = i == 0;
                 }
-                case "First" -> algostart = false;
-                case "Second" -> algostart = true;
+                case "Red (First)" -> algostart = false;
+                case "Blue (Second)" -> algostart = true;
 
             }
             isSwapEnabled = swapCheckBox.isSelected();
@@ -138,7 +158,7 @@ public class LocalGameSettings extends BaseScene {
                 }
             }
             // Start the game
-            Scene scene1 = new LocalGame(boardSize, algorithm1, algostart, iterations, mode).getScene();
+            Scene scene1 = new LocalGame(boardSize, algorithm1, algostart, iterations, mode, sceneManager).getScene();
             sceneManager.switchScene(scene1);
         });
 
@@ -150,9 +170,30 @@ public class LocalGameSettings extends BaseScene {
                 swapCheckBox, doubleCheckBox,
                 playBtn
         );
+        vbox.setPickOnBounds(false);
+        backButtonBox.setPickOnBounds(false);
+        root.getChildren().addAll(vbox, backButtonBox);
+        scene = new Scene(root, sceneManager.getSceneWidth(), sceneManager.getSceneHeight());
+    }
 
-        root.getChildren().add(vbox);
-        scene = new Scene(root, 800, 600);
+    private void updateFieldsByAlgo() {
+        switch (algorithmBox.getValue()) {
+            case "DQN" -> {
+                boardSizeSlider.setDisable(true);
+                boardSizeSlider.setValue(5);
+                difficultyBox.setDisable(true);
+                difficultyBox.setValue("Easy");
+                doubleCheckBox.setDisable(true);
+                doubleCheckBox.setSelected(false);
+            }
+            default -> {
+                boardSizeSlider.setDisable(false);
+                difficultyBox.setDisable(false);
+                doubleCheckBox.setDisable(false);
+                doubleCheckBox.setSelected(false);
+            }
+        }
+
     }
 
 }

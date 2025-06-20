@@ -8,8 +8,8 @@ import java.util.*;
 public interface Position {
 
     static enum Colors {
-        RED(2),
-        BLUE(1);
+        RED(1),
+        BLUE(2);
 
         private final int value;
 
