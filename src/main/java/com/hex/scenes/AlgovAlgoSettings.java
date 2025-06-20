@@ -180,7 +180,6 @@ public class AlgovAlgoSettings extends BaseScene{
                 boardSizeSlider.setDisable(true);
                 boardSizeSlider.setValue(5);
                 startingDifficultyBox.setDisable(true);
-                swapCheckBox.setDisable(true);
                 startingDifficultyBox.setVisible(false);
                 diflabel1.setVisible(false);
 
@@ -191,7 +190,6 @@ public class AlgovAlgoSettings extends BaseScene{
 
             }
             case "Connection" ->{
-                swapCheckBox.setDisable(false);
             }
 
             default -> {
@@ -204,7 +202,6 @@ public class AlgovAlgoSettings extends BaseScene{
     private void resetDefaultSettings() {
         startingDifficultyBox.setVisible(true);
         diflabel1.setVisible(true);
-        swapCheckBox.setDisable(false);
         if (!secondAlgorithmBox.getValue().equals("DQN")){
             boardSizeSlider.setDisable(false);
         }
@@ -217,7 +214,6 @@ public class AlgovAlgoSettings extends BaseScene{
                 boardSizeSlider.setDisable(true);
                 boardSizeSlider.setValue(5);
                 secondDifficultyBox.setDisable(true);
-                swapCheckBox.setDisable(true);
                 secondDifficultyBox.setVisible(false);
                 diflabel2.setVisible(false);
 
@@ -228,7 +224,6 @@ public class AlgovAlgoSettings extends BaseScene{
 
             }
             case "Connection" ->{
-                swapCheckBox.setDisable(false);
             }
 
             default -> {
@@ -241,7 +236,6 @@ public class AlgovAlgoSettings extends BaseScene{
     private void resetDefaultSettings2() {
         secondDifficultyBox.setVisible(true);
         diflabel2.setVisible(true);
-        swapCheckBox.setDisable(false);
         if (!startingAlgorithmBox.getValue().equals("DQN")){
             boardSizeSlider.setDisable(false);
         }
