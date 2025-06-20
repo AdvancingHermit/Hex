@@ -37,7 +37,7 @@ public class AlgovAlgoSettings extends BaseScene{
     private String secondAlgorithm;
 
     private boolean isSwapEnabled;
-    private boolean isDoubleEnabled;
+
 
     // UI elements (optional to store if needed outside)
     private final Slider boardSizeSlider;
@@ -46,6 +46,8 @@ public class AlgovAlgoSettings extends BaseScene{
     private final ComboBox<String> startingAlgorithmBox;
     private final ComboBox<String> secondAlgorithmBox;
     private final CheckBox swapCheckBox;
+    private final Label diflabel1;
+    private final Label diflabel2;
 
 
     public AlgovAlgoSettings(SceneManager sceneManager) {
@@ -77,11 +79,11 @@ public class AlgovAlgoSettings extends BaseScene{
         // Algorithm selection
         Label startingAlgorithmLabel = new Label("Select Algorithm That Starts:");
         startingAlgorithmBox = new ComboBox<>();
-        startingAlgorithmBox.getItems().addAll( "MCTS", "Connection", "AI");
+        startingAlgorithmBox.getItems().addAll( "MCTS", "Connection", "DQN");
         startingAlgorithmBox.setValue("MCTS");
 
         // Difficulty selection
-        Label startingDifficultyLabel = new Label("Select Difficulty For Starting Algorithm:");
+        diflabel1 = new Label("Select Difficulty For Starting Algorithm:");
         startingDifficultyBox = new ComboBox<>();
         startingDifficultyBox.getItems().addAll("Easy", "Medium", "Hard", "Very Hard (might take some time)");
         startingDifficultyBox.setValue("Medium");
@@ -89,11 +91,11 @@ public class AlgovAlgoSettings extends BaseScene{
         // Second Algorithm selection
         Label secondAlgorithmLabel = new Label("Select Algorithm That Goes Second:");
         secondAlgorithmBox = new ComboBox<>();
-        secondAlgorithmBox.getItems().addAll("MCTS", "Connection", "AI");
+        secondAlgorithmBox.getItems().addAll("MCTS", "Connection", "DQN");
         secondAlgorithmBox.setValue("Connection");
 
         // Difficulty selection
-        Label secondDifficultyLabel = new Label("Select Difficulty:");
+        diflabel2 = new Label("Select Difficulty:");
         secondDifficultyBox = new ComboBox<>();
         secondDifficultyBox.getItems().addAll("Easy", "Medium", "Hard", "Very Hard (might take some time)");
         secondDifficultyBox.setValue("Medium");
@@ -106,6 +108,8 @@ public class AlgovAlgoSettings extends BaseScene{
         // Double rule checkbox
 
 
+        startingAlgorithmBox.valueProperty().addListener((obs, oldVal, newVal) -> updateFieldsByAlgo());
+        secondAlgorithmBox.valueProperty().addListener((obs, oldVal, newVal) -> updateFieldsByAlgo2());
 
 
 
@@ -148,12 +152,7 @@ public class AlgovAlgoSettings extends BaseScene{
             if (isSwapEnabled){
                 mode = GameMode.SWAP;
             }
-            if (isDoubleEnabled){
-                mode = GameMode.DOUBLE;
-                if (algorithm1 != null) {
-                    algorithm1 = new MCTSDouble();
-                }
-            }
+
             // Start the game
 
             Scene scene1 = new AlgovAlgo(boardSize, algorithm1, algorithm2, startingIterations, secondIterations, mode, sceneManager, startingAlgorithm, secondAlgorithm).getScene();
@@ -163,9 +162,9 @@ public class AlgovAlgoSettings extends BaseScene{
         vbox.getChildren().addAll(
                 boardSizeLabel, boardSizeSlider,
                 startingAlgorithmLabel, startingAlgorithmBox,
-                startingDifficultyLabel, startingDifficultyBox,
+                diflabel1, startingDifficultyBox,
                 secondAlgorithmLabel, secondAlgorithmBox,
-                secondDifficultyLabel, secondDifficultyBox,
+                diflabel2, secondDifficultyBox,
                 swapCheckBox,
                 playBtn
         );
@@ -174,4 +173,80 @@ public class AlgovAlgoSettings extends BaseScene{
         root.getChildren().addAll(vbox, backButtonBox);
         scene = new Scene(root, sceneManager.getSceneWidth(), sceneManager.getSceneHeight());
     }
+    private void updateFieldsByAlgo() {
+        resetDefaultSettings();
+        switch (startingAlgorithmBox.getValue()) {
+            case "DQN" -> {
+                boardSizeSlider.setDisable(true);
+                boardSizeSlider.setValue(5);
+                startingDifficultyBox.setDisable(true);
+                swapCheckBox.setDisable(true);
+                startingDifficultyBox.setVisible(false);
+                diflabel1.setVisible(false);
+
+            }
+            case "MCTS" -> {
+                diflabel1.setVisible(true);
+                startingDifficultyBox.setVisible(true);
+
+            }
+            case "Connection" ->{
+                swapCheckBox.setDisable(false);
+            }
+
+            default -> {
+                startingDifficultyBox.setVisible(false);
+                diflabel1.setVisible(false);
+            }
+        }
+
+    }
+    private void resetDefaultSettings() {
+        startingDifficultyBox.setVisible(true);
+        diflabel1.setVisible(true);
+        swapCheckBox.setDisable(false);
+        if (!secondAlgorithmBox.getValue().equals("DQN")){
+            boardSizeSlider.setDisable(false);
+        }
+        startingDifficultyBox.setDisable(false);
+    }
+    private void updateFieldsByAlgo2() {
+        resetDefaultSettings2();
+        switch (secondAlgorithmBox.getValue()) {
+            case "DQN" -> {
+                boardSizeSlider.setDisable(true);
+                boardSizeSlider.setValue(5);
+                secondDifficultyBox.setDisable(true);
+                swapCheckBox.setDisable(true);
+                secondDifficultyBox.setVisible(false);
+                diflabel2.setVisible(false);
+
+            }
+            case "MCTS" -> {
+                diflabel2.setVisible(true);
+                secondDifficultyBox.setVisible(true);
+
+            }
+            case "Connection" ->{
+                swapCheckBox.setDisable(false);
+            }
+
+            default -> {
+                secondDifficultyBox.setVisible(false);
+                diflabel2.setVisible(false);
+            }
+        }
+
+    }
+    private void resetDefaultSettings2() {
+        secondDifficultyBox.setVisible(true);
+        diflabel2.setVisible(true);
+        swapCheckBox.setDisable(false);
+        if (!startingAlgorithmBox.getValue().equals("DQN")){
+            boardSizeSlider.setDisable(false);
+        }
+        secondDifficultyBox.setDisable(false);
+    }
+
+
 }

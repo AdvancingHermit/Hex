@@ -73,6 +73,7 @@ public class AlgovAlgo extends BaseScene {
         boardWrap.setPickOnBounds(false);
         topBox.setPickOnBounds(false);
 
+
         gameWrap.getChildren().addAll(boardWrap, backButtonBox, topBox);
         root.setCenter(gameWrap);
         scene = new Scene(root, sceneManager.getSceneWidth(), sceneManager.getSceneHeight());
