@@ -118,6 +118,7 @@ public class LocalGameSettings extends BaseScene {
             }
             if (isNowSelected) {
                 difficultyBox.setDisable(true);
+                difficultyBox.setValue("Hard");
                 boardSizeSlider.setMax(7);
                 boardSizeSlider.setValue(5);
 
