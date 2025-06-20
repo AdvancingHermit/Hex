@@ -52,11 +52,11 @@ public class AlgorithmTesterController extends Controller {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            if (gameState.getCurrentPlayer() == 2) {
+            if (gameState.getCurrentPlayer() == 1) {
                 BoardCoordinate move = algorithm.makeMove(gameState.getCurrentPlayer(), board, gameState, startingIterations, false);
                 placePiece(move);
 
-            } else if (gameState.getCurrentPlayer() == 1) {
+            } else if (gameState.getCurrentPlayer() == 2) {
                 BoardCoordinate otherMove = otherAlgo.makeMove(gameState.getCurrentPlayer(), board, gameState, secondIterations, false);
                 placePiece(otherMove);
             } else {
