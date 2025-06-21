@@ -225,7 +225,7 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
         Move y = null;
         for (VirtualConnection vc1 : vcList){
             for (VirtualConnection vc2 : vcList) {
-                if (!vc1.sameCriticalCell(vc2) && (!vc1.crititcalCellIsImportant(vc2) || !vc2.crititcalCellIsImportant(vc1))) { sortingList.add(Math.max(vc1.depth, vc2.depth)); currCarrier.addAll(vc1.carrier); x = vc1.x; y = vc1.y; }
+                if (!vc1.sameCriticalCell(vc2) && vc1.distinctCarrier(vc2) && vc2.distinctCarrier(vc1)) { sortingList.add(Math.max(vc1.depth, vc2.depth)); currCarrier.addAll(vc1.carrier); x = vc1.x; y = vc1.y; }
             }
         }
         Collections.sort(sortingList);
@@ -262,38 +262,40 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
      * @return set of vcs created by and rule
      */
     public HashSet<VirtualConnection> applyAndRule(HashSet<VirtualConnection> checkNewVCs, HashSet<VirtualConnection> VCs, int color) {
+        Map<Integer, HashSet<VirtualConnection>> groupsVCByEnds = new HashMap<>();
+        int xKey;
+        int yKey;
         HashSet<VirtualConnection> toAddList = new HashSet<>();
-        for (VirtualConnection vc1 : checkNewVCs) {
-            for (VirtualConnection vc2 : checkNewVCs) {
-                if (vc1 == vc2) { continue; }
-                Move[] connection = vc1.getConnectingEnd(vc2);
-                if (connection != null && (!vc1.endIsCarrier(vc2) && !vc2.endIsCarrier(vc1)) ) {
-                    int cell = elecBoard[connection[0].x][connection[0].y];
 
-                    HashSet<Move> combinedCarrier = new HashSet<>(vc1.carrier);
-                    combinedCarrier.addAll(vc2.carrier);
-
-
-                    VirtualConnection currVC = new VirtualConnection(connection[1], connection[2], combinedCarrier, vc1.depth + vc2.depth);
-                    if ( (bothBlueMovesOnSameEdge(currVC) && (color == Colors.BLUE.getValue())) || (bothRedMovesOnSameEdge(currVC) && (color == Colors.RED.getValue())) ) { continue; }
-                    if (cell == color) {
-                        toAddList.add(currVC);
-                    }
-                }
-            }
-            for (VirtualConnection vc2 : VCs) {
-                Move[] connection = vc1.getConnectingEnd(vc2);
-                if (connection != null && (!vc1.endIsCarrier(vc2) && !vc2.endIsCarrier(vc1)) ) {
-                    int cell = elecBoard[connection[0].x][connection[0].y];
-
-                    HashSet<Move> combinedCarrier = new HashSet<>(vc1.carrier);
-                    combinedCarrier.addAll(vc2.carrier);
-
-
-                    VirtualConnection currVC = new VirtualConnection(connection[1], connection[2], combinedCarrier, vc1.depth + vc2.depth);
-                    if ( (bothBlueMovesOnSameEdge(currVC) && (color == Colors.BLUE.getValue())) || (bothRedMovesOnSameEdge(currVC) && (color == Colors.RED.getValue())) ) { continue; }
-                    if (cell == color) {
-                        toAddList.add(currVC);
+        for (VirtualConnection vc : checkNewVCs) {
+            xKey = vc.x.val(elecCols);
+            yKey = vc.y.val(elecCols);
+            groupsVCByEnds.computeIfAbsent(xKey, k -> new HashSet<>()).add(vc);
+            groupsVCByEnds.computeIfAbsent(yKey, k -> new HashSet<>()).add(vc);
+        }
+        for (VirtualConnection vc : VCs) {
+            xKey = vc.x.val(elecCols);
+            yKey = vc.y.val(elecCols);
+            groupsVCByEnds.computeIfAbsent(xKey, k -> new HashSet<>()).add(vc);
+            groupsVCByEnds.computeIfAbsent(yKey, k -> new HashSet<>()).add(vc);
+        }
+        int size;
+        int i = 0;
+        int j;
+        for (Integer key : groupsVCByEnds.keySet()) {
+            size = groupsVCByEnds.get(key).size();
+            if (size > 1){
+                for (VirtualConnection vc1 : groupsVCByEnds.get(key)) {
+                    i++;
+                    j = 0;
+                    for (VirtualConnection vc2 : groupsVCByEnds.get(key)) {
+                        j++;
+                        if (j < i) continue;
+                        Move[] connections = vc1.getConnectingEnd(vc2);
+                        if (connections == null) continue;
+                        HashSet<Move> currCarrier = new HashSet<>(vc1.carrier);
+                        currCarrier.addAll(vc2.carrier);
+                        toAddList.add(new VirtualConnection(connections[1], connections[2], currCarrier, vc1.depth + vc2.depth));
                     }
                 }
             }

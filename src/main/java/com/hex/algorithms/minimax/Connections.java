@@ -244,7 +244,7 @@ public class Connections extends SimpleConnectionsLogic {
     }
 
     /**
-     * Collects semiVCs that are on the same coordinate and that toucheds the same edge.
+     * Collects semiVCs that are on the same coordinate and that touches the same edge.
      * @param semiVCs
      * @param VCs
      * @param color
@@ -311,6 +311,49 @@ public class Connections extends SimpleConnectionsLogic {
         }
     }
 
+    public HashSet<VirtualConnection> tempRule(HashSet<VirtualConnection> checkNewSemiVCs, HashSet<VirtualConnection> chekNewVCs, HashSet<VirtualConnection> VCs, HashSet<VirtualConnection> semiVCs, int color){
+
+        Map<Integer, HashSet<VirtualConnection>> groupsSemiByEnds = new HashMap<>();
+        Map<Integer, HashSet<VirtualConnection>> groupsVCByEnds = new HashMap<>();
+        int xKey;
+        int yKey;
+        HashSet<VirtualConnection> toAddList = new HashSet<>();
+
+        for (VirtualConnection vc : checkNewSemiVCs) {
+            xKey = vc.x.val(elecCols);
+            yKey = vc.y.val(elecCols);
+            groupsSemiByEnds.computeIfAbsent(xKey, k -> new HashSet<>()).add(vc);
+            groupsSemiByEnds.computeIfAbsent(yKey, k -> new HashSet<>()).add(vc);
+        }
+        for (VirtualConnection vc : chekNewVCs) {
+            xKey = vc.x.val(elecCols);
+            yKey = vc.y.val(elecCols);
+            groupsVCByEnds.computeIfAbsent(xKey, k -> new HashSet<>()).add(vc);
+            groupsVCByEnds.computeIfAbsent(yKey, k -> new HashSet<>()).add(vc);
+        }
+        for (VirtualConnection vc : VCs) {
+            xKey = vc.x.val(elecCols);
+            yKey = vc.y.val(elecCols);
+            groupsVCByEnds.computeIfAbsent(xKey, k -> new HashSet<>()).add(vc);
+            groupsVCByEnds.computeIfAbsent(yKey, k -> new HashSet<>()).add(vc);
+        }
+        for (Integer key : groupsSemiByEnds.keySet()) {
+            if (groupsVCByEnds.get(key) != null){
+                for (VirtualConnection semiVC : groupsSemiByEnds.get(key)){
+                    for (VirtualConnection vc : groupsVCByEnds.get(key)){
+                        Move[] connections = semiVC.getConnectingEnd(vc);
+                        if (connections == null) continue;
+                        HashSet<Move> currCarrier = new HashSet<>(semiVC.carrier);
+                        currCarrier.addAll(vc.carrier);
+                        toAddList.add(new VirtualConnection(connections[1], connections[2], currCarrier, semiVC.depth + vc.depth, semiVC.criticalCell));
+                    }
+                }
+            }
+        }
+        checkRedundancies(toAddList);
+        return toAdd(toAddList, checkNewSemiVCs, semiVCs, color, 1);
+    }
+
     /**
      * The function that applies all rules and adds to seperate list to minimize the amount of computations.
      * @param setHolder holder of various objects that need not be created anew for each move combination
@@ -366,6 +409,9 @@ public class Connections extends SimpleConnectionsLogic {
 
             newBlueSemiVCs.addAll(applyAFAIKRule(checkNewBlueSemiVCs, blueSemiVCs, checkNewBlueVCs, blueVCs, Colors.BLUE.getValue()));
             newRedSemiVCs.addAll(applyAFAIKRule(checkNewRedSemiVCs, redSemiVCs, checkNewRedVCs, redVCs, Colors.RED.getValue()));
+
+            tempRule(checkNewBlueSemiVCs, checkNewBlueVCs, blueVCs, blueSemiVCs, Colors.BLUE.getValue());
+            tempRule(checkNewRedSemiVCs, checkNewRedVCs, redVCs, redSemiVCs, Colors.RED.getValue());
 
             checkRedundancies(newBlueVCs);
             checkRedundancies(newRedVCs);
