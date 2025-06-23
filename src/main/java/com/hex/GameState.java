@@ -37,6 +37,10 @@ public class GameState {
         boardPieces++;
     }
 
+    public void setCurrentPlayer(int player){
+        currentPlayer = player;
+    }
+
     public void reset(){
         currentPlayer = 1;
         gameFinished = false;

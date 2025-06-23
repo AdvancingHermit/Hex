@@ -96,7 +96,6 @@ public class AlgorithmTesterController extends Controller {
         }
         updateLabel.run();
         notifyMoveListener(co);
-
     }
 
     private void updateBoard(int player) {

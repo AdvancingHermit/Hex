@@ -4,6 +4,7 @@ import com.hex.GameState;
 import com.hex.algorithms.minimax.Move;
 import com.hex.algorithms.minimax.VirtualConnection;
 import com.hex.components.Board;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,10 +15,20 @@ public class SimpleFuncs extends Board {
     protected ArrayList<Move> blueCells;
     protected ArrayList<Move> redCells;
 
+    @Getter
     protected HashSet<VirtualConnection> blueVCs;
+    @Getter
     protected HashSet<VirtualConnection> redVCs;
+    @Getter
     protected HashSet<VirtualConnection> blueSemiVCs;
+    @Getter
     protected HashSet<VirtualConnection> redSemiVCs;
+
+    @Getter
+    protected VirtualConnection bestSemiRedVC;
+    @Getter
+    protected VirtualConnection bestSemiBlueVC;
+
 
     protected int[][] elecBoard;
     protected int elecRows;
@@ -43,12 +54,12 @@ public class SimpleFuncs extends Board {
         }
     }
 
-    protected boolean movesOnBothBlueEdges(Move move1, Move move2) {
+    public boolean movesOnBothBlueEdges(Move move1, Move move2) {
         return (move1.x == 0 && move2.x == elecCols - 1)
                 || (move2.x == 0 && move1.x == elecCols - 1);
     }
 
-    protected boolean movesOnBothRedEdges(Move move1, Move move2) {
+    public boolean movesOnBothRedEdges(Move move1, Move move2) {
         return (move1.y == 0 && move2.y == elecRows - 1)
                 || (move2.y == 0 && move1.y == elecRows - 1);
     }
@@ -112,6 +123,7 @@ public class SimpleFuncs extends Board {
         }
         return false;
     }
+
 
     public SimpleFuncs(int rows, int cols) {
         super(rows, cols);

@@ -49,7 +49,7 @@ public class AlgorithmNoUIController extends Controller {
     // Loops through 50 games and then outputs the finished boardstates and how many of which algo won.
     public void gameIteration(BoardCoordinate ignored) {
         String output = "";
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 100; i++) {
             board.reset();
             gameState.reset();
             while (!gameState.isGameFinished()) {

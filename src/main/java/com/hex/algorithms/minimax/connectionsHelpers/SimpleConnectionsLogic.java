@@ -284,6 +284,7 @@ public class SimpleConnectionsLogic extends SimpleFuncs {
         int j;
         for (Integer key : groupsVCByEnds.keySet()) {
             size = groupsVCByEnds.get(key).size();
+            i = 0;
             if (size > 1){
                 for (VirtualConnection vc1 : groupsVCByEnds.get(key)) {
                     i++;

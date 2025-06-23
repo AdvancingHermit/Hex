@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 // Christian
 public class ConnectionPosition implements Position{
-    private Connections board;
+    protected Connections board;
     ArrayList<Move> possibleMoves;
     private boolean playerOnTurn;
 

@@ -41,7 +41,8 @@ public class BoardUI extends Pane {
     public enum ControllerType {
         LOCAL_GAME,
         ONLINE,
-        ALGORITHM_TESTER
+        ALGORITHM_TESTER,
+        SANDBOX
     }
     ControllerType type;
 
@@ -109,6 +110,15 @@ public class BoardUI extends Pane {
                         });
                     });
                     break;
+                case SANDBOX:
+                    SandboxController.getInstance().setMoveListener(co -> {
+                        SandboxController.getInstance().gameIteration(co);
+                        Platform.runLater(() -> {
+                            this.getChildren().clear();
+                            this.drawBoard();
+                        });
+                    });
+                    break;
             }
         }
 
@@ -136,6 +146,9 @@ public class BoardUI extends Pane {
                         case ALGORITHM_TESTER:
                             AlgorithmTesterController.getInstance().gameIteration(coord);
                             break;
+                        case SANDBOX:
+                            SandboxController.getInstance().gameIteration(coord);
+                            break;
                     }
                     if (singlePlayer){
                         this.getChildren().clear();
@@ -150,7 +163,14 @@ public class BoardUI extends Pane {
                     hex.setFill(Color.RED);
                 } else if (getBoard().getPiece(i, j) == 2) {
                     hex.setFill(Color.BLUE);
+                } else if (getBoard().getPiece(i, j) == 3) {
+                    hex.setFill(Color.GREEN);
+                } else if (getBoard().getPiece(i, j) == 4) {
+                    hex.setFill(Color.ORANGE);
+                } else if (getBoard().getPiece(i, j) == 5) {
+                    hex.setFill(Color.GOLD);
                 }
+
                 // Set the default stroke for the hexagon
                 hex.setStroke(Color.grayRgb(45));
 

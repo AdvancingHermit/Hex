@@ -39,6 +39,8 @@ import java.net.Socket;
         ALGO_V_ALGO_SETTINGS,
         ALGO_V_ALGO_NO_UI,
         ALGO_V_ALGO_SETTINGS_NO_UI,
+        SANDBOX_GAME_SETTINGS,
+        SANDBOX_GAME,
         ONLINE_GAME,
         LOADING_SCREEN,
         LOCAL_GAME_SETTINGS,
@@ -66,6 +68,8 @@ import java.net.Socket;
             case ALGO_V_ALGO_SETTINGS -> new AlgovAlgoSettings(this).getScene();
 
             case ALGO_V_ALGO_SETTINGS_NO_UI -> new AlgovAlgoNoUISettings(this).getScene();
+
+            case SANDBOX_GAME_SETTINGS -> new SandboxGameSettings(this).getScene();
 
             case ONLINE_GAME -> {
                 if (currentSocket != null && currentIn != null && currentOut != null) {

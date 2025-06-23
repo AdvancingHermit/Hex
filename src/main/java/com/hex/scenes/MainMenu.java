@@ -26,6 +26,9 @@ public class MainMenu extends BaseScene {
         Button playAINoUIsBtn = new Button("Test AIs No UI!");
         playAINoUIsBtn.setOnAction(e -> sceneManager.switchScene(SceneType.ALGO_V_ALGO_SETTINGS_NO_UI));
         vbox.getChildren().add(playAINoUIsBtn);
+        Button playSandboxBtn = new Button("Sandbox");
+        playSandboxBtn.setOnAction(e -> sceneManager.switchScene(SceneType.SANDBOX_GAME_SETTINGS));
+        vbox.getChildren().add(playSandboxBtn);
 
         vbox.setAlignment(javafx.geometry.Pos.CENTER);
 

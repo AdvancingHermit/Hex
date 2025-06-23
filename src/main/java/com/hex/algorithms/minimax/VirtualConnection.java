@@ -39,7 +39,7 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
         if (o == null || getClass() != o.getClass()) return false;
 
         VirtualConnection other = (VirtualConnection) o;
-        return carrier.size() == other.carrier.size() && equalEnds(other) && Objects.equals(carrier, other.carrier);
+        return carrier.size() == other.carrier.size() && equalEnds(other) && other.carrier.containsAll(carrier);
     }
 
 
