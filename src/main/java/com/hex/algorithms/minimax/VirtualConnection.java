@@ -72,18 +72,12 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
 
     // Tjekker om denne er sub af anden.
     public boolean isSubset(VirtualConnection other) {
-        if (equalEnds(other) && other.depth > depth) {
-            return true;
-        }
-        return false;
+        return equalEnds(other) && other.depth > depth;
     }
 
     // Tjekker om denne er sub af anden.
     public boolean isSubsetAssumed(VirtualConnection other) {
-        if (other.carrier.size() > carrier.size()) {
-            return other.carrier.containsAll(carrier);
-        }
-        return false;
+        return other.depth > depth;
     }
 
     public boolean isDistinct(VirtualConnection other){
@@ -117,7 +111,7 @@ public class VirtualConnection implements Comparable<VirtualConnection> {
         int ha = x.hashCode();
         int hb = y.hashCode();
         int H = Math.max(ha,hb), L = Math.min(ha,hb);
-        return H * 170 + L;   // 196 = 14*14 = maxSingleHash+1
+        return H * 196 + L;   // 196 = 14*14 = maxSingleHash+1
     }
 
     @Override

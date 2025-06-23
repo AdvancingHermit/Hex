@@ -144,25 +144,35 @@ public class Connections extends SimpleConnectionsLogic {
 
     /**
      * Checks if elements is subset of parent list to avoid problems later on.
-     * @param newVCs new vcs
      * @param checkNewVCs the vcs that rules are applied on
      * @param VCs old vcs
      */
-    private void checkForAllRedundancies(HashSet<VirtualConnection> newVCs, HashSet<VirtualConnection> checkNewVCs, HashSet<VirtualConnection> VCs){
-        HashSet<VirtualConnection> newVCsSnap = new HashSet<>(newVCs);
-        HashSet<VirtualConnection> checkNewVCsSnap = new HashSet<>(checkNewVCs);
-        HashSet<VirtualConnection> VCsSnap = new HashSet<>(VCs);
+    private void checkForAllRedundancies(HashSet<VirtualConnection> checkNewVCs, HashSet<VirtualConnection> VCs){
+        Map<Integer, List<VirtualConnection>> groupNewByEnds = new HashMap<>();
+        for (VirtualConnection vc : checkNewVCs) {
+            int endsKey = vc.getMovesCode();
+            groupNewByEnds.computeIfAbsent(endsKey, k -> new ArrayList<>()).add(vc);
+        }
+        Map<Integer, List<VirtualConnection>> groupOldByEnds = new HashMap<>();
+        for (VirtualConnection vc : VCs) {
+            int endsKey = vc.getMovesCode();
+            groupOldByEnds.computeIfAbsent(endsKey, k -> new ArrayList<>()).add(vc);
+        }
 
-        for (VirtualConnection newVC : newVCsSnap){
-            for (VirtualConnection vcToCheckWith : checkNewVCsSnap){
-                if (vcToCheckWith.isSubset(newVC)) newVCs.remove(newVC);
-                else if (newVC.isSubset(vcToCheckWith)) checkNewVCs.remove(vcToCheckWith);
-            }
-            for (VirtualConnection vcToCheckWith : VCsSnap){
-                if (vcToCheckWith.isSubset(newVC)) newVCs.remove(newVC);
-                else if (newVC.isSubset(vcToCheckWith)) VCs.remove(vcToCheckWith);
+        Set<VirtualConnection> toRemoveNew = new HashSet<>();
+        Set<VirtualConnection> toRemoveOld = new HashSet<>();
+
+        for (Integer key : groupNewByEnds.keySet()) {
+            if (!groupOldByEnds.containsKey(key)) continue;
+            for (VirtualConnection vc1 : groupNewByEnds.get(key)){
+                for (VirtualConnection vc2 : groupOldByEnds.get(key)){
+                    if (vc1.isSubsetAssumed(vc2)) toRemoveNew.add(vc1);
+                    else if (vc2.isSubsetAssumed(vc1)) toRemoveOld.add(vc2);
+                }
             }
         }
+        checkNewVCs.removeAll(toRemoveNew);
+        VCs.removeAll(toRemoveOld);
     }
 
     /**
@@ -194,7 +204,7 @@ public class Connections extends SimpleConnectionsLogic {
     }
 
     /**
-     * Written as Our rule in repport. Similar to And rule, but for semi vcs.
+     * Written as Our rule in report. Similar to And rule, but for semi vcs.
      * @param checkNewSemiVCs
      * @param semiVCs
      * @param checkNewVCs
@@ -445,7 +455,7 @@ public class Connections extends SimpleConnectionsLogic {
         redVCs.clear();
         redSemiVCs.clear();
 
-        int loops = 5;
+        int loops = 4;
         if (cols > 8 && rows > 8) { loops = 5; }
 
         for (int i = 0; i < loops; i++) {
@@ -472,20 +482,21 @@ public class Connections extends SimpleConnectionsLogic {
             newRedVCs.removeIf(vc -> redVCs.contains(vc) || checkNewRedVCs.contains(vc));
             newRedSemiVCs.removeIf(vc -> redSemiVCs.contains(vc) || checkNewRedSemiVCs.contains(vc));
 
-            checkForAllRedundancies(newBlueVCs, checkNewBlueVCs, blueVCs);
-            checkForAllRedundancies(newBlueSemiVCs, checkNewBlueSemiVCs, blueSemiVCs);
-            checkForAllRedundancies(newRedVCs, checkNewRedVCs, redVCs);
-            checkForAllRedundancies(newRedSemiVCs, checkNewRedSemiVCs, redSemiVCs);
+            checkForAllRedundancies(newBlueVCs, checkNewBlueVCs);
+            checkForAllRedundancies(newBlueSemiVCs, checkNewBlueSemiVCs);
+            checkForAllRedundancies(newRedVCs, checkNewRedVCs);
+            checkForAllRedundancies(newRedSemiVCs, checkNewRedSemiVCs);
 
             blueVCs.addAll(checkNewBlueVCs);
             blueSemiVCs.addAll(checkNewBlueSemiVCs);
             redVCs.addAll(checkNewRedVCs);
             redSemiVCs.addAll(checkNewRedSemiVCs);
 
+            /*
             checkRedundancies(blueVCs);
             checkRedundancies(blueSemiVCs);
             checkRedundancies(redVCs);
-            checkRedundancies(redSemiVCs);
+            checkRedundancies(redSemiVCs);*/
 
             checkNewBlueVCs.clear();
             checkNewBlueSemiVCs.clear();
@@ -501,6 +512,11 @@ public class Connections extends SimpleConnectionsLogic {
             newBlueSemiVCs.clear();
             newRedVCs.clear();
             newRedSemiVCs.clear();
+
+            checkForAllRedundancies(checkNewBlueVCs, blueVCs);
+            checkForAllRedundancies(checkNewBlueSemiVCs, blueSemiVCs);
+            checkForAllRedundancies(checkNewRedVCs, redVCs);
+            checkForAllRedundancies(checkNewRedSemiVCs, redSemiVCs);
 
             //if (checkNewBlueVCs.size() + checkNewBlueSemiVCs.size() + checkNewRedVCs.size() + checkNewRedSemiVCs.size() == 0) { break; }
         }

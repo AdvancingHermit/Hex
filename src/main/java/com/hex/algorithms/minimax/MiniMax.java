@@ -31,7 +31,8 @@ public class MiniMax {
         for (Move move : ogPossibleMoves){
             SetHolder setHolder = new SetHolder();
             Position newPosition = position.Move(move, player);
-            tasks.add(() -> evalWrapper(newPosition, depth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player, setHolder, move));
+            BoardEvals boardEval = new BoardEvals();
+            tasks.add(() -> evalWrapper(newPosition, depth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false, 3 - player, player, setHolder, move, boardEval));
         }
         try {
             List<Future<MoveValue>> futures = executor.invokeAll(tasks);
@@ -69,19 +70,32 @@ public class MiniMax {
             this.value = value;
         }
     }
-
-    private MoveValue evalWrapper(Position pos, int depth, float alpha, float beta, boolean maximizingPlayer, int currentPlayer, int originalPlayer, SetHolder setHolder, Move move){
-        return new MoveValue(move, alphabeta(pos, depth, alpha, beta, maximizingPlayer, currentPlayer, originalPlayer, setHolder));
+    static class BoardEvals {
+        HashMap<BigInteger, Float> alreadyComputedEvals;
+        BoardEvals() {
+            alreadyComputedEvals = new HashMap<>(10000);
+        }
+        public void addKey(BigInteger key, float eval){
+            alreadyComputedEvals.put(key, eval);
+        }
     }
 
-    private float alphabeta(Position pos, int depth, float alpha, float beta, boolean maximizingPlayer, int currentPlayer, int originalPlayer, SetHolder setHolder) {
+    private MoveValue evalWrapper(Position pos, int depth, float alpha, float beta, boolean maximizingPlayer, int currentPlayer, int originalPlayer, SetHolder setHolder, Move move, BoardEvals boardEvals){
+        return new MoveValue(move, alphabeta(pos, depth, alpha, beta, maximizingPlayer, currentPlayer, originalPlayer, setHolder, boardEvals));
+    }
+
+    private float alphabeta(Position pos, int depth, float alpha, float beta, boolean maximizingPlayer, int currentPlayer, int originalPlayer, SetHolder setHolder, BoardEvals boardEvals) {
 
         if (pos.checkWin(originalPlayer)) { return Float.POSITIVE_INFINITY; }
         if (pos.checkWin(3 - originalPlayer)) { return Float.NEGATIVE_INFINITY; }
 
 
         if (depth == 0 || pos.getPossibleMoves().isEmpty()) {
-            return pos.evaluate(originalPlayer, setHolder);
+            BigInteger key = pos.getHashCode();
+            if (boardEvals.alreadyComputedEvals.containsValue(key)) return boardEvals.alreadyComputedEvals.get(key);
+            float eval = pos.evaluate(originalPlayer, setHolder);
+            boardEvals.addKey(key, eval);
+            return eval;
         }
 
         if (maximizingPlayer) {
@@ -89,7 +103,7 @@ public class MiniMax {
             for (Move move : pos.getPossibleMoves()) {
                 Position nextPos = pos.Move(move, currentPlayer);
 
-                value = Math.max(value, alphabeta(nextPos, depth - 1, alpha, beta, false, 3 - currentPlayer, originalPlayer, setHolder));
+                value = Math.max(value, alphabeta(nextPos, depth - 1, alpha, beta, false, 3 - currentPlayer, originalPlayer, setHolder, boardEvals));
                 if (value >= beta) break;
                 alpha = Math.max(alpha, value);
 
@@ -99,7 +113,7 @@ public class MiniMax {
             float value = Float.POSITIVE_INFINITY;
             for (Move move : pos.getPossibleMoves()) {
                 Position nextPos = pos.Move(move, currentPlayer);
-                value = Math.min(value, alphabeta(nextPos, depth - 1, alpha, beta, true, 3 - currentPlayer, originalPlayer, setHolder));
+                value = Math.min(value, alphabeta(nextPos, depth - 1, alpha, beta, true, 3 - currentPlayer, originalPlayer, setHolder, boardEvals));
                 if (value <= alpha) break;
                 beta = Math.min(beta, value);
             }
