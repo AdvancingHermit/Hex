@@ -22,7 +22,7 @@ public class RandomAlgorithm implements Algorithm{
         int cols = board.getCols();
         int emptyCount =  cols * rows - gameState.getBoardPieces();
 
-        if (emptyCount == 0) {
+        if (emptyCount < 0) {
             throw new IllegalStateException("No empty cells available on the board");
         }
 

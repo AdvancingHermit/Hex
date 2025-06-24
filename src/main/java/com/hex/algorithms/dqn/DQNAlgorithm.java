@@ -24,16 +24,28 @@ import java.nio.file.StandardCopyOption;
 public class DQNAlgorithm implements Algorithm {
 
     private static final String MODEL_NAME = "hex-dqn";
+    private HexDqnBlock block;
+    private NDManager manager;
+
+    public DQNAlgorithm() {
+        try {
+            this.manager = NDManager.newBaseManager();
+            // Loads in the DQN model
+            this.block = new HexDqnBlock();
+            Path weightsPath = loadWeightsFromResource("/com/hex/models/djl_weights.txt");
+            block.initialize(manager, DataType.FLOAT32, new Shape[]{new Shape(1, 2, 5, 5), new Shape(1, 1)});
+            block.loadWeights(manager, weightsPath);
+
+        } catch (Exception e) {
+            System.err.println("Error during DQNAlgorithm construction: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public BoardCoordinate makeMove(int player, Board board, GameState gameState, int iterations, boolean swap) {
 
-        try (NDManager manager = NDManager.newBaseManager()) {
-            // Loads in the DQN model
-            HexDqnBlock block = new HexDqnBlock();
-            Path weightsPath = loadWeightsFromResource("/com/hex/models/djl_weights.txt");
-            block.initialize(manager, DataType.FLOAT32, new Shape[]{new Shape(1, 2, board.getRows(), board.getCols()), new Shape(1, 1)});
-            block.loadWeights(manager, weightsPath);
+        try {
 
             // Prepare inputs for the DQN model
             NDArray boardInput = convertBoardToNDArray(manager, board, player);
@@ -120,7 +132,7 @@ public class DQNAlgorithm implements Algorithm {
             int c = i % cols; // Column from flattened index
 
             // Only consider empty cells
-            if (board.getPiece(r, c) == 0 || (swapturn)) {
+            if ((board.getPiece(r, c) == 0 ) || (swapturn)) {
                 if (data[i] > maxQValue) {
                     maxQValue = data[i];
                     bestX = r;
