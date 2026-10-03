@@ -92,7 +92,7 @@ public class MiniMax {
 
         if (depth == 0 || pos.getPossibleMoves().isEmpty()) {
             BigInteger key = pos.getHashCode();
-            if (boardEvals.alreadyComputedEvals.containsValue(key)) return boardEvals.alreadyComputedEvals.get(key);
+            if (boardEvals.alreadyComputedEvals.containsKey(key)) return boardEvals.alreadyComputedEvals.get(key);
             float eval = pos.evaluate(originalPlayer, setHolder);
             boardEvals.addKey(key, eval);
             return eval;
